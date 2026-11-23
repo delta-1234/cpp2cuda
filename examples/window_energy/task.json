@@ -1,0 +1,9 @@
+{
+  "source": "window_energy.cpp",
+  "description": "Port the five-point window energy calculation. Preserve integer output and line order. Implement independent SIMT and shared-memory tiled kernels.",
+  "cases": [
+    {"name": "singleton", "args": ["1"]},
+    {"name": "tail", "args": ["259"]},
+    {"name": "many", "args": ["8193"]}
+  ]
+}

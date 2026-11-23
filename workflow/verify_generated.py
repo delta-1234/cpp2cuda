@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from check import compare, edge_input
+from probe import cupti_paths
 from scale import file_info
 
 MODES = ("simt", "tile")
@@ -23,16 +24,18 @@ class Evaluator:
     def __init__(self, run, source, env):
         self.run, self.work, self.source = run, run.work, source
         self.oracle = run.dir/"oracle"
-        self.toolkit = Path(env["nvcc"]).resolve().parents[1]
-        self.arch = env["driver"]["devices"][0]["cc"]
+        self.toolkit = Path(env["nvcc"]).resolve().parents[1] if env.get("nvcc") else None
+        devices = env.get("driver", {}).get("devices", [])
+        self.arch = devices[0]["cc"] if devices else None
         self.cxx = env["host_cxx"]
         self.sanitizer = env["compute-sanitizer"]
         self.offline = run.offline
         self.gold = {}
+        self.last_case = None
 
-    def prepare(self):
+    def prepare(self, with_trace=True):
         shutil.copyfile(self.source.with_name("factor_replay.hpp"), self.work/"factor_replay.hpp")
-        (self.oracle/"runs").mkdir(parents=True)
+        (self.oracle/"runs").mkdir(parents=True,exist_ok=True)
         for path in (self.source, self.source.with_name("factor_replay.hpp")):
             shutil.copyfile(path, self.oracle/path.name)
         self.offline("oracle-build", [self.cxx, "-std=c++17", "-O3", self.source.name, "-o", "runs/cpu"], self.oracle)
@@ -54,11 +57,19 @@ class Evaluator:
             self.reference(case)
         if file_info(self.gold["sample"]) != file_info(self.run.root/"factor_output.csv"):
             raise RuntimeError("CPU sample differs from frozen reference")
-        cupti = self.toolkit/"extras/CUPTI"
+        if with_trace:
+            self.prepare_trace()
+
+    def prepare_trace(self):
+        if not self.sanitizer:
+            raise RuntimeError("Compute Sanitizer is required for GPU verification")
+        cupti = cupti_paths(self.toolkit)
+        if not all(cupti.values()):
+            raise RuntimeError("CUPTI development headers and libcupti.so are required for launch tracing")
         shutil.copyfile(self.run.root/"workflow/trace_launch.cpp", self.oracle/"trace_launch.cpp")
         self.offline("trace-build", [self.cxx, "-std=c++14", "-shared", "-fPIC", "trace_launch.cpp",
-                     "-I"+str(cupti/"include"), "-I"+str(self.toolkit/"include"), "-L"+str(cupti/"lib64"),
-                     "-Wl,-rpath,"+str(cupti/"lib64"), "-lcupti", "-o", "runs/trace.so"], self.oracle)
+                     "-I"+cupti["include"], "-I"+str(self.toolkit/"include"), "-L"+cupti["library"],
+                     "-Wl,-rpath,"+cupti["library"], "-lcupti", "-o", "runs/trace.so"], self.oracle)
         shutil.copyfile(self.oracle/"runs/trace.so", self.work/"trace.so")
 
     def simulate(self, orders, seed):
@@ -70,6 +81,7 @@ class Evaluator:
     def reference(self, case):
         filename = case+".csv"
         # Independent mount roots share only read-only fixture bytes.
+        (self.oracle/filename).unlink(missing_ok=True)
         os.link(self.work/filename, self.oracle/filename)
         self.offline("reference-"+case, ["bash", "-ec", 'runs/cpu "$1" > "runs/$1"', "_", filename], self.oracle)
         self.gold[case] = self.oracle/"runs"/filename
@@ -93,6 +105,11 @@ class Evaluator:
             raise ValueError(f"{case}: numeric tolerance passed but output differs in byte formatting or rounding")
         return {"rows": rows, "sha256": sha}
 
+    def test_case(self, case, mode):
+        self.last_case = {"case":case,"mode":mode}
+        self.offline("focused-"+mode+"-"+case,["runs/replay",mode,case+".csv","runs/focused.csv"])
+        return self.validate(case,"focused.csv")
+
     def expect_rejection(self, name, cmd):
         self.offline(name, ["bash", "-c",
                      '"$@"; rc=$?; test "$rc" -gt 0 && test "$rc" -lt 126', "_", *cmd])
@@ -104,6 +121,7 @@ class Evaluator:
             self.expect_rejection("require-device-"+mode, ["env", "CUDA_VISIBLE_DEVICES=", "runs/replay",
                                   mode, "edge.csv", "runs/invalid.csv"])
             for case in self.gold:
+                self.last_case = {"case":case,"mode":mode}
                 output = f"{mode}-{case}.csv"
                 cmd = ["runs/replay", mode, case+".csv", "runs/"+output]
                 if case == "sample":
@@ -115,6 +133,7 @@ class Evaluator:
                 else:
                     self.offline(mode+"-"+case, cmd)
                 cases.setdefault(case, {})[mode] = self.validate(case, output)
+            self.last_case = None
             rejected[mode] = []
             for case in ("overfill", "unknown", "bad-time"):
                 self.expect_rejection("reject-"+mode+"-"+case, ["runs/replay", mode, case+".csv", "runs/invalid.csv"])

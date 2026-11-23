@@ -7,18 +7,38 @@ export NVCC_CCBIN="${NVCC_CCBIN:-/usr/bin/g++-7}"
 # Preserve an existing scheduler allocation, including an intentionally empty mask.
 export WORKFLOW_PYTHON="${WORKFLOW_PYTHON:-python3}"
 case "${1:-}" in
+    --test-repair)
+        shift
+        exec "$WORKFLOW_PYTHON" workflow/test_port_agent.py --gpu "$@"
+        ;;
+    --port-agent)
+        shift
+        exec "$WORKFLOW_PYTHON" workflow/port_agent.py "$@"
+        ;;
     --configure-api|--check-api|--agent)
         case "$1" in
             --configure-api) operation=configure ;;
             --check-api) operation=check ;;
-            --agent) operation=run; export WITH_TRITON="${WITH_TRITON:-1}" ;;
+            --agent)
+                for option in "$@"; do
+                    case "$option" in
+                        --source|--spec|--source=*|--spec=*|--inspect)
+                            shift; exec "$WORKFLOW_PYTHON" workflow/port_agent.py "$@" ;;
+                    esac
+                done
+                operation=run; export WITH_TRITON="${WITH_TRITON:-1}" ;;
         esac
         shift
         exec "$WORKFLOW_PYTHON" workflow/api_agent.py "$operation" "$@"
         ;;
     --generate-cuda)
         shift
-        exec "$WORKFLOW_PYTHON" workflow/generate_cuda.py "$@"
+        for option in "$@"; do
+            case "$option" in
+                --per-file|--no-per-file) exec "$WORKFLOW_PYTHON" workflow/generate_cuda.py "$@" ;;
+            esac
+        done
+        exec "$WORKFLOW_PYTHON" workflow/port_agent.py "$@"
         ;;
     --build-generated)
         shift

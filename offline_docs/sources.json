@@ -1,0 +1,17 @@
+[
+  {
+    "id": "cuda-guide",
+    "title": "CUDA Programming Guide",
+    "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/pdf/cuda-programming-guide.pdf"
+  },
+  {
+    "id": "cuda-guide-11.3",
+    "title": "CUDA C++ Programming Guide",
+    "url": "https://docs.nvidia.com/cuda/archive/11.3.0/pdf/CUDA_C_Programming_Guide.pdf"
+  },
+  {
+    "id": "best-practices-11.3",
+    "title": "CUDA C++ Best Practices Guide",
+    "url": "https://docs.nvidia.com/cuda/archive/11.3.0/pdf/CUDA_C_Best_Practices_Guide.pdf"
+  }
+]

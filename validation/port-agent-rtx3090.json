@@ -1,0 +1,840 @@
+{
+  "model": "qwen3.8-max",
+  "runs": {
+    "node_analysis": {
+      "report": "runs/cuda-agent-fhnn476e/report.json",
+      "status": "analyzed",
+      "entry": null,
+      "gpu": "NVIDIA GeForce RTX 3090",
+      "nvcc": "Cuda compilation tools, release 11.3, V11.3.58",
+      "tools": [
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "gpu"
+        },
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "toolchain"
+        },
+        {
+          "turn": 1,
+          "tool": "catalog"
+        },
+        {
+          "turn": 2,
+          "tool": "search",
+          "doc": "cuda-guide-11.3"
+        },
+        {
+          "turn": 3,
+          "tool": "page",
+          "doc": "cuda-guide-11.3",
+          "page": 51
+        },
+        {
+          "turn": 4,
+          "tool": "finish"
+        }
+      ],
+      "model_summary": "检查结论：GPU 为 NVIDIA GeForce RTX 3090，计算能力 sm_86，显存约 24 GB；nvcc 工具链为 /usr/local/cuda-11.3，CUDA Toolkit 11.3（V11.3.58），nvcc_arches 包含 compute_86，可直接编译运行。版本匹配手册为 cuda-guide-11.3。可行的并行化技术：按 replay simt|tile 契约，可实现两种 GPU 内核：1) SIMT 内核，每个线程负责一个输出元素，适合逐点或简单归约计算；2) shared-memory tiled 内核，按线程块加载二维子块到 __shared__ 数组，用 __syncthreads() 同步后在片上共享内存中复用数据，减少全局内存访问。依据：cuda-guide-11.3 第 51 页展示了 MatMulKernel 使用 dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE)、dim3 dimGrid，以及 __shared__ float As/Bs 的分块矩阵乘法；第 52 页对应共享内存矩阵乘法图示。"
+    },
+    "generic_supplied_cases": {
+      "report": "runs/cuda-agent-up2rso7e/report.json",
+      "status": "verified",
+      "entry": "window_energy.cpp",
+      "gpu": "NVIDIA GeForce RTX 3090",
+      "nvcc": "Cuda compilation tools, release 11.3, V11.3.58",
+      "tools": [
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "gpu"
+        },
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "toolchain"
+        },
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "system"
+        },
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "runtimes"
+        },
+        {
+          "turn": 1,
+          "tool": "catalog"
+        },
+        {
+          "turn": 1,
+          "tool": "read",
+          "path": "window_energy.cpp"
+        },
+        {
+          "turn": 2,
+          "tool": "search",
+          "doc": "cuda-guide-11.3"
+        },
+        {
+          "turn": 3,
+          "tool": "search",
+          "doc": "cuda-guide-11.3"
+        },
+        {
+          "turn": 4,
+          "tool": "search",
+          "doc": "best-practices-11.3"
+        },
+        {
+          "turn": 6,
+          "tool": "page",
+          "doc": "best-practices-11.3",
+          "page": 50
+        },
+        {
+          "turn": 6,
+          "tool": "page",
+          "doc": "cuda-guide-11.3",
+          "page": 52
+        },
+        {
+          "turn": 7,
+          "tool": "write",
+          "path": "window_energy.cu"
+        },
+        {
+          "turn": 8,
+          "tool": "build"
+        },
+        {
+          "turn": 9,
+          "tool": "verify"
+        },
+        {
+          "turn": 10,
+          "tool": "benchmark"
+        },
+        {
+          "turn": 11,
+          "tool": "finish"
+        }
+      ],
+      "generated_source_sha256": {
+        "window_energy.cu": "1e4a736f8d48ea6dfb523c0f7e083defba9ba1b46aa17971baa9533fab12b0e1"
+      },
+      "validation": {
+        "stdout_sha256": {
+          "singleton": "913f5d1da2feaf4deeccc9e55cbb350a20f12b3f507e87be85dbb77fdd3cb9bc",
+          "tail": "c411fa1ee241aefa6415e81e762791c1631f0c9235b41b61d2d7223665c977c2",
+          "many": "c5393eb76950901a9f305579c30a1e82a8c2b6a0a41d8c24bd62ecaccac35bba"
+        },
+        "successful_gpu_launches": {
+          "simt": [
+            "_ZN68_GLOBAL__N__48_tmpxft_0000004c_00000000_7_window_energy_cpp1_ii_main11energy_simtEPKiPii"
+          ],
+          "tile": [
+            "_ZN68_GLOBAL__N__48_tmpxft_0000004c_00000000_7_window_energy_cpp1_ii_main11energy_tileEPKiPii"
+          ]
+        },
+        "memcheck": [
+          "simt",
+          "tile"
+        ]
+      },
+      "median_ms": {
+        "singleton": {
+          "cpu": 2.767,
+          "simt": 139.678,
+          "tile": 127.091
+        },
+        "tail": {
+          "cpu": 2.565,
+          "simt": 143.249,
+          "tile": 121.997
+        },
+        "many": {
+          "cpu": 4.008,
+          "simt": 142.4,
+          "tile": 127.798
+        }
+      }
+    },
+    "generic_model_proposed_cases": {
+      "report": "runs/cuda-agent-_j7jcy74/report.json",
+      "status": "verified",
+      "entry": "window_energy.cpp",
+      "gpu": "NVIDIA GeForce RTX 3090",
+      "nvcc": "Cuda compilation tools, release 11.3, V11.3.58",
+      "tools": [
+        {
+          "turn": 1,
+          "tool": "read",
+          "path": "window_energy.cpp"
+        },
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "gpu"
+        },
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "toolchain"
+        },
+        {
+          "turn": 1,
+          "tool": "catalog"
+        },
+        {
+          "turn": 2,
+          "tool": "select_toolchain"
+        },
+        {
+          "turn": 2,
+          "tool": "baseline",
+          "error": "read the CPU entry and propose a case for its CLI first"
+        },
+        {
+          "turn": 3,
+          "tool": "case",
+          "name": "boundary_one"
+        },
+        {
+          "turn": 3,
+          "tool": "case",
+          "name": "nonmultiple_1000"
+        },
+        {
+          "turn": 3,
+          "tool": "baseline"
+        },
+        {
+          "turn": 3,
+          "tool": "experiment"
+        },
+        {
+          "turn": 5,
+          "tool": "write",
+          "path": "window_energy.cu"
+        },
+        {
+          "turn": 6,
+          "tool": "build"
+        },
+        {
+          "turn": 6,
+          "tool": "verify"
+        },
+        {
+          "turn": 7,
+          "tool": "benchmark"
+        },
+        {
+          "turn": 8,
+          "tool": "finish"
+        }
+      ],
+      "generated_source_sha256": {
+        "window_energy.cu": "36a6ad402fad8a47e6a52f61977aece7c8c1aa6bacf396348c824f7540e2b2b9"
+      },
+      "validation": {
+        "output_sha256": {
+          "boundary_one": "913f5d1da2feaf4deeccc9e55cbb350a20f12b3f507e87be85dbb77fdd3cb9bc",
+          "nonmultiple_1000": "0964fe8a934fd52516262584102eca8c8e4df15d80740db9ecfc150dc8d087ca"
+        },
+        "successful_gpu_launches": {
+          "simt": [
+            "_Z11simt_energyPii"
+          ],
+          "tile": [
+            "_Z11tile_energyPii"
+          ]
+        },
+        "memcheck": [
+          "simt",
+          "tile"
+        ]
+      },
+      "median_ms": {
+        "boundary_one": {
+          "cpu": 2.387,
+          "simt": 124.508,
+          "tile": 129.673
+        },
+        "nonmultiple_1000": {
+          "cpu": 2.607,
+          "simt": 137.966,
+          "tile": 131.599
+        }
+      },
+      "cases": {
+        "boundary_one": [
+          "1"
+        ],
+        "nonmultiple_1000": [
+          "1000"
+        ]
+      }
+    },
+    "original_factor_checkpoint_verification": {
+      "report": "runs/cuda-agent-7m72zp3i/report.json",
+      "status": "verified",
+      "entry": "OrderFillRateSpread.cpp",
+      "gpu": "NVIDIA GeForce RTX 3090",
+      "nvcc": "Cuda compilation tools, release 11.3, V11.3.58",
+      "tools": [
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "gpu"
+        },
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "toolchain"
+        },
+        {
+          "turn": 1,
+          "tool": "probe",
+          "topic": "system"
+        },
+        {
+          "turn": 1,
+          "tool": "catalog"
+        },
+        {
+          "turn": 2,
+          "tool": "read",
+          "path": "OrderFillRateSpread.cpp"
+        },
+        {
+          "turn": 2,
+          "tool": "read",
+          "path": "factor_replay.hpp"
+        },
+        {
+          "turn": 2,
+          "tool": "read",
+          "path": "order_fill_rate_spread.cpp"
+        },
+        {
+          "turn": 2,
+          "tool": "read",
+          "path": "order_fill_rate_spread_gpu.cu"
+        },
+        {
+          "turn": 2,
+          "tool": "read",
+          "path": "gpu_kernels.cu"
+        },
+        {
+          "turn": 2,
+          "tool": "read",
+          "path": "gpu_kernels.cuh"
+        },
+        {
+          "turn": 3,
+          "tool": "read",
+          "path": "factor_replay.hpp"
+        },
+        {
+          "turn": 3,
+          "tool": "read",
+          "path": "OrderFillRateSpread.cpp"
+        },
+        {
+          "turn": 3,
+          "tool": "read",
+          "path": "order_fill_rate_spread.cpp"
+        },
+        {
+          "turn": 3,
+          "tool": "read",
+          "path": "gpu_kernels.cu"
+        },
+        {
+          "turn": 4,
+          "tool": "read",
+          "path": "order_fill_rate_spread.cpp"
+        },
+        {
+          "turn": 4,
+          "tool": "select_toolchain"
+        },
+        {
+          "turn": 5,
+          "tool": "baseline"
+        },
+        {
+          "turn": 5,
+          "tool": "build"
+        },
+        {
+          "turn": 6,
+          "tool": "verify"
+        },
+        {
+          "turn": 7,
+          "tool": "benchmark"
+        },
+        {
+          "turn": 8,
+          "tool": "finish"
+        }
+      ],
+      "generated_source_sha256": {
+        "gpu_kernels.cu": "669283fdafaf6796d03cb7e66283f0e1ff58e0add5aad2506665a520b72b0007",
+        "gpu_kernels.cuh": "f68b8ee25d02c5bbef6626740dca52dade9916dc588dd0b2df980135c1bf6d70",
+        "order_fill_rate_spread.cpp": "985fcec6a867049f0741c2cc9a2fb7a8d40b387d857bc0aeea681cf1460c057f",
+        "order_fill_rate_spread_gpu.cu": "24cbbfb33357a6296f187b6404e992cdd65e45ca786fc4efc47e81b54237b251"
+      },
+      "validation": {
+        "byte_exact": {
+          "header-only": {
+            "simt": {
+              "rows": 0,
+              "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+            },
+            "tile": {
+              "rows": 0,
+              "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+            }
+          },
+          "warmup499": {
+            "simt": {
+              "rows": 0,
+              "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+            },
+            "tile": {
+              "rows": 0,
+              "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+            }
+          },
+          "short-window": {
+            "simt": {
+              "rows": 0,
+              "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+            },
+            "tile": {
+              "rows": 0,
+              "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+            }
+          },
+          "edge": {
+            "simt": {
+              "rows": 3,
+              "sha256": "edb01cc8ea43cc83c4edd377a400b6aa0a39eec560029bb3226f215af8fa0cd4"
+            },
+            "tile": {
+              "rows": 3,
+              "sha256": "edb01cc8ea43cc83c4edd377a400b6aa0a39eec560029bb3226f215af8fa0cd4"
+            }
+          },
+          "sample": {
+            "simt": {
+              "rows": 912,
+              "sha256": "a5d198ecb551b9e04608534318f09888bc844aa365396ed331e4e3729c0daf9c"
+            },
+            "tile": {
+              "rows": 912,
+              "sha256": "a5d198ecb551b9e04608534318f09888bc844aa365396ed331e4e3729c0daf9c"
+            }
+          },
+          "orders-32768": {
+            "simt": {
+              "rows": 22794,
+              "sha256": "e3d58a66ef3232d39574cbf90fb88fc5d1df1d05d25a9272b1d116f42f3551f9"
+            },
+            "tile": {
+              "rows": 22794,
+              "sha256": "e3d58a66ef3232d39574cbf90fb88fc5d1df1d05d25a9272b1d116f42f3551f9"
+            }
+          },
+          "orders-131072": {
+            "simt": {
+              "rows": 94880,
+              "sha256": "73bacfd5889529602234282df0d44029bbd334a0758adef4f0e366ae0099c1ae"
+            },
+            "tile": {
+              "rows": 94880,
+              "sha256": "73bacfd5889529602234282df0d44029bbd334a0758adef4f0e366ae0099c1ae"
+            }
+          }
+        },
+        "successful_gpu_launches": {
+          "simt": [
+            "_ZN70_GLOBAL__N__46_tmpxft_0000004c_00000000_7_gpu_kernels_cpp1_ii_4900c39534order_fill_rate_spread_simt_kernelEPKiPNS_15DeviceResultRowEi"
+          ],
+          "tile": [
+            "_ZN70_GLOBAL__N__46_tmpxft_0000004c_00000000_7_gpu_kernels_cpp1_ii_4900c39534order_fill_rate_spread_tile_kernelEPKiPNS_15DeviceResultRowEi"
+          ]
+        },
+        "invalid_inputs_rejected": {
+          "simt": [
+            "overfill",
+            "unknown",
+            "bad-time"
+          ],
+          "tile": [
+            "overfill",
+            "unknown",
+            "bad-time"
+          ]
+        },
+        "compute_sanitizer_memcheck": [
+          "simt",
+          "tile"
+        ],
+        "no_device_rejected": [
+          "simt",
+          "tile"
+        ],
+        "unknown_mode_rejected": true
+      },
+      "median_ms": {
+        "orders-32768": {
+          "cpu": 75.142,
+          "simt": 229.801,
+          "tile": 229.338
+        },
+        "orders-131072": {
+          "cpu": 255.853,
+          "simt": 463.212,
+          "tile": 429.363
+        }
+      }
+    }
+  },
+  "from_scratch_factor_run": {
+    "report": "runs/cuda-agent-owllaqg3/report.json",
+    "final_status": "failed",
+    "final_error": "tool-turn budget exhausted; inspect the saved report and candidate",
+    "verified_revision_at_turn": 16,
+    "validation": {
+      "byte_exact": {
+        "header-only": {
+          "simt": {
+            "rows": 0,
+            "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+          },
+          "tile": {
+            "rows": 0,
+            "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+          }
+        },
+        "warmup499": {
+          "simt": {
+            "rows": 0,
+            "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+          },
+          "tile": {
+            "rows": 0,
+            "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+          }
+        },
+        "short-window": {
+          "simt": {
+            "rows": 0,
+            "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+          },
+          "tile": {
+            "rows": 0,
+            "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+          }
+        },
+        "edge": {
+          "simt": {
+            "rows": 3,
+            "sha256": "edb01cc8ea43cc83c4edd377a400b6aa0a39eec560029bb3226f215af8fa0cd4"
+          },
+          "tile": {
+            "rows": 3,
+            "sha256": "edb01cc8ea43cc83c4edd377a400b6aa0a39eec560029bb3226f215af8fa0cd4"
+          }
+        },
+        "sample": {
+          "simt": {
+            "rows": 912,
+            "sha256": "a5d198ecb551b9e04608534318f09888bc844aa365396ed331e4e3729c0daf9c"
+          },
+          "tile": {
+            "rows": 912,
+            "sha256": "a5d198ecb551b9e04608534318f09888bc844aa365396ed331e4e3729c0daf9c"
+          }
+        },
+        "orders-32768": {
+          "simt": {
+            "rows": 22794,
+            "sha256": "e3d58a66ef3232d39574cbf90fb88fc5d1df1d05d25a9272b1d116f42f3551f9"
+          },
+          "tile": {
+            "rows": 22794,
+            "sha256": "e3d58a66ef3232d39574cbf90fb88fc5d1df1d05d25a9272b1d116f42f3551f9"
+          }
+        },
+        "orders-131072": {
+          "simt": {
+            "rows": 94880,
+            "sha256": "73bacfd5889529602234282df0d44029bbd334a0758adef4f0e366ae0099c1ae"
+          },
+          "tile": {
+            "rows": 94880,
+            "sha256": "73bacfd5889529602234282df0d44029bbd334a0758adef4f0e366ae0099c1ae"
+          }
+        }
+      },
+      "successful_gpu_launches": {
+        "simt": [
+          "_ZN70_GLOBAL__N__46_tmpxft_0000004c_00000000_7_gpu_kernels_cpp1_ii_4900c39534order_fill_rate_spread_simt_kernelEPKiPNS_15DeviceResultRowEi"
+        ],
+        "tile": [
+          "_ZN70_GLOBAL__N__46_tmpxft_0000004c_00000000_7_gpu_kernels_cpp1_ii_4900c39534order_fill_rate_spread_tile_kernelEPKiPNS_15DeviceResultRowEi"
+        ]
+      },
+      "invalid_inputs_rejected": {
+        "simt": [
+          "overfill",
+          "unknown",
+          "bad-time"
+        ],
+        "tile": [
+          "overfill",
+          "unknown",
+          "bad-time"
+        ]
+      },
+      "compute_sanitizer_memcheck": [
+        "simt",
+        "tile"
+      ],
+      "no_device_rejected": [
+        "simt",
+        "tile"
+      ],
+      "unknown_mode_rejected": true
+    },
+    "median_ms": {
+      "orders-32768": {
+        "cpu": 74.188,
+        "simt": 240.74,
+        "tile": 207.94
+      },
+      "orders-131072": {
+        "cpu": 256.259,
+        "simt": 452.383,
+        "tile": 454.037
+      }
+    },
+    "note": "Sources reconstructed from the model's replies through turn 16 were built and fully verified again in the checkpoint-verification run.",
+    "tool_sequence": [
+      {
+        "turn": 1,
+        "tool": "probe"
+      },
+      {
+        "turn": 1,
+        "tool": "probe"
+      },
+      {
+        "turn": 1,
+        "tool": "read"
+      },
+      {
+        "turn": 1,
+        "tool": "read"
+      },
+      {
+        "turn": 1,
+        "tool": "catalog"
+      },
+      {
+        "turn": 2,
+        "tool": "read"
+      },
+      {
+        "turn": 2,
+        "tool": "read"
+      },
+      {
+        "turn": 2,
+        "tool": "search"
+      },
+      {
+        "turn": 2,
+        "tool": "search"
+      },
+      {
+        "turn": 3,
+        "tool": "read"
+      },
+      {
+        "turn": 3,
+        "tool": "read"
+      },
+      {
+        "turn": 3,
+        "tool": "page"
+      },
+      {
+        "turn": 4,
+        "tool": "read"
+      },
+      {
+        "turn": 4,
+        "tool": "search"
+      },
+      {
+        "turn": 4,
+        "tool": "page"
+      },
+      {
+        "turn": 5,
+        "tool": "experiment",
+        "error": "experiment-build exited 1\ntrial.cu:1:10: fatal error: factor_replay.hpp: No such file or directory\n #include \"factor_replay.hpp\"\n          ^~~~~~~~~~~~~~~~~~~\ncompilation terminated."
+      },
+      {
+        "turn": 6,
+        "tool": "write"
+      },
+      {
+        "turn": 7,
+        "tool": "build",
+        "error": "port-build exited 1\nIn file included from port/order_fill_rate_spread_gpu.cu:2:0:\n./factor_replay.hpp:3:10: fatal error: charconv: No such file or directory\n #include <charconv>\n          ^~~~~~~~~~\ncompilation terminated."
+      },
+      {
+        "turn": 8,
+        "tool": "probe"
+      },
+      {
+        "turn": 8,
+        "tool": "write"
+      },
+      {
+        "turn": 8,
+        "tool": "write"
+      },
+      {
+        "turn": 9,
+        "tool": "write"
+      },
+      {
+        "turn": 9,
+        "tool": "write"
+      },
+      {
+        "turn": 10,
+        "tool": "build"
+      },
+      {
+        "turn": 11,
+        "tool": "verify",
+        "error": "simt-header-only exited 1\nUsage: runs/replay [ticks.csv] | --generate [seed] | --generate-scale seed orders | --pack ticks.csv windows.bin keys.csv | replay simt|tile INPUT.csv OUTPUT.csv"
+      },
+      {
+        "turn": 12,
+        "tool": "write"
+      },
+      {
+        "turn": 13,
+        "tool": "write"
+      },
+      {
+        "turn": 14,
+        "tool": "build"
+      },
+      {
+        "turn": 15,
+        "tool": "verify"
+      },
+      {
+        "turn": 16,
+        "tool": "benchmark"
+      },
+      {
+        "turn": 17,
+        "tool": "write"
+      },
+      {
+        "turn": 17,
+        "tool": "write"
+      },
+      {
+        "turn": 19,
+        "tool": "experiment",
+        "error": "experiment-build exited 1\ntrial.cu(33): error: argument of type \"unsigned long\" is incompatible with parameter of type \"cudaMemcpyKind\"\n\ntrial.cu(33): error: too many arguments in function call\n\n2 errors detected in the compilation of \"trial.cu\"."
+      },
+      {
+        "turn": 20,
+        "tool": "experiment"
+      },
+      {
+        "turn": 21,
+        "tool": "build",
+        "error": "port-build exited 255\nptxas error   : Entry function '_ZN70_GLOBAL__N__46_tmpxft_0000004c_00000000_7_gpu_kernels_cpp1_ii_4900c39534order_fill_rate_spread_tile_kernelEPKiPNS_15DeviceResultRowEi' uses too much shared data (0x12000 bytes, 0xc000 max)"
+      },
+      {
+        "turn": 22,
+        "tool": "write"
+      },
+      {
+        "turn": 23,
+        "tool": "build",
+        "error": "port-build exited 1\nport/order_fill_rate_spread.cpp: In lambda function:\nport/order_fill_rate_spread.cpp:226:43: error: ‘cudaFree’ was not declared in this scope\n  226 |             gpu_warmup = std::thread([] { cudaFree(nullptr); });\n      |                                           ^~~~~~~~"
+      },
+      {
+        "turn": 24,
+        "tool": "write"
+      },
+      {
+        "turn": 24,
+        "tool": "write"
+      },
+      {
+        "turn": 25,
+        "tool": "write"
+      },
+      {
+        "turn": 25,
+        "tool": "write"
+      },
+      {
+        "turn": 26,
+        "tool": "build",
+        "error": "port-build exited 1\n/usr/bin/ld: runs/order_fill_rate_spread.cpp.o: undefined reference to symbol 'pthread_create@@GLIBC_2.2.5'\n//lib/x86_64-linux-gnu/libpthread.so.0: error adding symbols: DSO missing from command line\ncollect2: error: ld returned 1 exit status"
+      }
+    ]
+  },
+  "tool_namespace": {
+    "interfaces": [
+      "lo"
+    ],
+    "key_in_environment": false,
+    "repository_dotenv_visible": false
+  },
+  "offline_manuals": [
+    {
+      "id": "cuda-guide",
+      "version": "13.5",
+      "pages": 770,
+      "pdf_sha256": "b18264f6a4b094b1e9374318bd1afe972e18a6e47b22a8478c08eee4121ec4e9"
+    },
+    {
+      "id": "cuda-guide-11.3",
+      "version": "11.3",
+      "pages": 399,
+      "pdf_sha256": "e669c9dd077af2dbf1e34ccbf75b97da2579aefe910d87fe90f38d0b3ef22db7"
+    },
+    {
+      "id": "best-practices-11.3",
+      "version": "11.3",
+      "pages": 93,
+      "pdf_sha256": "e49c23e6c452061b416b6fee76866226f18554703017b6cf289c8c546102203b"
+    }
+  ]
+}

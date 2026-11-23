@@ -1,0 +1,38 @@
+{
+  "indexed_utc": "2026-11-23",
+  "documents": [
+    {
+      "id": "cuda-guide",
+      "title": "CUDA Programming Guide",
+      "version": "13.5",
+      "source": "https://docs.nvidia.com/cuda/cuda-programming-guide/pdf/cuda-programming-guide.pdf",
+      "pdf": "cuda-guide.pdf",
+      "pdf_sha256": "b18264f6a4b094b1e9374318bd1afe972e18a6e47b22a8478c08eee4121ec4e9",
+      "text": "cuda-guide.txt.gz",
+      "text_sha256": "5bffea9944969d2494ae458a7ca5b622f1403ac0cdbe45c765f0af5ecb3b1cd8",
+      "pages": 770
+    },
+    {
+      "id": "cuda-guide-11.3",
+      "title": "CUDA C++ Programming Guide",
+      "version": "11.3",
+      "source": "https://docs.nvidia.com/cuda/archive/11.3.0/pdf/CUDA_C_Programming_Guide.pdf",
+      "pdf": "cuda-guide-11.3.pdf",
+      "pdf_sha256": "e669c9dd077af2dbf1e34ccbf75b97da2579aefe910d87fe90f38d0b3ef22db7",
+      "text": "cuda-guide-11.3.txt.gz",
+      "text_sha256": "d43d466c77d72960d21a292027b5084d310897a855b47672b536372070e1a317",
+      "pages": 399
+    },
+    {
+      "id": "best-practices-11.3",
+      "title": "CUDA C++ Best Practices Guide",
+      "version": "11.3",
+      "source": "https://docs.nvidia.com/cuda/archive/11.3.0/pdf/CUDA_C_Best_Practices_Guide.pdf",
+      "pdf": "best-practices-11.3.pdf",
+      "pdf_sha256": "e49c23e6c452061b416b6fee76866226f18554703017b6cf289c8c546102203b",
+      "text": "best-practices-11.3.txt.gz",
+      "text_sha256": "137d4fd72b7797cf40740f0052fe7827e924eaf763ed7ea864df0ebe94e8cb39",
+      "pages": 93
+    }
+  ]
+}

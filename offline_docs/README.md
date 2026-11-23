@@ -1,6 +1,22 @@
 # 离线资料入口
 
-将预先取得的开发指南、API 说明或示例放在本目录中。为每份材料注明标题、版本和适用的 GPU 架构。运行期间直接读取本地文件。
+已随仓库保存的官方手册可按版本、术语和物理页码离线查阅。
+
+| 手册 | 版本 | PDF 页数 |
+| --- | --- | ---: |
+| [CUDA Programming Guide](nvidia/cuda-guide.pdf) | 13.5 | 770 |
+| [CUDA C++ Programming Guide](nvidia/cuda-guide-11.3.pdf) | 11.3 | 399 |
+| [CUDA C++ Best Practices Guide](nvidia/best-practices-11.3.pdf) | 11.3 | 93 |
+
+每份手册同时保存原 PDF 和按物理页分隔的压缩文本。模型通过 `catalog` 列出版本，使用 `search(query="shared memory", doc="cuda-guide-11.3")` 搜索，再用 `page(doc="cuda-guide-11.3", page=51)` 读取完整页或其后续片段。公式、图表和排版可在相应 PDF 页核对。计算节点 使用 Toolkit 11.3，可用归档手册判断适用接口，新版功能另用本机编译探针验证。
+
+**资料准备**　[来源清单](sources.json) 记录手册 ID、标题和官方 PDF 地址。[快照清单](nvidia/manifest.json) 记录封面版本、页数、时间、来源、PDF 和解压文本的 SHA-256。仓库自带的索引可直接使用。运行 `python3 workflow/prepare_docs.py verify` 可离线核对全部 PDF、文本哈希与页数。在准备机上执行以下命令可刷新。
+
+```sh
+python3 workflow/prepare_docs.py sync
+```
+
+`sync` 需要联网和 Poppler 的 `pdftotext`。也可以在联网机器运行 `fetch`，传送 PDF 后在离线机器运行 `index`。新增 PDF 时在来源清单追加一项，按需填写 `version` 以覆盖封面文本识别。模型运行期间无需安装检索服务或访问文档网站。[NVIDIA 编程指南主页](https://docs.nvidia.com/cuda/cuda-programming-guide/)
 
 ## 本地工具链参考
 

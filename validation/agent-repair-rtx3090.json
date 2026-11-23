@@ -1,0 +1,252 @@
+{
+  "model": "qwen3.8-max",
+  "existing_candidate_test": {
+    "run": "runs/cuda-agent-oy386ha1",
+    "status": "verified",
+    "seed": "examples/window_energy/repair_fixture/window_energy.cu",
+    "seed_sha256": "9f023e3f01857b8cf7e0bd01ba79ddfd6dec633ad26d0522a42bcc5ee5d3a0fa",
+    "changes": [
+      "-        int g = base - R + idx + (base != 0);",
+      "+        int g = base - R + idx;"
+    ],
+    "actions": [
+      {
+        "turn": 1,
+        "tool": "probe"
+      },
+      {
+        "turn": 1,
+        "tool": "probe"
+      },
+      {
+        "turn": 1,
+        "tool": "build"
+      },
+      {
+        "turn": 1,
+        "tool": "verify",
+        "error": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'"
+      },
+      {
+        "turn": 2,
+        "tool": "read",
+        "path": "window_energy.cpp"
+      },
+      {
+        "turn": 2,
+        "tool": "read",
+        "path": "window_energy.cu"
+      },
+      {
+        "turn": 2,
+        "tool": "log"
+      },
+      {
+        "turn": 3,
+        "tool": "read",
+        "path": "window_energy.cu"
+      },
+      {
+        "turn": 3,
+        "tool": "edit",
+        "path": "window_energy.cu"
+      },
+      {
+        "turn": 3,
+        "tool": "build"
+      },
+      {
+        "turn": 3,
+        "tool": "test_case",
+        "case": "tail",
+        "mode": "tile"
+      },
+      {
+        "turn": 4,
+        "tool": "decode",
+        "error": "Expecting value: line 1 column 1 (char 0)"
+      },
+      {
+        "turn": 5,
+        "tool": "verify"
+      },
+      {
+        "turn": 6,
+        "tool": "benchmark"
+      },
+      {
+        "turn": 7,
+        "tool": "finish"
+      }
+    ],
+    "incidents": [
+      {
+        "id": 1,
+        "tool": "verify",
+        "target": {
+          "case": "tail",
+          "mode": "tile"
+        },
+        "signature": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'",
+        "count": 1,
+        "status": "passed_on_retry",
+        "diagnostic": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'",
+        "log": "14-verify-tile-tail.log"
+      }
+    ],
+    "validation": {
+      "output_sha256": {
+        "singleton": "913f5d1da2feaf4deeccc9e55cbb350a20f12b3f507e87be85dbb77fdd3cb9bc",
+        "tail": "c411fa1ee241aefa6415e81e762791c1631f0c9235b41b61d2d7223665c977c2",
+        "many": "c5393eb76950901a9f305579c30a1e82a8c2b6a0a41d8c24bd62ecaccac35bba"
+      },
+      "successful_gpu_launches": {
+        "simt": [
+          "_ZN68_GLOBAL__N__48_tmpxft_0000004c_00000000_7_window_energy_cpp1_ii_main11energy_simtEPKiPii"
+        ],
+        "tile": [
+          "_ZN68_GLOBAL__N__48_tmpxft_0000004c_00000000_7_window_energy_cpp1_ii_main11energy_tileEPKiPii"
+        ]
+      },
+      "memcheck": [
+        "simt",
+        "tile"
+      ]
+    },
+    "checkpoint": "a65681bd7770d682",
+    "source_sha256": {
+      "window_energy.cu": "1e4a736f8d48ea6dfb523c0f7e083defba9ba1b46aa17971baa9533fab12b0e1"
+    },
+    "benchmark_ms": {
+      "singleton": {
+        "cpu": 2.569,
+        "simt": 142.548,
+        "tile": 129.152
+      },
+      "tail": {
+        "cpu": 2.559,
+        "simt": 146.636,
+        "tile": 131.948
+      },
+      "many": {
+        "cpu": 3.755,
+        "simt": 148.898,
+        "tile": 125.054
+      }
+    }
+  },
+  "controller_fallback_test": {
+    "run": "runs/cuda-agent-_e3zu2gc",
+    "status": "verified_fallback",
+    "trigger": "workflow/cuda.sh --test-repair: scripted tool decisions; real CPU oracle, GPU, compiler and four-turn budget.",
+    "fall_back_at_limit": {
+      "reason": "turn_budget",
+      "checkpoint": "a65681bd7770d682",
+      "restored": "a65681bd7770d682",
+      "previous_draft": "restore-8yhikrtj-previous",
+      "next": "build and verify the restored sources"
+    },
+    "failed_attempts": [
+      {
+        "id": 1,
+        "tool": "verify",
+        "target": {
+          "case": "tail",
+          "mode": "tile"
+        },
+        "signature": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'",
+        "count": 1,
+        "status": "passed_on_retry",
+        "diagnostic": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'",
+        "log": "14-verify-tile-tail.log",
+        "source_sha256": {
+          "window_energy.cu": "9f023e3f01857b8cf7e0bd01ba79ddfd6dec633ad26d0522a42bcc5ee5d3a0fa"
+        }
+      },
+      {
+        "id": 2,
+        "tool": "verify",
+        "target": {
+          "case": "tail",
+          "mode": "tile"
+        },
+        "signature": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'",
+        "count": 2,
+        "status": "passed_on_retry",
+        "diagnostic": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'",
+        "log": "15-focused-tile-tail.log",
+        "loop": "repeated_failure",
+        "source_sha256": {
+          "window_energy.cu": "9f023e3f01857b8cf7e0bd01ba79ddfd6dec633ad26d0522a42bcc5ee5d3a0fa"
+        }
+      },
+      {
+        "id": 3,
+        "tool": "verify",
+        "target": {
+          "case": "tail",
+          "mode": "tile"
+        },
+        "signature": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'",
+        "count": 1,
+        "status": "passed_on_retry",
+        "diagnostic": "tail: first difference at byte 889; expected b'238\\n174\\n110\\n', received b'174\\n110\\n61\\n'",
+        "log": "59-verify-tile-tail.log",
+        "source_sha256": {
+          "window_energy.cu": "9f023e3f01857b8cf7e0bd01ba79ddfd6dec633ad26d0522a42bcc5ee5d3a0fa"
+        }
+      }
+    ],
+    "focused_retests": [
+      {
+        "incident": 1,
+        "case": "tail",
+        "mode": "tile"
+      },
+      {
+        "incident": 3,
+        "case": "tail",
+        "mode": "tile"
+      }
+    ],
+    "source_sha256_after_restore": {
+      "window_energy.cu": "1e4a736f8d48ea6dfb523c0f7e083defba9ba1b46aa17971baa9533fab12b0e1"
+    },
+    "validation": {
+      "output_sha256": {
+        "singleton": "913f5d1da2feaf4deeccc9e55cbb350a20f12b3f507e87be85dbb77fdd3cb9bc",
+        "tail": "c411fa1ee241aefa6415e81e762791c1631f0c9235b41b61d2d7223665c977c2",
+        "many": "c5393eb76950901a9f305579c30a1e82a8c2b6a0a41d8c24bd62ecaccac35bba"
+      },
+      "successful_gpu_launches": {
+        "simt": [
+          "_ZN68_GLOBAL__N__48_tmpxft_0000004c_00000000_7_window_energy_cpp1_ii_main11energy_simtEPKiPii"
+        ],
+        "tile": [
+          "_ZN68_GLOBAL__N__48_tmpxft_0000004c_00000000_7_window_energy_cpp1_ii_main11energy_tileEPKiPii"
+        ]
+      },
+      "memcheck": [
+        "simt",
+        "tile"
+      ]
+    },
+    "benchmark_ms": {
+      "singleton": {
+        "cpu": 2.324,
+        "simt": 147.277,
+        "tile": 144.842
+      },
+      "tail": {
+        "cpu": 2.469,
+        "simt": 143.73,
+        "tile": 131.54
+      },
+      "many": {
+        "cpu": 3.613,
+        "simt": 143.134,
+        "tile": 136.423
+      }
+    }
+  }
+}

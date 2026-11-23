@@ -1,8 +1,10 @@
 # 离线 CUDA 因子转写工作流
 
-本仓库的输入是一个交易日的逐笔 CSV。CPU 判定规则在 `OrderFillRateSpread.cpp`，原始窗口归约的验收入口为 `workflow/run.py`，端到端流式路径的验收入口为 `workflow/check_stream.py` 和 `workflow/scale.py`（Python 3.8+）。一次工作流由一个 agent 顺序执行以下阶段。
+通用移植入口为 `bash workflow/cuda.sh --agent --source <程序.cpp>` 或 `--agent --spec <任务.json>`。原因子通过 `--generate-cuda OrderFillRateSpread.cpp` 进入同一工具循环。`--agent --inspect --task '问题'` 支持无源码的节点分析。模型根据本地观测选择探测、查阅手册、实验、生成用例、写代码、编译和验证。控制器以独立 CPU 结果和真实 GPU 启动记录验收。
 
-模型可通过 计算节点 的 `bash workflow/cuda.sh --agent '任务'` 驱动以下阶段。控制器从已配置的模型 API 获取操作决定，将本地只读资料、编译诊断和验证结果作为上下文。模型配置、运行报告目录以及只生成补丁的选项见 README。模型推理是此入口唯一主动发起的外部 API 调用，构建和测试在独立网络命名空间执行。
+编程手册位于 `offline_docs/nvidia/`，包含原版 PDF、可按页检索的文本和 SHA-256 清单。资料准备使用 `workflow/prepare_docs.py`，运行中的 agent 只查询本地副本，先核对资料版本与工具链。工具协议、通用输入输出约定和示例参见 README。收到错误时可通过 `diagnostics`、`log` 和 `test_case` 定位失败，修改后全量验证。检查点与回退语义详见 `offline_docs/agent-repair.md`。
+
+以下步骤描述订单因子及既有实现的维护和专项基准。`--agent '维护任务'` 使用这一流程。CPU 判定规则在 `OrderFillRateSpread.cpp` 和 `factor_replay.hpp`，窗口归约的验收入口为 `workflow/run.py`，流式路径的验收入口为 `workflow/check_stream.py` 和 `workflow/scale.py`。
 
 ### 1. 先盘点环境
 
