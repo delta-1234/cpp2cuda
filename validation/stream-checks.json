@@ -1,0 +1,72 @@
+{
+  "sample_ticks.csv": {
+    "forecasts": 912,
+    "sha256": "a5d198ecb551b9e04608534318f09888bc844aa365396ed331e4e3729c0daf9c",
+    "verified": [
+      "cpu",
+      "simt",
+      "tile",
+      "triton"
+    ]
+  },
+  "edge.csv": {
+    "forecasts": 3,
+    "sha256": "edb01cc8ea43cc83c4edd377a400b6aa0a39eec560029bb3226f215af8fa0cd4",
+    "verified": [
+      "cpu",
+      "simt",
+      "tile",
+      "triton"
+    ]
+  },
+  "tail-8191.csv": {
+    "forecasts": 8191,
+    "sha256": "fb1bf28819e978339468ca0e4120f29e651ee9c75121faa8a99a369f38d0506c",
+    "verified": [
+      "cpu",
+      "simt",
+      "tile",
+      "triton"
+    ]
+  },
+  "tail-8192.csv": {
+    "forecasts": 8192,
+    "sha256": "eba640d80e8c3f5eb96b2ddb854937d527d44172c6172b05f02674d22203a516",
+    "verified": [
+      "cpu",
+      "simt",
+      "tile",
+      "triton"
+    ]
+  },
+  "tail-8193.csv": {
+    "forecasts": 8193,
+    "sha256": "02753fce1dbefbcdd0225d10bdbeb1f13945383929dde936f7f8d33a922607ff",
+    "verified": [
+      "cpu",
+      "simt",
+      "tile",
+      "triton"
+    ]
+  },
+  "many.csv": {
+    "forecasts": 66576,
+    "sha256": "237d1cda7eaae2ad261be33e8986e2725d6501fb590a4c9a60db5f448dd0a837",
+    "verified": [
+      "cpu",
+      "simt",
+      "tile",
+      "triton"
+    ]
+  },
+  "empty.csv": {
+    "forecasts": 0,
+    "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb",
+    "verified": [
+      "cpu",
+      "simt",
+      "tile",
+      "triton"
+    ]
+  }
+}

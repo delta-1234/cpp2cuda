@@ -1,6 +1,6 @@
 # 离线 CUDA 因子转写工作流
 
-本仓库的输入是一个交易日的逐笔 CSV。CPU 判定规则在 `OrderFillRateSpread.cpp`，可执行验收入口为 `workflow/run.py`（Python 3.8+）。一次工作流由一个 agent 顺序执行以下阶段。
+本仓库的输入是一个交易日的逐笔 CSV。CPU 判定规则在 `OrderFillRateSpread.cpp`，原始窗口归约的验收入口为 `workflow/run.py`，端到端流式路径的验收入口为 `workflow/check_stream.py` 和 `workflow/scale.py`（Python 3.8+）。一次工作流由一个 agent 顺序执行以下阶段。
 
 ### 1. 先盘点环境
 
@@ -15,6 +15,12 @@
 读取 README 中的输入格式和因子定义。先按原始 CPU 路径回放。保持同毫秒事件顺序、每只证券的独立状态、100 笔委托窗口、500 笔成交预热、已滑出窗口的成交引用以及单侧缺失值。将所给样例的 CPU 输出与 `factor_output.csv` 比较。
 
 ### 3. 确定并行边界，再分别转写
+
+端到端任务优先使用 `stream/replay.cpp`。每只证券维护 100 笔活动委托。CPU 对照 `cpu` 增量维护四个量并直接计算比率，`legacy` 按原算法逐窗口扫描。GPU 每段首行接收绝对值，其余行接收增减量。SIMT、共享内存 Tile 及预编译的 Triton Tile 在设备上分别作段内前缀和。每批最多 8,192 个待输出时点，结果按原始到达顺序写入最终 CSV。常驻 `--serve` 模式跨文件复用 CUDA 资源，各输入文件独立重建交易状态。
+
+在 计算节点 用 `bash workflow/cuda.sh --build-stream` 编译。用 `python workflow/check_stream.py --exe runs/stream/replay --with-triton` 验证空文件头、单侧委托、同一进程多次回放、多证券及批次边界。用 `bash workflow/cuda.sh --scale --core 6 --repeat 7` 在同一 CPU 亲和性、同一磁盘和同一原始输入下测试冷启动及常驻进程。报告两种 CPU 对照、输出行数、事件数和实测交叉区间。不要把内核加速比用作端到端加速比。
+
+以下为原始窗口路径，可用来诊断打包输入、拆分 I/O 开销和比对旧实现。
 
 逐笔更新有先后依赖。CPU 负责匹配和校验委托、更新累计成交量，为每个待输出时点冻结当时的窗口。同时写下 `time_ms,symbol,trade_count`。GPU 对这些独立窗口做并行归约、除法和作差。主机打包过程中不计算成交率。修改因子规则时，先核对这一划分是否仍然成立。
 

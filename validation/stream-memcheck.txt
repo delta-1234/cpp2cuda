@@ -1,0 +1,12 @@
+simt
+========= COMPUTE-SANITIZER
+OK	8193	2	147	232.466
+========= ERROR SUMMARY: 0 errors
+tile
+========= COMPUTE-SANITIZER
+OK	8193	2	147	166.826
+========= ERROR SUMMARY: 0 errors
+triton
+========= COMPUTE-SANITIZER
+OK	8193	2	147	168.21
+========= ERROR SUMMARY: 0 errors

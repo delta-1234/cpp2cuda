@@ -1,0 +1,4577 @@
+{
+  "platform": "Linux-4.15.0-213-generic-x86_64-with-glibc2.27",
+  "seed": 42,
+  "repeat": 5,
+  "affinity": [
+    6
+  ],
+  "clock": "parent perf_counter_ns; fresh process through exit or warm request through reply",
+  "directory": "runs/scale-pp3lk1j7",
+  "cases": {
+    "1600": {
+      "ticks": 2770,
+      "forecasts": 172,
+      "input_bytes": 102964,
+      "input_sha256": "a6d6e24f1a06ae09e9462d5733534b5c3b209d871a97f6c112d46ca4b042e70c",
+      "output_sha256": "2b0770a3ab0d16f365eee63d3f28f1ee0e9870405d5ce3a4f9681e539d0d0ed9"
+    },
+    "2000": {
+      "ticks": 3476,
+      "forecasts": 478,
+      "input_bytes": 129910,
+      "input_sha256": "63c5129c377e0b568ff180d70e989e30ae04e00c8299be879a526a8c9798cc32",
+      "output_sha256": "762947cfe810b7a5b1cf95c406efdddc964d8762c4f2572c1813c049525562f7"
+    },
+    "2600": {
+      "ticks": 4490,
+      "forecasts": 892,
+      "input_bytes": 168589,
+      "input_sha256": "d44ee016f5d25d29d42987ce8bbc8f32b3cb1dd56a6d89e6fe7dbea65d1b7305",
+      "output_sha256": "8d1d5f34ce6ab9433dddf0df30bb8e41480923511c2309acf304d29ed28044b3"
+    },
+    "4096": {
+      "ticks": 7103,
+      "forecasts": 2009,
+      "input_bytes": 268455,
+      "input_sha256": "7b4f3c98d095076f6f5081905e947ef13f372e3f0bb06545b79d63fbc7ed0cb0",
+      "output_sha256": "1733ccf5ed669ab533e9255a8790190aa1f08bd8aa497ab3e6a5746f76b08caa"
+    },
+    "81920": {
+      "ticks": 141845,
+      "forecasts": 58927,
+      "input_bytes": 5590349,
+      "input_sha256": "f53c3412aa2ecafeb8f43d983d3d7208e7bafb00c6f0adb8af1823b33c38dde3",
+      "output_sha256": "2981abccb378ee6fb1413ccd0df8da7447955ce3f89fa2afa25b7018c99401b8"
+    },
+    "98304": {
+      "ticks": 170077,
+      "forecasts": 70775,
+      "input_bytes": 6708373,
+      "input_sha256": "b0ab0ff4c263339783e452f284ab43cf8c5df4e277345b30cd2ba27a25464e32",
+      "output_sha256": "7c3dc164419ec1c57c81918bf809556237130f41221e7248245b399e00e38470"
+    },
+    "114688": {
+      "ticks": 198400,
+      "forecasts": 82714,
+      "input_bytes": 7865338,
+      "input_sha256": "3954e4e5e8c18e6450eac53c116b84c94a15f9e41f58a5e77695491968748496",
+      "output_sha256": "ad1043bdae6afb4430cdd7640bc90420bdf62acf2a0341f45cc29d315ffc2ec6"
+    },
+    "131072": {
+      "ticks": 226897,
+      "forecasts": 94827,
+      "input_bytes": 9033825,
+      "input_sha256": "a0bd0f49387ca7c28edd57a78b39432a170447cc5df9896e2fc95533ff5a7df1",
+      "output_sha256": "2d75df94261486322175583a3194afd1fec344a6ec02c68183c3340d0508241e"
+    },
+    "1048576": {
+      "ticks": 1814598,
+      "forecasts": 765024,
+      "input_bytes": 74284567,
+      "input_sha256": "a2faa278bd96cc187102f4b775f2ce645795e4aaeeaed7a2146d260800e5ca4f",
+      "output_sha256": "47b0bf7fe810692d6e3f654a84e809fca7b55062286dbe4ac1ddf2ff5b77ab4d"
+    }
+  },
+  "samples": [
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 162.979703,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 137.548
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 3.424031,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000253
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 114.421991,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 92.647
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 3.174303,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000256
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 140.5413,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 118.47
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 3.725322,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000222
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 129.901158,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 89.9181
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 19.836672,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000225
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 132.79376,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 94.9569
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 122.039911,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 87.6934
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 111.220939,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 88.4354
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 113.747274,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 91.289
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 126.801136,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 93.7962
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 3.486522,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000221
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 11.460922,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000246
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 114.326586,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 92.3797
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 3.156712,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000258
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 112.941116,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 91.1249
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 3.499068,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000174
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 109.636092,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 87.7384
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 114.555281,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 92.0014
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 3.219565,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000235
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 143.05613,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 110.135
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 127.875625,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 94.2695
+    },
+    {
+      "phase": "cold",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 3.528667,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000224
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 2.66456,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000236
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 128.775785,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 91.9155
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 4.485634,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000262
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 121.481433,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 96.7153
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 119.880314,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 95.8701
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 3.645962,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000241
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 115.025702,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 92.1878
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 133.466015,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 94.6005
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 4.419261,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000274
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 122.297097,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 99.3675
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 12.205162,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000218
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 8.220671,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000212
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 118.264202,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 94.7724
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 117.61642,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 94.1733
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 115.361891,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 89.7348
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 3.654683,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000256
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 3.462038,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000192
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 118.70354,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 96.1844
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 116.376252,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 93.1995
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 111.853212,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 89.0464
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 3.509498,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000247
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 112.927042,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 89.9043
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 114.821074,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 91.1354
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 119.388284,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 95.7355
+    },
+    {
+      "phase": "cold",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 9.40037,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000256
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 114.854893,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 91.1564
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 13.973226,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000285
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 120.185159,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 96.3114
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 5.345367,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000238
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 114.183342,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 90.6842
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 125.444525,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 95.582
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 3.914844,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.00021
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 135.151869,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 91.7469
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 5.359786,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000238
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 125.608761,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 90.5486
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 5.337761,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000234
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 143.086071,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 118.601
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 3.873385,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000197
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 113.584083,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 90.8638
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 115.149051,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 91.9341
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 3.751546,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000238
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 114.787583,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 92.0827
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 122.209484,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 96.3397
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 5.389123,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.00025
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 117.649746,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 94.5623
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 5.301763,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000227
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 3.028591,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000226
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 124.068729,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 88.1321
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 114.134053,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 88.3766
+    },
+    {
+      "phase": "cold",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 112.991563,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 89.1559
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 4.684277,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000232
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 7.134607,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000194
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 118.919556,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 95.1762
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 115.315177,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 88.8498
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 113.33291,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 88.6835
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 128.643818,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 92.4352
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 4.684249,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000228
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 133.900656,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 94.1719
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 7.974281,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000216
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 119.473639,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 91.2261
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 115.03967,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 90.4837
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 119.624165,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 92.1769
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 117.983497,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 93.4482
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 4.607921,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000248
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 7.057503,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.00023
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 3.680228,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000227
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 112.38656,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 88.7247
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 7.968598,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000224
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 113.649022,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 88.5273
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 116.063818,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 88.4649
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 8.085135,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000201
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 115.524691,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 89.4216
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 4.587464,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000294
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 123.81707,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 88.8717
+    },
+    {
+      "phase": "cold",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 131.207881,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 92.1713
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 161.80155,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.1616
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 165.750643,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 93.049
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 164.195947,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.9799
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 148.377248,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.00024
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 49.087885,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000236
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 48.425041,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000266
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 164.27143,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 93.5561
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 147.134249,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000239
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 161.387715,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.3081
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 161.714966,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.852
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 49.919576,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000248
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 166.344055,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 95.2124
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 161.04717,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 88.4527
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 147.140671,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000233
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 166.316733,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 93.6802
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 49.901337,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000247
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 161.809128,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 91.0745
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 146.904001,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000257
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 161.000352,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 89.5893
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 164.833369,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 91.9875
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 172.967846,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 95.0452
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 50.285395,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000263
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 160.593683,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 89.7078
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 167.092662,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.249
+    },
+    {
+      "phase": "cold",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 149.142547,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000233
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 175.366061,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 93.2546
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 170.734235,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 88.9901
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 175.647034,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000212
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 60.558908,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000247
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 176.930939,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 94.5443
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 176.570294,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.00026
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 62.459274,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000245
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 181.540134,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 97.6445
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 175.728338,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 91.7298
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 179.953888,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 94.6059
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 65.497982,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000246
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 189.070749,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 100.112
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 214.815448,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 99.614
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 178.908624,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 94.0981
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 177.673836,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000207
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 175.400219,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 91.9574
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 178.961548,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000222
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 62.188442,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000222
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 177.182677,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 94.5159
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 178.300522,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 95.2879
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 177.567754,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 92.6377
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 182.896077,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 96.5244
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 180.552575,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000246
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 62.721534,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000202
+    },
+    {
+      "phase": "cold",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 181.111795,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 96.2996
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 210.663945,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.00026
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 186.697943,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 93.8105
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 73.933531,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000233
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 189.505118,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 95.6259
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 191.225586,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 96.9547
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 185.407963,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 92.0487
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 185.278155,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 91.8998
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 73.004359,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000386
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 190.14504,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 95.7215
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 207.630798,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000235
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 186.307891,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 94.0903
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 188.538886,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 96.5354
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 180.851181,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 90.527
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 71.866478,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000258
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 204.189787,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000249
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 186.539965,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 93.489
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 71.806224,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000253
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 186.370251,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 93.834
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 184.721623,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 91.8411
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 206.696791,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000244
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 183.141076,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 90.0709
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 184.957266,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 92.1753
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 207.49292,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000247
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 184.852283,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 93.3803
+    },
+    {
+      "phase": "cold",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 71.80936,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000221
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 194.014666,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 93.4944
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 194.341004,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 91.6493
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 239.142176,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000272
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 83.763362,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000383
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 195.895165,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 93.9383
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 199.234103,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 97.1996
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 82.500703,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000218
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 236.491469,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.00022
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 196.890394,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 94.651
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 197.619438,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 95.2484
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 236.874004,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000252
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 193.37909,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 91.5479
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 85.268864,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000228
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 199.479485,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 96.811
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 199.633025,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 94.2886
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 196.67994,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 95.1994
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 81.775851,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000231
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 191.48018,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 90.171
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 196.014599,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 94.0673
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 235.767761,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000223
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 198.29659,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 94.5955
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 236.144353,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000219
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 81.594234,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000234
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 192.365834,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 90.3227
+    },
+    {
+      "phase": "cold",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 192.048036,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 90.6194
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 841.889588,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 91.5726
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 813.219911,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000264
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 957.296503,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 122.074
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 2063.885959,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.00024
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 877.027323,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 133.651
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 851.342275,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 113.58
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 771.725984,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000273
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 925.822979,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 115.252
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 2054.265709,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000221
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 914.470968,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 127.792
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 929.780035,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 114.394
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 923.3286,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 116.005
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 829.668178,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000227
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 930.76201,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 116.712
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 2054.290223,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000216
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 908.808819,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 126.259
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 2073.413305,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000213
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 780.035548,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000238
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 924.497879,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 120.881
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 913.352342,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 115.55
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 2042.490807,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000228
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 1048.486275,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 133.638
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 939.038596,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 119.886
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 965.026372,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 123.577
+    },
+    {
+      "phase": "cold",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 799.881045,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000256
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 20.167615,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 2.010112,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 19.285961,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 2.21988,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 10.149195,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 2.246735,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 11.47717,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 2.225983,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 2.850523,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 2.133736,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 3.159068,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 2.063755,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 2.421408,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 2.35142,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 8.881503,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 9.015419,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 1.537114,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 22.080576,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 27.183842,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 11.162139,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 2.859153,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 7.350022,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 2.035207,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 2.271905,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1600,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 13.103296,
+      "batches": 1,
+      "segments": 2,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 9.835439,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 8.88844,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 11.08168,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 2.779614,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 9.729807,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 24.826807,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 10.981408,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 11.357584,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 11.423974,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 2.70948,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 4.927053,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 2.467914,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 2.267921,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 8.156119,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 2.290269,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 4.118288,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 1.904356,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 2.003607,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 2.0422,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 9.796232,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 9.693166,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 14.504452,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 2.79454,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 2.899704,
+      "batches": 1,
+      "segments": 4,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2000,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 2.559185,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 3.035126,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 2.152737,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 13.476499,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 1.695403,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 2.092773,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 10.423314,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 3.016421,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 5.702191,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 4.15974,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 2.070634,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 8.599801,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 1.63493,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 11.718702,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 3.076902,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 3.139513,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 2.588547,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 2.614898,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 2.598002,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 4.516463,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 1.809726,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 1.617187,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 3.520561,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 1.320667,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 1.392576,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 2600,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 10.33498,
+      "batches": 1,
+      "segments": 8,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 12.02107,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 7.198237,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 3.739942,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 16.191466,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 32.733845,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 16.030246,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 16.816165,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 4.689371,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 3.194761,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 3.352125,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 2.527533,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 2.249422,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 2.088474,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 2.28832,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 5.362169,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 6.521859,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 2.216964,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 6.258792,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 2.311425,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 26.082328,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 3.79071,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 3.67189,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 3.112147,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 8.390979,
+      "batches": 1,
+      "segments": 17,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 4096,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 6.947537,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 145.078443,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 45.693472,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 48.131234,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 48.00696,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 51.108125,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 45.722381,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 62.564427,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 151.631175,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 46.316766,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 47.603091,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 51.813467,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 47.084946,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 162.067741,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 47.831071,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 46.434917,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 46.599011,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 47.554728,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 46.00205,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 142.708275,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 47.126627,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 142.662028,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 144.768532,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 46.491004,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 46.913035,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 81920,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 46.999804,
+      "batches": 8,
+      "segments": 469,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 294.533053,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 178.17595,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 59.814743,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 173.263604,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 58.514371,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 84.270845,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 176.908608,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 57.986985,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 64.456439,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 59.444746,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 62.407555,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 171.513444,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 58.352333,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 57.869706,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 57.568133,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 57.390886,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 383.15685,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 234.374491,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 58.467222,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 57.81213,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 309.322411,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 105.515089,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 57.484394,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 92.916451,
+      "batches": 9,
+      "segments": 562,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 98304,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 57.536753,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 330.077476,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 450.081582,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 67.362289,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 67.262203,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 67.244283,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 1273.925255,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 66.57538,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 278.527388,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 68.819865,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 71.57805,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 143.24493,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 517.011652,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 324.512768,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 66.032289,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 201.858398,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 69.500932,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 66.85133,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 66.458564,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 66.63088,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 199.517243,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 67.669721,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 66.991577,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 532.51549,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 66.197402,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 114688,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 69.279519,
+      "batches": 11,
+      "segments": 657,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 402.373052,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 79.218309,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 111.862174,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 237.095045,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 79.060348,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 94.687687,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 755.056531,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 136.203846,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 267.192718,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 76.091953,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 1295.070877,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 85.838168,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 1202.186428,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 79.723078,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 302.024582,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 1319.642124,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 76.324072,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 230.04439,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 79.123609,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 77.779971,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 77.05557,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 75.27475,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 262.50493,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 230.237636,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 131072,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 75.866991,
+      "batches": 12,
+      "segments": 753,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "simt",
+      "ms": 1286.543807,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "tile",
+      "ms": 1052.080193,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "triton",
+      "ms": 1775.303015,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "cpu",
+      "ms": 1278.144722,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 0,
+      "mode": "legacy",
+      "ms": 10788.304656,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "triton",
+      "ms": 4861.274754,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "simt",
+      "ms": 8127.018224,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "tile",
+      "ms": 1624.395938,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "legacy",
+      "ms": 2131.445243,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 1,
+      "mode": "cpu",
+      "ms": 1507.229358,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "triton",
+      "ms": 1284.688941,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "legacy",
+      "ms": 2159.772847,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "simt",
+      "ms": 1260.962714,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "tile",
+      "ms": 903.901412,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 2,
+      "mode": "cpu",
+      "ms": 1525.856765,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "cpu",
+      "ms": 3053.417069,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "simt",
+      "ms": 1141.497704,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "legacy",
+      "ms": 1987.403843,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "triton",
+      "ms": 744.01335,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 3,
+      "mode": "tile",
+      "ms": 839.10399,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "simt",
+      "ms": 1870.765061,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 126.14
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "legacy",
+      "ms": 2060.575283,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000448
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "tile",
+      "ms": 1741.649989,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 87.3284
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "triton",
+      "ms": 1036.520679,
+      "batches": 94,
+      "segments": 6067,
+      "init_ms": 90.0971
+    },
+    {
+      "phase": "warm",
+      "orders": 1048576,
+      "trial": 4,
+      "mode": "cpu",
+      "ms": 747.882683,
+      "batches": 0,
+      "segments": 0,
+      "init_ms": 0.000412
+    }
+  ]
+}

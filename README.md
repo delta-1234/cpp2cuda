@@ -2,6 +2,36 @@
 
 独立 C++17 程序，读取单个交易日的逐笔委托与成交 CSV，按证券输出卖方成交比例、买方成交比例和两者之差。程序使用 C++ 标准库，内置模拟数据生成器。
 
+## 优先使用流式回放
+
+在 计算节点 上使用下列入口，可直接从原始逐笔 CSV 写到最终因子 CSV。SIMT、CUDA C++ 分块 Tile 和提前编译的 Triton Tile 共用一个 C++ 前端，执行阶段使用同一套 CSV 解析、委托检查和输出格式化。
+
+```sh
+cd "$(git rev-parse --show-toplevel)"
+bash workflow/cuda.sh --build-stream
+bash workflow/cuda.sh --stream simt sample_ticks.csv runs/simt.csv
+bash workflow/cuda.sh --stream tile sample_ticks.csv runs/tile.csv
+bash workflow/cuda.sh --stream triton sample_ticks.csv runs/triton.csv
+bash workflow/cuda.sh --stream cpu sample_ticks.csv runs/incremental-cpu.csv
+```
+
+`--serve` 允许多次回放共用 GPU 上下文、CUDA stream、页锁定主机内存和显存。输入协议为每行一个「输入路径、制表符、输出路径」。进程收到 EOF 后退出，每个 CSV 的委托状态独立。返回 `READY` 表示工作进程已启动，`OK` 后依次为输出行数、批次数、分段数及本进程一次性初始化耗时（毫秒）。
+
+```sh
+printf '%s\t%s\n' sample_ticks.csv runs/first.csv sample_ticks.csv runs/second.csv |
+  bash workflow/cuda.sh --stream simt --serve
+```
+
+每个 GPU 批次最多 8,192 个时点，同一证券每段最多 128 行。段首以当前委托状态为基准，段内记录四个 int64 变化量，GPU 计算前缀和及成交率。只有分段索引按证券分组，因子按逐笔到达顺序输出。CPU 对照 `cpu` 直接增量维护四个统计量，`legacy` 保留原来的 100 笔窗口扫描。旧打包后端仍可用于逐阶段诊断。
+
+在 计算节点 上，主实验覆盖 13 至 1,530,669 行因子输出。约 8.3 万输出行时，新建 GPU 进程开始稳定超过原扫描 CPU。在测试上限，流式 GPU 与增量 CPU 的常驻端到端耗时接近。[规模、开销拆分、两组 CPU 基线和交叉点](validation/stream-results.md)
+
+```sh
+bash workflow/cuda.sh --scale --core 6 --repeat 7
+```
+
+命令会生成固定种子的限价撮合行情，各规模共享同一行情前缀。每次 CSV 回放都校验最终结果的 SHA-256。修改规模可用 `--sizes 2600,32768,131072`（单位为提交委托数），只测常驻模式可用 `--phase warm`。运行目录保留输入、最近一次各后端的输出和 `scale.json`。复现开销拆分可运行 `workflow/profile_io.py --help`。
+
 ## 离线 CUDA agent 工作流
 
 把本仓库作为 agent 的工作目录，给它指令「按 AGENTS.md 在本机离线验证 OrderFillRateSpread 的 SIMT 与 Tile 实现」。阶段、排错分支和验收条件见 [AGENTS.md](AGENTS.md)。[离线资料目录](offline_docs/README.md) 包含 计算节点 上的 Toolkit 资料位置和共享数据格式。
@@ -22,7 +52,7 @@ cd "$(git rev-parse --show-toplevel)"
 bash workflow/cuda.sh --device 0 --repeat 7
 ```
 
-### 实测结果
+### 原始窗口打包路径的实测结果
 
 RTX 3090（sm_86，24 GiB），驱动 550.76，CUDA Toolkit 11.3，Triton 3.2.0。以下为 912 个窗口、7 次运行的中位数。每个窗口包含 100 笔委托。三种 GPU 实现的样例和边界输出都通过逐行比对。[环境检测](validation/rtx3090-probe.json) · [完整验证报告](validation/rtx3090.json)
 
