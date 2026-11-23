@@ -1,6 +1,7 @@
 """Local protocol tests; --gpu also exercises the full agent loop on a CUDA node."""
 import argparse
 import contextlib
+import io
 import json
 import os
 import shutil
@@ -12,7 +13,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from api_agent import ROOT, snapshot
-from model_api import complete, configure, settings
+from model_api import complete, configure, read_stream, settings
 from unittest.mock import patch
 
 DUMMY = "fixture-token-for-loopback-only"
@@ -101,11 +102,26 @@ def config_test():
             assert "UNRELATED=preserved" in path.read_text() and path.stat().st_mode & 0o777 == 0o600
 
 
+def stream_test():
+    chat = b'data: {"choices":[{"delta":{"content":"C++"}}]}\n\ndata: [DONE]\n'
+    assert read_stream(io.BytesIO(chat), True) == "C++"
+    responses = (b'data: {"type":"response.output_text.delta","delta":"CUDA"}\n'
+                 b'data: {"type":"response.completed"}\n')
+    assert read_stream(io.BytesIO(responses), False) == "CUDA"
+    try:
+        read_stream(io.BytesIO(chat.split(b"data: [DONE]")[0]), True)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("truncated stream accepted")
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--gpu",action="store_true")
     args = p.parse_args()
     config_test()
+    stream_test()
     with provider(scripted_agent) as url:
         cfg = dict(base_url=url,api_key=DUMMY,model="fixture")
         for protocol in ("chat","responses"):

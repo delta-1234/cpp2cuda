@@ -6,6 +6,8 @@ work=$2
 python=$3
 prefix=$4
 shift 4
+# Compute Sanitizer's target and launcher communicate over loopback in this private network namespace.
+ip link set dev lo up
 mount --make-rprivate /
 mount -t tmpfs -o mode=755 tmpfs "$root"
 bind_ro() {

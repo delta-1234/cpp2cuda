@@ -61,23 +61,15 @@ def snapshot(root, work):
     return readable, editable
 
 
-class Run:
-    def __init__(self, root, cfg, args):
+class OfflineRun:
+    def __init__(self, root, cfg, args, prefix):
         self.root, self.cfg, self.args = root, cfg, args
         (root/"runs").mkdir(exist_ok=True)
-        self.dir = Path(tempfile.mkdtemp(prefix="api-agent-", dir=root/"runs"))
+        self.dir = Path(tempfile.mkdtemp(prefix=prefix, dir=root/"runs"))
         self.work = self.dir/"candidate"
         self.work.mkdir()
         (self.work/"runs").mkdir()
         (self.dir/"jail").mkdir()
-        self.readable, self.editable = snapshot(root, self.work)
-        self.original = {p:(self.work/p).read_bytes() for p in self.editable}
-        self.base_hashes = {p:hashlib.sha256((self.work/p).read_bytes()).digest()
-                            for p in self.readable | {"sample_ticks.csv","factor_output.csv"}}
-        self.seen = set()
-        self.verified = self.benchmarked = False
-        self.results = {}
-        self.audit = {"status":"running", "model":cfg["model"], "task":args.task, "actions":[], "results":self.results}
         self.log_index = 0
 
     def scrub(self, text):
@@ -90,21 +82,7 @@ class Run:
         tmp.write_text(self.scrub(json.dumps(self.audit, ensure_ascii=False, indent=2))+"\n")
         tmp.replace(target)
 
-    def patch(self):
-        diff = []
-        for path, base in sorted(self.original.items()):
-            now = (self.work/path).read_bytes()
-            if now == base:
-                continue
-            lines = difflib.diff_bytes(difflib.unified_diff, base.splitlines(True), now.splitlines(True),
-                                       ("a/"+path).encode(), ("b/"+path).encode())
-            for line in lines:
-                diff.append(line if line.endswith(b"\n") else line+b"\n\\ No newline at end of file\n")
-        data = b"".join(diff)
-        (self.dir/"changes.patch").write_bytes(data)
-        return data
-
-    def offline(self, name, argv):
+    def offline(self, name, argv, work=None):
         self.log_index += 1
         log = self.dir / f"{self.log_index:02d}-{name}.log"
         # The parent alone owns provider credentials. Children see only the compiler/GPU environment.
@@ -112,7 +90,7 @@ class Run:
                "CXX","NVCC_CCBIN","WITH_TRITON","WORKFLOW_PYTHON","LD_LIBRARY_PATH","LANG") if k in os.environ}
         env.update(PIP_NO_INDEX="1", PIP_DISABLE_PIP_VERSION_CHECK="1", PYTHONNOUSERSITE="1")
         cmd = ["unshare","-Urnmpf","--mount-proc","--","bash",str(ROOT/"workflow/agent_jail.sh"),
-               str(self.dir/"jail"),str(self.work),sys.executable,sys.prefix,*map(str, argv)]
+               str(self.dir/"jail"),str(work or self.work),sys.executable,sys.prefix,*map(str, argv)]
         with log.open("wb") as f:
             proc = subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT, env=env, start_new_session=True)
             try:
@@ -128,6 +106,33 @@ class Run:
         if code:
             raise RuntimeError(f"{name} exited {code}\n{tail}")
         return tail
+
+
+class Run(OfflineRun):
+    def __init__(self, root, cfg, args):
+        super().__init__(root, cfg, args, "api-agent-")
+        self.readable, self.editable = snapshot(root, self.work)
+        self.original = {p:(self.work/p).read_bytes() for p in self.editable}
+        self.base_hashes = {p:hashlib.sha256((self.work/p).read_bytes()).digest()
+                            for p in self.readable | {"sample_ticks.csv","factor_output.csv"}}
+        self.seen = set()
+        self.verified = self.benchmarked = False
+        self.results = {}
+        self.audit = {"status":"running", "model":cfg["model"], "task":args.task, "actions":[], "results":self.results}
+
+    def patch(self):
+        diff = []
+        for path, base in sorted(self.original.items()):
+            now = (self.work/path).read_bytes()
+            if now == base:
+                continue
+            lines = difflib.diff_bytes(difflib.unified_diff, base.splitlines(True), now.splitlines(True),
+                                       ("a/"+path).encode(), ("b/"+path).encode())
+            for line in lines:
+                diff.append(line if line.endswith(b"\n") else line+b"\n\\ No newline at end of file\n")
+        data = b"".join(diff)
+        (self.dir/"changes.patch").write_bytes(data)
+        return data
 
     def stage_report(self, stage, argv, filename):
         output = self.offline(stage, argv)

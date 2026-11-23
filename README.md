@@ -31,6 +31,42 @@ bash workflow/cuda.sh --agent --proposal-only '检查 SIMT 实现，提出并验
 
 每次运行会打印 `runs/api-agent-*/report.json` 路径，同目录包含 `changes.patch`、分阶段日志及候选副本。默认最多 24 次模型决策，可用 `--max-steps` 调整。默认验证流式 CPU、SIMT、CUDA C++ Tile 和 AOT Triton；编辑原始打包实现时还会运行相应路径的验证。
 
+## 让模型从 CPU 源码生成完整 CUDA 实现
+
+在 计算节点 的仓库根目录运行以下命令。控制器先探测可见 GPU 和 Toolkit，随后向配置的模型发送 `OrderFillRateSpread.cpp` 及其直接依赖 `factor_replay.hpp`。这两份文件包含输入格式、回放规则、CPU 公式和原程序的打包工具。模型从空的实现目录编写 `host.cpp`、`gpu.hpp`、`kernels.cu`，可以在主机端复用原头文件里的逐笔回放逻辑。
+
+```sh
+bash workflow/cuda.sh --generate-cuda OrderFillRateSpread.cpp
+```
+
+编译和测试使用独立网络命名空间。控制器单独编译 CPU 参考程序，保存模型每轮返回的源码，遇到编译或验证错误时把诊断发回模型。默认使用流式 API，每次请求一份完整源码，最多 7 次模型回复（含修复）。每次运行打印独立的 `runs/from-cpp-*` 路径，其中 `candidate/` 保存模型源码，`candidate/runs/replay` 是可执行文件，`model-*.txt` 是模型回复，`report.json` 记录环境、源码哈希、逐例对照结果、CUPTI 内核名和端到端耗时。
+
+### 直接运行已验证的模型版本
+
+本次配置的 `qwen3.8-max` 分三次生成了 [主机程序](generated/order-fill-rate/host.cpp)、[GPU 接口](generated/order-fill-rate/gpu.hpp) 与 [CUDA 内核](generated/order-fill-rate/kernels.cu)。三个文件均可在 计算节点 的原始回复中按 SHA-256 核对。SIMT 每个线程计算一行，Tile 使用 128 个线程在共享内存中归约订单，每块最多处理 8 行。主机复用原头文件的逐笔回放，按输出时点在内存中打包窗口，每 65,536 行为一批。同一进程中的批次复用显存。
+
+```sh
+cd "$(git rev-parse --show-toplevel)"
+bash workflow/cuda.sh --build-generated
+bash workflow/cuda.sh --generated simt sample_ticks.csv runs/model-simt.csv
+bash workflow/cuda.sh --generated tile sample_ticks.csv runs/model-tile.csv
+cmp factor_output.csv runs/model-simt.csv
+cmp factor_output.csv runs/model-tile.csv
+```
+
+输入和输出使用不同文件，输出路径会被覆盖。单次回放包含 CUDA 初始化。复现实验时，可以在 `--generate-cuda OrderFillRateSpread.cpp` 后加 `--extra-orders 524288 2097152`，把两个更大规模加入新生成候选的基准测试。
+
+在 RTX 3090 上，两种生成的内核都通过了逐字节 CPU 对照，Compute Sanitizer 的边界样本检查均为 0 错误。下表是每种实现各启动三个新进程后取的 CSV 到 CSV 耗时中位数，包含解析、输出及 GPU 初始化。CPU 对照为输入的原始 C++ 程序。
+
+| 委托笔数 | 输出行数 | CPU（毫秒） | SIMT（毫秒） | Tile（毫秒） |
+| ---: | ---: | ---: | ---: | ---: |
+| 32,768 | 22,794 | 72 | 218 | 213 |
+| 131,072 | 94,880 | 254 | 466 | 442 |
+| 524,288 | 381,472 | 988 | 1,355 | 1,358 |
+| 2,097,152 | 1,530,728 | 4,330 | 5,444 | 5,456 |
+
+四个实测规模上，原始 CPU 程序的端到端耗时均较短。生成版本仍需为每个输出时点扫描和复制窗口，再向设备传输整批窗口。[源码哈希、内核启动记录和各次计时](validation/generated-cuda-rtx3090.json)
+
 ## 优先使用流式回放
 
 在 计算节点 上使用下列入口，可直接从原始逐笔 CSV 写到最终因子 CSV。SIMT、CUDA C++ 分块 Tile 和提前编译的 Triton Tile 共用一个 C++ 前端，执行阶段使用同一套 CSV 解析、委托检查和输出格式化。

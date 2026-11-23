@@ -16,6 +16,18 @@ case "${1:-}" in
         shift
         exec "$WORKFLOW_PYTHON" workflow/api_agent.py "$operation" "$@"
         ;;
+    --generate-cuda)
+        shift
+        exec "$WORKFLOW_PYTHON" workflow/generate_cuda.py "$@"
+        ;;
+    --build-generated)
+        shift
+        exec bash workflow/build_generated.sh "${1:-generated/order-fill-rate}" "${2:-runs/generated}" . "${CUDA_SM:-86}"
+        ;;
+    --generated)
+        shift
+        exec runs/generated/replay "$@"
+        ;;
     --build-stream)
         shift
         "$WORKFLOW_PYTHON" workflow/run.py --probe-only

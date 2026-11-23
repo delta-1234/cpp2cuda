@@ -127,21 +127,52 @@ class NoRedirect(request.HTTPRedirectHandler):
         return None
 
 
-def complete(cfg, system, messages):
+def read_stream(resp, chat):
+    parts = []
+    finished = False
+    for raw in resp:
+        if not raw.startswith(b"data:"):
+            continue
+        payload = raw[5:].strip()
+        if payload == b"[DONE]":
+            finished = True
+            break
+        data = json.loads(payload)
+        if "error" in data or data.get("type") in ("response.failed", "error"):
+            raise RuntimeError("model stream returned an error")
+        if chat:
+            for choice in data.get("choices", []):
+                value = choice.get("delta", {}).get("content")
+                if isinstance(value, str):
+                    parts.append(value)
+                if choice.get("finish_reason") is not None:
+                    finished = True
+        elif data.get("type") == "response.output_text.delta":
+            parts.append(data["delta"])
+        elif data.get("type") == "response.completed":
+            finished = True
+    if not finished or not parts:
+        raise RuntimeError("model stream ended without a complete text response")
+    return "".join(parts).strip()
+
+
+def complete(cfg, system, messages, timeout=180, stream=False):
     url = endpoint(cfg)
     chat = cfg.get("protocol", "chat") == "chat"
-    body = {"model": cfg["model"], "stream": False}
+    body = {"model": cfg["model"], "stream": stream}
     if chat:
         body["messages"] = [{"role": "system", "content": system}, *messages]
     else:
         body.update(instructions=system, input=messages, store=False)
-    headers = {"Content-Type": "application/json", "Accept": "application/json"}
+    headers = {"Content-Type": "application/json", "Accept": "text/event-stream" if stream else "application/json"}
     key = cfg.get("api_key")
     if key:
         headers["Authorization"] = "Bearer " + key
     req = request.Request(url, data=json.dumps(body).encode(), headers=headers)
     try:
-        with request.build_opener(NoRedirect()).open(req, timeout=180) as resp:
+        with request.build_opener(NoRedirect()).open(req, timeout=timeout) as resp:
+            if stream and "text/event-stream" in resp.headers.get("Content-Type", ""):
+                return read_stream(resp, chat)
             data = json.load(resp)
     except error.HTTPError as exc:
         # Gateways sometimes echo request credentials in their error messages.

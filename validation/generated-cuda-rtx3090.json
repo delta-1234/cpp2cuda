@@ -1,0 +1,261 @@
+{
+  "model": "qwen3.8-max",
+  "status": "verified",
+  "gpu": "NVIDIA GeForce RTX 3090",
+  "nvcc": [
+    "Cuda compilation tools, release 11.3, V11.3.58",
+    "Build cuda_11.3.r11.3/compiler.29745058_0"
+  ],
+  "run": "runs/from-cpp-ttgchmlz",
+  "scale_run": "runs/generated-scale-olk_d84y",
+  "input_sha256": {
+    "OrderFillRateSpread.cpp": "43fde293de8451dc77f310f3701911088af604043edf24d1f302ed5c6c9f1db9",
+    "factor_replay.hpp": "2b6caf640cb96fdf9149647ffa78bb40bb591a7fc31c2784c7ba28e47c59bd4d"
+  },
+  "source_sha256": {
+    "gpu.hpp": "4b7500faa0b6a281c6a77e4a138d68d9df62d0081c3e03c3025d153d5f7bd358",
+    "kernels.cu": "660cd7d60387a5a31d13dc03b20b9c51c924481c78d104fa280a62a2391247c1",
+    "host.cpp": "2ccf7977bd9e589264cafd52f6926eae02e4e72258dbbb0e480cb7a5d1fd6e45"
+  },
+  "model_replies": [
+    {
+      "attempt": 1,
+      "response_sha256": "c68c4ed14c9025fd1d74d2b5ceea5338aff07211217347f6caf2508391dba891",
+      "received": [
+        "gpu.hpp"
+      ]
+    },
+    {
+      "attempt": 2,
+      "response_sha256": "21ec798a033a768d2e1d3583c33b0321d653faa8a134bb6b38475d9b721ff25c",
+      "received": [
+        "kernels.cu"
+      ]
+    },
+    {
+      "attempt": 3,
+      "response_sha256": "551aa526feb945e6c7a2c3aeb14152f81c2ea6b9e915701236f5c686028c67d9",
+      "file_sha256": {
+        "gpu.hpp": "4b7500faa0b6a281c6a77e4a138d68d9df62d0081c3e03c3025d153d5f7bd358",
+        "kernels.cu": "660cd7d60387a5a31d13dc03b20b9c51c924481c78d104fa280a62a2391247c1",
+        "host.cpp": "2ccf7977bd9e589264cafd52f6926eae02e4e72258dbbb0e480cb7a5d1fd6e45"
+      }
+    }
+  ],
+  "validation": {
+    "byte_exact": {
+      "header-only": {
+        "simt": {
+          "rows": 0,
+          "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+        },
+        "tile": {
+          "rows": 0,
+          "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+        }
+      },
+      "warmup499": {
+        "simt": {
+          "rows": 0,
+          "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+        },
+        "tile": {
+          "rows": 0,
+          "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+        }
+      },
+      "short-window": {
+        "simt": {
+          "rows": 0,
+          "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+        },
+        "tile": {
+          "rows": 0,
+          "sha256": "2348c13c2158d10b1c96bca52013f381dab77a58c0d4caf6f03034449411dacb"
+        }
+      },
+      "edge": {
+        "simt": {
+          "rows": 3,
+          "sha256": "edb01cc8ea43cc83c4edd377a400b6aa0a39eec560029bb3226f215af8fa0cd4"
+        },
+        "tile": {
+          "rows": 3,
+          "sha256": "edb01cc8ea43cc83c4edd377a400b6aa0a39eec560029bb3226f215af8fa0cd4"
+        }
+      },
+      "sample": {
+        "simt": {
+          "rows": 912,
+          "sha256": "a5d198ecb551b9e04608534318f09888bc844aa365396ed331e4e3729c0daf9c"
+        },
+        "tile": {
+          "rows": 912,
+          "sha256": "a5d198ecb551b9e04608534318f09888bc844aa365396ed331e4e3729c0daf9c"
+        }
+      },
+      "orders-32768": {
+        "simt": {
+          "rows": 22794,
+          "sha256": "e3d58a66ef3232d39574cbf90fb88fc5d1df1d05d25a9272b1d116f42f3551f9"
+        },
+        "tile": {
+          "rows": 22794,
+          "sha256": "e3d58a66ef3232d39574cbf90fb88fc5d1df1d05d25a9272b1d116f42f3551f9"
+        }
+      },
+      "orders-131072": {
+        "simt": {
+          "rows": 94880,
+          "sha256": "73bacfd5889529602234282df0d44029bbd334a0758adef4f0e366ae0099c1ae"
+        },
+        "tile": {
+          "rows": 94880,
+          "sha256": "73bacfd5889529602234282df0d44029bbd334a0758adef4f0e366ae0099c1ae"
+        }
+      }
+    },
+    "successful_gpu_launches": {
+      "simt": [
+        "_ZN66_GLOBAL__N__42_tmpxft_0000004b_00000000_7_kernels_cpp1_ii_0982093c11simt_kernelEPKN3gpu8InputRowEPNS0_9OutputRowEi"
+      ],
+      "tile": [
+        "_ZN66_GLOBAL__N__42_tmpxft_0000004b_00000000_7_kernels_cpp1_ii_0982093c11tile_kernelEPKN3gpu8InputRowEPNS0_9OutputRowEi"
+      ]
+    },
+    "invalid_inputs_rejected": {
+      "simt": [
+        "overfill",
+        "unknown",
+        "bad-time"
+      ],
+      "tile": [
+        "overfill",
+        "unknown",
+        "bad-time"
+      ]
+    },
+    "compute_sanitizer_memcheck": [
+      "simt",
+      "tile"
+    ],
+    "no_device_rejected": [
+      "simt",
+      "tile"
+    ],
+    "unknown_mode_rejected": true
+  },
+  "benchmark_method": "Cold process, same CSV input and output semantics, original C++ CPU reference, three rotating mode orders, wall clock, milliseconds. Each timed result checked byte for byte.",
+  "simulator_seeds": {
+    "32768": 7319,
+    "131072": 15013,
+    "524288": 7319,
+    "2097152": 7319
+  },
+  "benchmark": {
+    "orders-32768": {
+      "events": 56560,
+      "forecasts": 22794,
+      "samples_ms": {
+        "cpu": [
+          71.61,
+          72.57,
+          72.471
+        ],
+        "simt": [
+          218.824,
+          198.359,
+          218.348
+        ],
+        "tile": [
+          213.475,
+          195.505,
+          226.575
+        ]
+      },
+      "median_ms": {
+        "cpu": 72.471,
+        "simt": 218.348,
+        "tile": 213.475
+      }
+    },
+    "orders-131072": {
+      "events": 226950,
+      "forecasts": 94880,
+      "samples_ms": {
+        "cpu": [
+          252.735,
+          254.144,
+          263.575
+        ],
+        "simt": [
+          466.016,
+          427.716,
+          492.675
+        ],
+        "tile": [
+          429.381,
+          442.239,
+          452.515
+        ]
+      },
+      "median_ms": {
+        "cpu": 254.144,
+        "simt": 466.016,
+        "tile": 442.239
+      }
+    },
+    "orders-524288": {
+      "events": 906758,
+      "forecasts": 381472,
+      "samples_ms": {
+        "cpu": [
+          969.492,
+          988.034,
+          992.458
+        ],
+        "simt": [
+          1348.628,
+          1354.556,
+          1378.176
+        ],
+        "tile": [
+          1357.561,
+          1337.693,
+          1374.56
+        ]
+      },
+      "median_ms": {
+        "cpu": 988.034,
+        "simt": 1354.556,
+        "tile": 1357.561
+      }
+    },
+    "orders-2097152": {
+      "events": 3628878,
+      "forecasts": 1530728,
+      "samples_ms": {
+        "cpu": [
+          4330.387,
+          4324.261,
+          4358.105
+        ],
+        "simt": [
+          5083.371,
+          5443.794,
+          5538.254
+        ],
+        "tile": [
+          5716.626,
+          5456.152,
+          5447.785
+        ]
+      },
+      "median_ms": {
+        "cpu": 4330.387,
+        "simt": 5443.794,
+        "tile": 5456.152
+      }
+    }
+  }
+}
