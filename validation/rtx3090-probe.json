@@ -1,0 +1,55 @@
+{
+  "input": "sample_ticks.csv",
+  "device_ordinal": 0,
+  "repeat": 3,
+  "require_cutile": false,
+  "environment": {
+    "platform": "Linux-4.15.0-213-generic-x86_64-with-glibc2.27",
+    "python": "3.10.4",
+    "driver": {
+      "devices": [
+        {
+          "ordinal": 0,
+          "name": "NVIDIA GeForce RTX 3090",
+          "cc": "86",
+          "memory_bytes": 25430786048,
+          "nvidia_smi": {
+            "code": 0,
+            "output": "index, name, driver_version, memory.total [MiB]\n1, NVIDIA GeForce RTX 3090, 550.76, 24576 MiB"
+          }
+        }
+      ],
+      "driver_api_version": 12040
+    },
+    "nvcc": "/usr/local/cuda-11.3/bin/nvcc",
+    "host_cxx": "/usr/local/bin/c++",
+    "nvcc_version": {
+      "code": 0,
+      "output": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2021 NVIDIA Corporation\nBuilt on Sun_Mar_21_19:15:46_PDT_2021\nCuda compilation tools, release 11.3, V11.3.58\nBuild cuda_11.3.r11.3/compiler.29745058_0"
+    },
+    "nvcc_arches": {
+      "code": 0,
+      "output": "compute_35\ncompute_37\ncompute_50\ncompute_52\ncompute_53\ncompute_60\ncompute_61\ncompute_62\ncompute_70\ncompute_72\ncompute_75\ncompute_80\ncompute_86"
+    },
+    "runtime_headers": [
+      "/usr/local/cuda-11.3/include/cuda_runtime.h",
+      "/usr/local/cuda-11.3/targets/x86_64-linux/include/cuda_runtime.h"
+    ],
+    "ptxas": "/usr/local/cuda-11.3/bin/ptxas",
+    "tileiras": null,
+    "compute-sanitizer": "/usr/local/cuda-11.3/bin/compute-sanitizer",
+    "nvidia_smi": {
+      "code": 255,
+      "output": "Unable to determine the device handle for GPU: Unknown Error"
+    },
+    "tile_import": {
+      "code": 1,
+      "output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'cuda.tile'"
+    },
+    "triton_import": {
+      "code": 0,
+      "output": "triton 3.2.0 torch 2.6.0+cu124 torch_cuda 12.4"
+    }
+  },
+  "exit_code": 0
+}

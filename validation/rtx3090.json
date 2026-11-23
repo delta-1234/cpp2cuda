@@ -1,0 +1,190 @@
+{
+  "input": "sample_ticks.csv",
+  "device_ordinal": 0,
+  "repeat": 7,
+  "require_cutile": false,
+  "environment": {
+    "platform": "Linux-4.15.0-213-generic-x86_64-with-glibc2.27",
+    "python": "3.10.4",
+    "driver": {
+      "devices": [
+        {
+          "ordinal": 0,
+          "name": "NVIDIA GeForce RTX 3090",
+          "cc": "86",
+          "memory_bytes": 25430786048
+        }
+      ],
+      "driver_api_version": 12040
+    },
+    "nvcc": "/usr/local/cuda-11.3/bin/nvcc",
+    "host_cxx": "/usr/local/bin/c++",
+    "nvcc_version": {
+      "code": 0,
+      "output": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2021 NVIDIA Corporation\nBuilt on Sun_Mar_21_19:15:46_PDT_2021\nCuda compilation tools, release 11.3, V11.3.58\nBuild cuda_11.3.r11.3/compiler.29745058_0"
+    },
+    "nvcc_arches": {
+      "code": 0,
+      "output": "compute_35\ncompute_37\ncompute_50\ncompute_52\ncompute_53\ncompute_60\ncompute_61\ncompute_62\ncompute_70\ncompute_72\ncompute_75\ncompute_80\ncompute_86"
+    },
+    "runtime_headers": [
+      "/usr/local/cuda-11.3/include/cuda_runtime.h",
+      "/usr/local/cuda-11.3/targets/x86_64-linux/include/cuda_runtime.h"
+    ],
+    "ptxas": "/usr/local/cuda-11.3/bin/ptxas",
+    "tileiras": null,
+    "compute-sanitizer": "/usr/local/cuda-11.3/bin/compute-sanitizer",
+    "nvidia_smi": {
+      "code": 255,
+      "output": "Unable to determine the device handle for GPU: Unknown Error"
+    },
+    "tile_import": {
+      "code": 1,
+      "output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'cuda.tile'"
+    },
+    "triton_import": {
+      "code": 0,
+      "output": "triton 3.2.0 torch 2.6.0+cu124 torch_cuda 12.4"
+    }
+  },
+  "cpu": {
+    "status": "verified",
+    "rows": 912,
+    "edge_rows": 3,
+    "empty_rows": 0,
+    "wall_ms": [
+      12.13384885340929,
+      23.84444698691368,
+      30.51852621138096,
+      54.28954027593136,
+      48.40335249900818,
+      38.98070007562637,
+      36.00490652024746
+    ],
+    "median_wall_ms": 36.00490652024746,
+    "packed_compute_ms": [
+      0.874465,
+      0.881249,
+      0.918101,
+      0.878801,
+      0.902268,
+      0.879127,
+      0.861675
+    ],
+    "median_packed_compute_ms": 0.879127
+  },
+  "backends": {
+    "simt": {
+      "build": [
+        "/usr/local/cuda-11.3/bin/nvcc",
+        "-std=c++14",
+        "-O3",
+        "-ccbin",
+        "/usr/bin/g++-7",
+        "-arch=sm_86",
+        "cuda/native.cu",
+        "-o",
+        "runs/run-qb9syuto/simt"
+      ],
+      "status": "verified",
+      "rows": 912,
+      "edge_rows": 3,
+      "empty_rows": 0,
+      "wall_ms": [
+        1023.6773891374469,
+        224.76320434361696,
+        153.22352573275566,
+        206.4879359677434,
+        321.18602748960257,
+        364.71688374876976,
+        713.5090362280607
+      ],
+      "kernel_ms": [
+        0.01024,
+        0.009216,
+        0.01024,
+        0.01024,
+        0.009216,
+        0.009216,
+        0.009216
+      ],
+      "median_wall_ms": 321.18602748960257,
+      "median_kernel_ms": 0.009216,
+      "end_to_end_speedup": 0.11209985316504159,
+      "packed_compute_speedup": 95.39138454861111
+    },
+    "shared_tile": {
+      "build": [
+        "/usr/local/cuda-11.3/bin/nvcc",
+        "-std=c++14",
+        "-O3",
+        "-ccbin",
+        "/usr/bin/g++-7",
+        "-arch=sm_86",
+        "-DSHARED_TILE",
+        "cuda/native.cu",
+        "-o",
+        "runs/run-qb9syuto/shared_tile"
+      ],
+      "status": "verified",
+      "rows": 912,
+      "edge_rows": 3,
+      "empty_rows": 0,
+      "wall_ms": [
+        392.9362092167139,
+        780.3424494341016,
+        646.77301235497,
+        536.657358519733,
+        441.99005234986544,
+        523.8034017384052,
+        346.7302555218339
+      ],
+      "kernel_ms": [
+        0.009216,
+        0.009216,
+        0.009216,
+        0.008192,
+        0.009216,
+        0.01024,
+        0.008192
+      ],
+      "median_wall_ms": 523.8034017384052,
+      "median_kernel_ms": 0.009216,
+      "end_to_end_speedup": 0.06873744309554679,
+      "packed_compute_speedup": 95.39138454861111
+    },
+    "triton_tile": {
+      "status": "verified",
+      "rows": 912,
+      "edge_rows": 3,
+      "empty_rows": 0,
+      "wall_ms": [
+        4748.8664127886295,
+        5937.0249742642045,
+        10062.687025405467,
+        4110.877891071141,
+        4120.508775115013,
+        4384.995276108384,
+        4611.180401407182
+      ],
+      "kernel_ms": [
+        0.2877439856529236,
+        0.13619199395179749,
+        0.13312000036239624,
+        0.12390399724245071,
+        0.29900801181793213,
+        0.40959998965263367,
+        0.15564799308776855
+      ],
+      "median_wall_ms": 4611.180401407182,
+      "median_kernel_ms": 0.15564799308776855,
+      "end_to_end_speedup": 0.007808175648313377,
+      "packed_compute_speedup": 5.648174335947061
+    },
+    "cutile": {
+      "status": "unavailable",
+      "reason": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'cuda.tile'"
+    }
+  },
+  "exit_code": 0
+}

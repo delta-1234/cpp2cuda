@@ -1,0 +1,134 @@
+{
+  "input": "runs/run-xzoycif6/multi_batch.csv",
+  "device_ordinal": 0,
+  "repeat": 3,
+  "require_cutile": false,
+  "environment": {
+    "platform": "Linux-4.15.0-213-generic-x86_64-with-glibc2.27",
+    "python": "3.10.4",
+    "driver": {
+      "devices": [
+        {
+          "ordinal": 0,
+          "name": "NVIDIA GeForce RTX 3090",
+          "cc": "86",
+          "memory_bytes": 25430786048
+        }
+      ],
+      "driver_api_version": 12040
+    },
+    "nvcc": "/usr/local/cuda-11.3/bin/nvcc",
+    "host_cxx": "/usr/local/bin/c++",
+    "nvcc_version": {
+      "code": 0,
+      "output": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2021 NVIDIA Corporation\nBuilt on Sun_Mar_21_19:15:46_PDT_2021\nCuda compilation tools, release 11.3, V11.3.58\nBuild cuda_11.3.r11.3/compiler.29745058_0"
+    },
+    "nvcc_arches": {
+      "code": 0,
+      "output": "compute_35\ncompute_37\ncompute_50\ncompute_52\ncompute_53\ncompute_60\ncompute_61\ncompute_62\ncompute_70\ncompute_72\ncompute_75\ncompute_80\ncompute_86"
+    },
+    "runtime_headers": [
+      "/usr/local/cuda-11.3/include/cuda_runtime.h",
+      "/usr/local/cuda-11.3/targets/x86_64-linux/include/cuda_runtime.h"
+    ],
+    "ptxas": "/usr/local/cuda-11.3/bin/ptxas",
+    "tileiras": null,
+    "compute-sanitizer": "/usr/local/cuda-11.3/bin/compute-sanitizer",
+    "nvidia_smi": {
+      "code": 255,
+      "output": "Unable to determine the device handle for GPU: Unknown Error"
+    },
+    "tile_import": {
+      "code": 1,
+      "output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'cuda.tile'"
+    }
+  },
+  "cpu": {
+    "status": "verified",
+    "rows": 5472,
+    "edge_rows": 3,
+    "empty_rows": 0,
+    "wall_ms": [
+      249.53645933419466,
+      36.672032438218594,
+      82.67444651573896
+    ],
+    "median_wall_ms": 82.67444651573896,
+    "packed_compute_ms": [
+      0.916791,
+      2.64912,
+      2.65275
+    ],
+    "median_packed_compute_ms": 2.64912
+  },
+  "backends": {
+    "simt": {
+      "build": [
+        "/usr/local/cuda-11.3/bin/nvcc",
+        "-std=c++14",
+        "-O3",
+        "-ccbin",
+        "/usr/bin/g++-7",
+        "-arch=sm_86",
+        "cuda/native.cu",
+        "-o",
+        "runs/run-4b8kcst7/simt"
+      ],
+      "status": "verified",
+      "rows": 5472,
+      "edge_rows": 3,
+      "empty_rows": 0,
+      "wall_ms": [
+        319.60482336580753,
+        208.3833683282137,
+        200.86589269340038
+      ],
+      "kernel_ms": [
+        0.02944,
+        0.035104,
+        0.033152
+      ],
+      "median_wall_ms": 208.3833683282137,
+      "median_kernel_ms": 0.033152,
+      "end_to_end_speedup": 0.3967420585385816,
+      "packed_compute_speedup": 79.90830115830116
+    },
+    "shared_tile": {
+      "build": [
+        "/usr/local/cuda-11.3/bin/nvcc",
+        "-std=c++14",
+        "-O3",
+        "-ccbin",
+        "/usr/bin/g++-7",
+        "-arch=sm_86",
+        "-DSHARED_TILE",
+        "cuda/native.cu",
+        "-o",
+        "runs/run-4b8kcst7/shared_tile"
+      ],
+      "status": "verified",
+      "rows": 5472,
+      "edge_rows": 3,
+      "empty_rows": 0,
+      "wall_ms": [
+        355.28211016207933,
+        285.86469404399395,
+        328.23977433145046
+      ],
+      "kernel_ms": [
+        0.029184,
+        0.024128,
+        0.023904
+      ],
+      "median_wall_ms": 328.23977433145046,
+      "median_kernel_ms": 0.024128,
+      "end_to_end_speedup": 0.25187211599851955,
+      "packed_compute_speedup": 109.79442970822281
+    },
+    "cutile": {
+      "status": "unavailable",
+      "reason": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nModuleNotFoundError: No module named 'cuda.tile'"
+    }
+  },
+  "exit_code": 0
+}
