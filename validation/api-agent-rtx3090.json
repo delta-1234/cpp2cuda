@@ -1,0 +1,94 @@
+{
+  "model": "qwen3.8-max",
+  "status": "verified",
+  "run": "runs/api-agent-yorixdqz/report.json",
+  "actions": [
+    "read",
+    "read",
+    "read",
+    "read",
+    "verify",
+    "benchmark",
+    "finish"
+  ],
+  "gpu_sources_changed": false,
+  "checks": {
+    "sample_ticks.csv": {
+      "rows": 912,
+      "backends": [
+        "cpu",
+        "simt",
+        "tile",
+        "triton"
+      ]
+    },
+    "edge.csv": {
+      "rows": 3,
+      "backends": [
+        "cpu",
+        "simt",
+        "tile",
+        "triton"
+      ]
+    },
+    "tail-8191.csv": {
+      "rows": 8191,
+      "backends": [
+        "cpu",
+        "simt",
+        "tile",
+        "triton"
+      ]
+    },
+    "tail-8192.csv": {
+      "rows": 8192,
+      "backends": [
+        "cpu",
+        "simt",
+        "tile",
+        "triton"
+      ]
+    },
+    "tail-8193.csv": {
+      "rows": 8193,
+      "backends": [
+        "cpu",
+        "simt",
+        "tile",
+        "triton"
+      ]
+    },
+    "many.csv": {
+      "rows": 66576,
+      "backends": [
+        "cpu",
+        "simt",
+        "tile",
+        "triton"
+      ]
+    },
+    "empty.csv": {
+      "rows": 0,
+      "backends": [
+        "cpu",
+        "simt",
+        "tile",
+        "triton"
+      ]
+    }
+  },
+  "benchmark_orders": 2600,
+  "benchmark_repeats": 1,
+  "measured_wall_ms": {
+    "cold/2600/simt": 186.873,
+    "cold/2600/legacy": 12.622,
+    "cold/2600/triton": 163.574,
+    "cold/2600/cpu": 9.211,
+    "cold/2600/tile": 167.793,
+    "warm/2600/legacy": 7.973,
+    "warm/2600/simt": 5.908,
+    "warm/2600/cpu": 3.691,
+    "warm/2600/tile": 5.871,
+    "warm/2600/triton": 5.525
+  }
+}

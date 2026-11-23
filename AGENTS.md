@@ -2,6 +2,8 @@
 
 本仓库的输入是一个交易日的逐笔 CSV。CPU 判定规则在 `OrderFillRateSpread.cpp`，原始窗口归约的验收入口为 `workflow/run.py`，端到端流式路径的验收入口为 `workflow/check_stream.py` 和 `workflow/scale.py`（Python 3.8+）。一次工作流由一个 agent 顺序执行以下阶段。
 
+模型可通过 计算节点 的 `bash workflow/cuda.sh --agent '任务'` 驱动以下阶段。控制器从已配置的模型 API 获取操作决定，将本地只读资料、编译诊断和验证结果作为上下文。模型配置、运行报告目录以及只生成补丁的选项见 README。模型推理是此入口唯一主动发起的外部 API 调用，构建和测试在独立网络命名空间执行。
+
 ### 1. 先盘点环境
 
 在计算节点运行 `python3 workflow/run.py --probe-only`。读取本次打印的 `report.json`，确认 CUDA Driver API 是否能枚举目标 GPU，记录型号、计算能力、显存、驱动 API 版本、`nvcc --version`、可编译架构、运行时头文件及 Triton、cuTile 的导入状态。输出目录会为每次运行单独创建。`--device` 使用当前进程中的可见序号。

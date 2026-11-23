@@ -2,6 +2,35 @@
 
 独立 C++17 程序，读取单个交易日的逐笔委托与成交 CSV，按证券输出卖方成交比例、买方成交比例和两者之差。程序使用 C++ 标准库，内置模拟数据生成器。
 
+## 用自己的模型 API 执行工作流
+
+计算节点 上的仓库根目录 `.env` 已配置为模型服务入口。修改此文件即可更换模型、地址或密钥。新建仓库可复制 [.env.example](.env.example) 并填入实际值，也可执行 `bash workflow/cuda.sh --configure-api` 交互配置。交互输入的密钥隐藏，文件权限为 0600。实际 `.env` 已加入 Git 忽略规则。
+
+```bash
+cd "$(git rev-parse --show-toplevel)"
+bash workflow/cuda.sh --check-api
+bash workflow/cuda.sh --agent '按 AGENTS.md 验证 SIMT 和 Tile，回放 2600 笔委托，汇报实测耗时。'
+```
+
+| 设置 | 用途 |
+| --- | --- |
+| `OPENAI_BASE_URL` | 模型 API 的基础地址，保留服务商要求的版本路径。 |
+| `OPENAI_MODEL` | 服务提供的模型 ID。 |
+| `OPENAI_API_KEY` | Bearer 密钥。免密内网服务可留空。 |
+| `FACTOR_API_PROTOCOL` | 默认 `chat`，调用 Chat Completions；设为 `responses` 可调用 Responses API。 |
+
+已导出的同名环境变量覆盖文件值。`FACTOR_API_CONFIG` 可显式指定 dotenv 或 JSON 配置文件。默认先读仓库 `.env`，然后依次尝试 `~/.config/order-fill-rate-cuda/api.json` 和 `~/.env`，选中第一份存在的文件。dotenv 支持单行值、引号和 `export` 前缀，按文本读取。API 连通检查只发一条简短消息。
+
+执行任务时，控制器先盘点 GPU 和 Toolkit，将任务、设备信息及项目规则传给所配置的模型。模型可以按需读取仓库源码和 `offline_docs/` 的文本材料、编辑候选副本中已有的 `cuda/` 或 `stream/` 源文件、读取编译错误并继续修复。编译、验证和基准运行在 计算节点 的独立 Linux 网络、挂载和 PID 命名空间内。候选源码对这些子进程只读，工作产物写入该次运行的 `runs/`。模型 API 调用由外层控制器发起，模型接口应支持文本生成。
+
+当前候选版本通过 CPU 对照和基准回放后，控制器才将补丁应用到工作目录。若原文件在运行期间被其他任务修改，补丁保存在运行目录供核对。需要仅生成候选补丁时使用以下命令。
+
+```bash
+bash workflow/cuda.sh --agent --proposal-only '检查 SIMT 实现，提出并验证一个针对当前输入的优化。'
+```
+
+每次运行会打印 `runs/api-agent-*/report.json` 路径，同目录包含 `changes.patch`、分阶段日志及候选副本。默认最多 24 次模型决策，可用 `--max-steps` 调整。默认验证流式 CPU、SIMT、CUDA C++ Tile 和 AOT Triton；编辑原始打包实现时还会运行相应路径的验证。
+
 ## 优先使用流式回放
 
 在 计算节点 上使用下列入口，可直接从原始逐笔 CSV 写到最终因子 CSV。SIMT、CUDA C++ 分块 Tile 和提前编译的 Triton Tile 共用一个 C++ 前端，执行阶段使用同一套 CSV 解析、委托检查和输出格式化。
