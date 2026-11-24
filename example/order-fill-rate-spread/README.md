@@ -3,10 +3,10 @@
 这个高频订单因子从逐笔委托和成交计算买卖双方的成交率差。以下交易字段、预热规则和规模基准均属于本示例。其他量化因子的输入、计算语义和输出由各自的 C++ 参考程序定义。文中的命令均在仓库根目录运行。
 
 ```sh
-bash workflow/cuda.sh --generate-cuda OrderFillRateSpread.cpp
+bash workflow/cuda.sh --generate-cuda example/order-fill-rate-spread/OrderFillRateSpread.cpp
 ```
 
-该入口会生成 SIMT 与 Tile 候选，验证正确性并分别优化内核。可用 `--no-optimize` 只运行转写和验收。`--extra-orders 524288 2097152` 会额外生成这两种规模的模拟订单。显式传入 `--per-file` 可复现早期逐文件生成器。参考程序、因子定义和固定输出分别保存在 [OrderFillRateSpread.cpp](../../OrderFillRateSpread.cpp)、[factor_replay.hpp](../../factor_replay.hpp) 和 [factor_output.csv](../../factor_output.csv)。
+原有简写 `bash workflow/cuda.sh --generate-cuda OrderFillRateSpread.cpp` 也可直接运行这个示例。该入口会生成 SIMT 与 Tile 候选，验证正确性并分别优化内核。可用 `--no-optimize` 只运行转写和验收。`--extra-orders 524288 2097152` 会额外生成这两种规模的模拟订单。显式传入 `--per-file` 可复现早期逐文件生成器。参考程序、因子定义和固定输出分别保存在 [OrderFillRateSpread.cpp](OrderFillRateSpread.cpp)、[factor_replay.hpp](factor_replay.hpp) 和 [factor_output.csv](data/factor_output.csv)。
 
 ## 两个专项 agent 的实测
 
@@ -19,22 +19,22 @@ bash workflow/cuda.sh --generate-cuda OrderFillRateSpread.cpp
 
 两条路径均通过七组 CPU 逐字节对照和 Compute Sanitizer 显存检查。两个候选补丁都可分别应用在仓库随附的起点上，复原模型当时编译的源码。[SIMT 实验补丁](simt-trial.patch) · [Tile 实验补丁](tile-trial.patch)
 
-完整报告保留每个候选的硬件假设、采样值、机器码指纹和选版判定。[计算节点 专项优化记录](../../validation/factorport-specialists-rtx3090.json)
+完整报告保留每个候选的硬件假设、采样值、机器码指纹和选版判定。[计算节点 专项优化记录](validation/factorport-specialists-rtx3090.json)
 
 ## 运行已验证的示例移植
 
-先前的逐文件实验使用 `qwen3.8-max` 分三次生成了 [主机程序](../../generated/order-fill-rate/host.cpp)、[GPU 接口](../../generated/order-fill-rate/gpu.hpp) 与 [CUDA 内核](../../generated/order-fill-rate/kernels.cu)。三个文件均可在 计算节点 的原始回复中按 SHA-256 核对。SIMT 每个线程计算一行，Tile 使用 128 个线程在共享内存中归约订单，每块最多处理 8 行。主机复用原头文件的逐笔回放，按输出时点在内存中打包窗口，每 65,536 行为一批。同一进程中的批次复用显存。
+先前的逐文件实验使用 `qwen3.8-max` 分三次生成了 [主机程序](generated/host.cpp)、[GPU 接口](generated/gpu.hpp) 与 [CUDA 内核](generated/kernels.cu)。三个文件均可在 计算节点 的原始回复中按 SHA-256 核对。SIMT 每个线程计算一行，Tile 使用 128 个线程在共享内存中归约订单，每块最多处理 8 行。主机复用原头文件的逐笔回放，按输出时点在内存中打包窗口，每 65,536 行为一批。同一进程中的批次复用显存。
 
 ```sh
 cd "$(git rev-parse --show-toplevel)"
 bash workflow/cuda.sh --build-generated
-bash workflow/cuda.sh --generated simt sample_ticks.csv runs/model-simt.csv
-bash workflow/cuda.sh --generated tile sample_ticks.csv runs/model-tile.csv
-cmp factor_output.csv runs/model-simt.csv
-cmp factor_output.csv runs/model-tile.csv
+bash workflow/cuda.sh --generated simt example/order-fill-rate-spread/data/sample_ticks.csv runs/model-simt.csv
+bash workflow/cuda.sh --generated tile example/order-fill-rate-spread/data/sample_ticks.csv runs/model-tile.csv
+cmp example/order-fill-rate-spread/data/factor_output.csv runs/model-simt.csv
+cmp example/order-fill-rate-spread/data/factor_output.csv runs/model-tile.csv
 ```
 
-输入和输出使用不同文件，输出路径会被覆盖。单次回放包含 CUDA 初始化。复现实验时，可以在 `--generate-cuda OrderFillRateSpread.cpp` 后加 `--extra-orders 524288 2097152`，把两个更大规模加入新生成候选的基准测试。
+输入和输出使用不同文件，输出路径会被覆盖。单次回放包含 CUDA 初始化。复现实验时，可以在 `--generate-cuda example/order-fill-rate-spread/OrderFillRateSpread.cpp` 后加 `--extra-orders 524288 2097152`，把两个更大规模加入新生成候选的基准测试。
 
 在 RTX 3090 上，两种生成的内核都通过了逐字节 CPU 对照，Compute Sanitizer 的边界样本检查均为 0 错误。下表是每种实现各启动三个新进程后取的 CSV 到 CSV 耗时中位数，包含解析、输出及 GPU 初始化。CPU 对照为输入的原始 C++ 程序。
 
@@ -45,7 +45,7 @@ cmp factor_output.csv runs/model-tile.csv
 | 524,288 | 381,472 | 988 | 1,355 | 1,358 |
 | 2,097,152 | 1,530,728 | 4,330 | 5,444 | 5,456 |
 
-四个实测规模上，原始 CPU 程序的端到端耗时均较短。生成版本仍需为每个输出时点扫描和复制窗口，再向设备传输整批窗口。[源码哈希、内核启动记录和各次计时](../../validation/generated-cuda-rtx3090.json)
+四个实测规模上，原始 CPU 程序的端到端耗时均较短。生成版本仍需为每个输出时点扫描和复制窗口，再向设备传输整批窗口。[源码哈希、内核启动记录和各次计时](validation/generated-cuda-rtx3090.json)
 
 ## 优先使用流式回放
 
@@ -54,22 +54,22 @@ cmp factor_output.csv runs/model-tile.csv
 ```sh
 cd "$(git rev-parse --show-toplevel)"
 bash workflow/cuda.sh --build-stream
-bash workflow/cuda.sh --stream simt sample_ticks.csv runs/simt.csv
-bash workflow/cuda.sh --stream tile sample_ticks.csv runs/tile.csv
-bash workflow/cuda.sh --stream triton sample_ticks.csv runs/triton.csv
-bash workflow/cuda.sh --stream cpu sample_ticks.csv runs/incremental-cpu.csv
+bash workflow/cuda.sh --stream simt example/order-fill-rate-spread/data/sample_ticks.csv runs/simt.csv
+bash workflow/cuda.sh --stream tile example/order-fill-rate-spread/data/sample_ticks.csv runs/tile.csv
+bash workflow/cuda.sh --stream triton example/order-fill-rate-spread/data/sample_ticks.csv runs/triton.csv
+bash workflow/cuda.sh --stream cpu example/order-fill-rate-spread/data/sample_ticks.csv runs/incremental-cpu.csv
 ```
 
 `--serve` 允许多次回放共用 GPU 上下文、CUDA stream、页锁定主机内存和显存。输入协议为每行一个「输入路径、制表符、输出路径」。进程收到 EOF 后退出，每个 CSV 的委托状态独立。返回 `READY` 表示工作进程已启动，`OK` 后依次为输出行数、批次数、分段数及本进程一次性初始化耗时（毫秒）。
 
 ```sh
-printf '%s\t%s\n' sample_ticks.csv runs/first.csv sample_ticks.csv runs/second.csv |
+printf '%s\t%s\n' example/order-fill-rate-spread/data/sample_ticks.csv runs/first.csv example/order-fill-rate-spread/data/sample_ticks.csv runs/second.csv |
   bash workflow/cuda.sh --stream simt --serve
 ```
 
 每个 GPU 批次最多 8,192 个时点，同一证券每段最多 128 行。段首以当前委托状态为基准，段内记录四个 int64 变化量，GPU 计算前缀和及成交率。只有分段索引按证券分组，因子按逐笔到达顺序输出。CPU 对照 `cpu` 直接增量维护四个统计量，`legacy` 保留原来的 100 笔窗口扫描。旧打包后端仍可用于逐阶段诊断。
 
-在 计算节点 上，主实验覆盖 13 至 1,530,669 行因子输出。约 8.3 万输出行时，新建 GPU 进程开始稳定超过原扫描 CPU。在测试上限，流式 GPU 与增量 CPU 的常驻端到端耗时接近。[规模、开销拆分、两组 CPU 基线和交叉点](../../validation/stream-results.md)
+在 计算节点 上，主实验覆盖 13 至 1,530,669 行因子输出。约 8.3 万输出行时，新建 GPU 进程开始稳定超过原扫描 CPU。在测试上限，流式 GPU 与增量 CPU 的常驻端到端耗时接近。[规模、开销拆分、两组 CPU 基线和交叉点](validation/stream-results.md)
 
 ```sh
 bash workflow/cuda.sh --scale --core 6 --repeat 7
@@ -83,7 +83,7 @@ bash workflow/cuda.sh --scale --core 6 --repeat 7
 
 ```sh
 python3 workflow/run.py --probe-only
-python3 workflow/run.py --input sample_ticks.csv --repeat 7
+python3 workflow/run.py --input example/order-fill-rate-spread/data/sample_ticks.csv --repeat 7
 ```
 
 运行器需要 Python 3.8+ 和 C++17 主机编译器。两条原生后端通过本地 nvcc 编译，使用 CUDA C++14。每次运行打印独立的 `runs/run-*/report.json` 路径，并在该目录保留 CPU 和 GPU 结果。未连 GPU 的机器可完成 CPU 及打包验证。运行器不下载依赖。严格物理隔离时，可在断网计算节点或已预装工具链、禁用网络的本地容器内运行。
@@ -99,7 +99,7 @@ bash workflow/cuda.sh --device 0 --repeat 7
 
 ### 原始窗口打包路径的实测结果
 
-RTX 3090（sm_86，24 GiB），驱动 550.76，CUDA Toolkit 11.3，Triton 3.2.0。以下为 912 个窗口、7 次运行的中位数。每个窗口包含 100 笔委托。三种 GPU 实现的样例和边界输出都通过逐行比对。[环境检测](../../validation/rtx3090-probe.json) · [完整验证报告](../../validation/rtx3090.json)
+RTX 3090（sm_86，24 GiB），驱动 550.76，CUDA Toolkit 11.3，Triton 3.2.0。以下为 912 个窗口、7 次运行的中位数。每个窗口包含 100 笔委托。三种 GPU 实现的样例和边界输出都通过逐行比对。[环境检测](../../validation/rtx3090-probe.json) · [完整验证报告](validation/rtx3090.json)
 
 | 实现 | 已打包窗口的计算 | 原始 CSV 至结果 CSV |
 | --- | ---: | ---: |
@@ -110,30 +110,24 @@ RTX 3090（sm_86，24 GiB），驱动 550.76，CUDA Toolkit 11.3，Triton 3.2.0�
 
 同一份已打包窗口上，两种 CUDA C++ 内核的计算时间约为单线程 C++ 的 1/95，Triton Tile 约为 1/5.6。GPU 数据来自包围预热后一次发射的 CUDA events。完整流程计入进程启动、窗口打包、落盘、CUDA 初始化、传输和输出格式化，Triton 另含 Python 框架导入。这份小样本从原始 CSV 开始处理时，CPU 耗时最短。
 
-两种 CUDA C++ 后端另通过 5,472 行跨批次测试及边界输入的显存检查。[跨批次报告](../../validation/rtx3090-multibatch.json) · [SIMT memcheck](../../validation/simt-memcheck.txt) · [Tile memcheck](../../validation/shared_tile-memcheck.txt)
+两种 CUDA C++ 后端另通过 5,472 行跨批次测试及边界输入的显存检查。[跨批次报告](validation/rtx3090-multibatch.json) · [SIMT memcheck](validation/simt-memcheck.txt) · [Tile memcheck](validation/shared_tile-memcheck.txt)
 
 仓库另含 NVIDIA cuTile DSL 实现 `cuda/cutile_backend.py`。服务器的验证环境缺少 `cuda.tile`，该路径尚未实机验证。在配有相应本地依赖的节点上，添加 `--require-cutile` 可将其列为必验项。
 
 ## 运行样例
 
-以下命令均在仓库根目录运行。首次使用时先编译 C++17 程序。
+在仓库根目录编译并回放固定行情，再与随附的预期结果逐字节比较。
 
 ```sh
-./order_fill_rate_spread sample_ticks.csv > factor_output.csv
-head -n 4 factor_output.csv
+mkdir -p runs
+factor=example/order-fill-rate-spread
+c++ -std=c++17 -O2 -Wall -Wextra -Wpedantic "$factor/OrderFillRateSpread.cpp" -o runs/order_fill_rate_spread
+runs/order_fill_rate_spread "$factor/data/sample_ticks.csv" > runs/order-output.csv
+cmp "$factor/data/factor_output.csv" runs/order-output.csv
+head -n 4 runs/order-output.csv
 ```
 
-省略输入文件时默认读取当前目录的 `sample_ticks.csv`。这台 Mac 上重新编译可使用以下命令，显式选择与本机链接器兼容的 SDK。
-
-```sh
-c++ -std=c++17 -O2 -Wall -Wextra -Wpedantic -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk OrderFillRateSpread.cpp -o order_fill_rate_spread
-```
-
-在已配置 C++17 的 Linux 环境或使用默认 SDK 的常规开发环境中，可使用通用编译命令。
-
-```sh
-c++ -std=c++17 -O2 -Wall -Wextra -Wpedantic OrderFillRateSpread.cpp -o order_fill_rate_spread
-```
+省略输入参数时，程序读取当前工作目录的 `sample_ticks.csv`。在 macOS 上可给编译命令加上 `-isysroot "$(xcrun --sdk macosx --show-sdk-path)"` 以显式选择 SDK。
 
 ## 模拟行情
 
@@ -148,8 +142,8 @@ c++ -std=c++17 -O2 -Wall -Wextra -Wpedantic OrderFillRateSpread.cpp -o order_fil
 以下命令生成另一组行情并计算因子。同一构建环境下，相同种子可复现相同数据。
 
 ```sh
-./order_fill_rate_spread --generate 42 > ticks_42.csv
-./order_fill_rate_spread ticks_42.csv > factors_42.csv
+runs/order_fill_rate_spread --generate 42 > runs/ticks_42.csv
+runs/order_fill_rate_spread runs/ticks_42.csv > runs/factors_42.csv
 ```
 
 ## 输入格式

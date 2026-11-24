@@ -2,7 +2,18 @@
 
 FactorPort 用 agent 工作流把量化因子的 C++ 参考实现迁移到 CUDA，并针对目标 GPU 分别优化 SIMT 和共享内存 Tile 内核。你提供因子源码和可复现的输入，原 C++ 程序提供计算真值。每次运行交付 CUDA 源码、可执行文件、正确性报告和端到端耗时。
 
-`OrderFillRateSpread.cpp` 是一个完整的高频因子示例。其他因子可以使用自己的输入格式、窗口、预热规则和输出列。[订单成交率差示例](examples/order-fill-rate-spread/README.md) · [通用窗口算子样例](examples/window_energy/task.json)
+`OrderFillRateSpread.cpp` 是一个完整的高频因子示例。其他因子可以使用自己的输入格式、窗口、预热规则和输出列。[订单成交率差示例](example/order-fill-rate-spread/README.md) · [通用窗口算子样例](example/window_energy/task.json)
+
+## 仓库结构
+
+| 目录 | 内容 |
+| --- | --- |
+| `example/order-fill-rate-spread/` | 订单因子的 C++ 参考程序和头文件。`data/` 存放模拟逐笔行情和预期输出，`cuda/`、`stream/` 和 `generated/` 存放不同 GPU 实现，`validation/` 保存该因子的测量记录。 |
+| `example/window_energy/` | 五点窗口算子的 C++ 源码、任务清单、纠错用例、Pi 生成的 CUDA 代码和验证报告。 |
+| `workflow/` | Agent、构建和验证入口、离线工具及回归测试。 |
+| `offline_docs/` | 可供 agent 离线检索的 CUDA 手册和工作流说明。 |
+| `validation/` | 跨示例的迁移报告与节点环境记录。 |
+| `runs/` | 本机生成的可执行文件、检查点和每次运行的报告，Git 忽略此目录。 |
 
 ## Agent 工作流
 
@@ -37,7 +48,7 @@ bash workflow/cuda.sh --configure-api
 bash workflow/cuda.sh --check-api
 
 # 用仓库自带的通用用例跑通迁移、正确性验证和两个专项优化 agent
-bash workflow/cuda.sh --agent --spec examples/window_energy/task.json \
+bash workflow/cuda.sh --agent --spec example/window_energy/task.json \
   --optimize --profile-case many
 ```
 
@@ -46,7 +57,7 @@ bash workflow/cuda.sh --agent --spec examples/window_energy/task.json \
 独立安装的 Nsight Systems 可通过 `NSYS` 指定可执行文件。计算节点 使用 CUDA 11.3 编译，使用本机的 Nsight Systems 2022.1.3 采样。如果一次导出没有 GPU 内核记录，控制器最多采集三次。报告记录每个有效样本的采集次数，连续三次空采样会使测量失败。
 
 ```sh
-python3 workflow/port_agent.py --spec examples/window_energy/task.json --optimize --profile-case many
+python3 workflow/port_agent.py --spec example/window_energy/task.json --optimize --profile-case many
 ```
 
 单文件因子也可用简写 `bash workflow/cuda.sh --generate-cuda path/to/factor.cpp` 一次完成迁移和优化。
@@ -128,7 +139,7 @@ flowchart TD
 
 ```sh
 WORKFLOW_PYTHON="$(command -v python3)" \
-  bash workflow/cuda.sh --agent --spec examples/window_energy/task.json \
+  bash workflow/cuda.sh --agent --spec example/window_energy/task.json \
   --optimize --profile-case many --backend transformers
 ```
 
@@ -141,7 +152,7 @@ WORKFLOW_PYTHON="$(command -v python3)" \
 bash workflow/cuda.sh --agent --backend pi --inspect --task "报告 GPU 型号、计算能力和 nvcc 版本"
 
 # 从通用因子的 C++ 源码开始，生成、验收并优化两种 CUDA 实现
-bash workflow/cuda.sh --agent --backend pi --spec examples/window_energy/task.json \
+bash workflow/cuda.sh --agent --backend pi --spec example/window_energy/task.json \
   --optimize --profile-case many
 ```
 
@@ -164,7 +175,7 @@ echo "ef77dbe4379b3bdeb425a1e1b862fa3c915c255000dfe4965c98eee96a5765d1  $archive
 
 ### Pi 在 RTX 3090 上的实测
 
-Pi 1.6.0 使用配置的 `qwen3.8-max` 将五点窗口因子的 C++ 源码迁移到 RTX 3090。迁移阶段生成了 SIMT 和共享内存 Tile 两条路径。恢复运行时，控制器从已选检查点重新测量，两位专项 agent 各提交一个候选。最终源码通过了 1、259 和 8,193 个输出的 CPU 逐字节对照、CUPTI 内核启动检查和 Compute Sanitizer 显存检查。[选中的 CUDA 源码](generated/window-energy-pi/window_energy_cuda.cu) · [测量与选版记录](validation/pi-rtx3090.json)
+Pi 1.6.0 使用配置的 `qwen3.8-max` 将五点窗口因子的 C++ 源码迁移到 RTX 3090。迁移阶段生成了 SIMT 和共享内存 Tile 两条路径。恢复运行时，控制器从已选检查点重新测量，两位专项 agent 各提交一个候选。最终源码通过了 1、259 和 8,193 个输出的 CPU 逐字节对照、CUPTI 内核启动检查和 Compute Sanitizer 显存检查。[选中的 CUDA 源码](example/window_energy/generated/window_energy_cuda.cu) · [测量与选版记录](example/window_energy/validation/pi-rtx3090.json)
 
 | 专项 | 接手时内核耗时 | 候选内核耗时 | 选版结果 |
 | --- | ---: | ---: | --- |
@@ -188,8 +199,8 @@ Pi 1.6.0 使用配置的 `qwen3.8-max` 将五点窗口因子的 C++ 源码迁移
 ```sh
 run=runs/cuda-agent-ndsx1ldx  # 换成自己的运行目录
 checkpoint=$(python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); print(r.get("optimization", {}).get("selected", {}).get("checkpoint") or r["last_verified_checkpoint"])' "$run/report.json")
-bash workflow/cuda.sh --agent --backend pi --spec examples/window_energy/task.json \
+bash workflow/cuda.sh --agent --backend pi --spec example/window_energy/task.json \
   --candidate "$run/checkpoints/$checkpoint" --optimize --profile-case many
 ```
 
-`verified` 表示所选代码通过正确性验收并完成计时。是否值得部署，要看目标工作负载的端到端结果。仓库包含通用窗口算子的迁移与故障修复记录，以及订单示例的交易数据格式、预热语义、流式回放和不同规模的 GPU/CPU 实测结果。[通用迁移记录](validation/port-agent-rtx3090.json) · [纠错记录](validation/agent-repair-rtx3090.json) · [双 agent 硬件优化实测](validation/factorport-specialists-rtx3090.json) · [订单因子示例与基准](examples/order-fill-rate-spread/README.md)
+`verified` 表示所选代码通过正确性验收并完成计时。是否值得部署，要看目标工作负载的端到端结果。仓库包含通用窗口算子的迁移与故障修复记录，以及订单示例的交易数据格式、预热语义、流式回放和不同规模的 GPU/CPU 实测结果。[通用迁移记录](validation/port-agent-rtx3090.json) · [纠错记录](example/window_energy/validation/agent-repair-rtx3090.json) · [双 agent 硬件优化实测](example/order-fill-rate-spread/validation/factorport-specialists-rtx3090.json) · [订单因子示例与基准](example/order-fill-rate-spread/README.md)

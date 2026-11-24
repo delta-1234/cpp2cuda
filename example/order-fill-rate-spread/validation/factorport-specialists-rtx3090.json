@@ -26,7 +26,7 @@
     "driver_api_version": 12040
   },
   "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2021 NVIDIA Corporation\nBuilt on Sun_Mar_21_19:15:46_PDT_2021\nCuda compilation tools, release 11.3, V11.3.58\nBuild cuda_11.3.r11.3/compiler.29745058_0",
-  "seed_source": "generated/order-fill-rate",
+  "seed_source": "example/order-fill-rate-spread/generated",
   "selected_source_patch": null,
   "cpu_reference_cases": [
     "edge",
@@ -198,7 +198,7 @@
                 "tile": 1.095674472979598
               }
             },
-            "source_patch": "examples/order-fill-rate-spread/simt-trial.patch"
+            "source_patch": "example/order-fill-rate-spread/simt-trial.patch"
           }
         ],
         "status": "measured",
@@ -340,7 +340,7 @@
                 "tile": 1.0901286411159101
               }
             },
-            "source_patch": "examples/order-fill-rate-spread/tile-trial.patch"
+            "source_patch": "example/order-fill-rate-spread/tile-trial.patch"
           }
         ],
         "status": "measured",

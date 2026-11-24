@@ -1,5 +1,5 @@
---- a/generated/order-fill-rate/kernels.cu
-+++ b/generated/order-fill-rate/kernels.cu
+--- a/example/order-fill-rate-spread/generated/kernels.cu
++++ b/example/order-fill-rate-spread/generated/kernels.cu
 @@ -82,30 +82,34 @@
  __global__ void tile_kernel(const gpu::InputRow* __restrict__ input,
                              gpu::OutputRow* __restrict__ output,

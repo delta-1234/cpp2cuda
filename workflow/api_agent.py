@@ -11,6 +11,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+from example_paths import EXPECTED_OUTPUT, ORDER_EXAMPLE, SAMPLE_TICKS
 from model_api import complete, configure, endpoint, settings
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,7 +23,7 @@ Answer each turn with exactly one JSON object. You may use these actions:
 {"action":"catalog"} lists offline manuals with toolkit versions; {"action":"search","query":"shared memory","doc":"cuda-guide-11.3"}
 finds physical PDF pages. {"action":"page","doc":"cuda-guide-11.3","page":51} reads local text.
 {"action":"edit","path":"relative path","old":"exact unique substring","new":"replacement"}
-edits existing GPU implementation files under stream/ or cuda/. Read a file before editing it.
+edits existing GPU implementation files under the order example's stream/ or cuda/ directories. Read a file before editing it.
 {"action":"verify"} builds and checks both native backends against the CPU oracle.
 {"action":"benchmark","orders":[2600,32768],"repeat":1} benchmarks the verified stream revision.
 {"action":"finish","summary":"Chinese summary"} finishes after actual checks and benchmark.
@@ -41,9 +42,11 @@ def git(cwd, *args):
 
 
 def snapshot(root, work):
-    paths = [root / name for name in ("README.md", "AGENTS.md", "OrderFillRateSpread.cpp",
-                                      "factor_replay.hpp", "sample_ticks.csv", "factor_output.csv")]
-    for folder, extensions in (("cuda", SOURCE_TYPES), ("stream", SOURCE_TYPES),
+    gpu_dirs = (ORDER_EXAMPLE/"cuda", ORDER_EXAMPLE/"stream")
+    paths = [root/"README.md", root/"AGENTS.md", root/SAMPLE_TICKS, root/EXPECTED_OUTPUT]
+    paths += [root/ORDER_EXAMPLE/name for name in
+              ("README.md", "OrderFillRateSpread.cpp", "factor_replay.hpp", "packed_cpu.cpp")]
+    for folder, extensions in ((gpu_dirs[0], SOURCE_TYPES), (gpu_dirs[1], SOURCE_TYPES),
                                ("workflow", {".py", ".sh"}), ("offline_docs", {".md", ".txt"})):
         paths += [p for p in (root/folder).rglob("*") if p.is_file() and p.suffix in extensions]
     readable, editable = set(), set()
@@ -58,7 +61,7 @@ def snapshot(root, work):
         shutil.copyfile(src, target)
         if src.suffix != ".csv":
             readable.add(rel.as_posix())
-        if rel.parts[0] in ("cuda", "stream"):
+        if any(folder in rel.parents for folder in gpu_dirs):
             editable.add(rel.as_posix())
     return readable, editable
 
@@ -125,7 +128,7 @@ class Run(OfflineRun):
         self.readable, self.editable = snapshot(root, self.work)
         self.original = {p:(self.work/p).read_bytes() for p in self.editable}
         self.base_hashes = {p:hashlib.sha256((self.work/p).read_bytes()).digest()
-                            for p in self.readable | {"sample_ticks.csv","factor_output.csv"}}
+                            for p in self.readable | {SAMPLE_TICKS.as_posix(), EXPECTED_OUTPUT.as_posix()}}
         self.seen = set()
         self.verified = self.benchmarked = False
         self.results = {}
@@ -162,7 +165,8 @@ class Run(OfflineRun):
     def verify(self):
         self.verified = self.benchmarked = False
         py = sys.executable
-        changed = {p for p, base in self.original.items() if (self.work/p).read_bytes()!=base}
+        changed = {Path(p).relative_to(ORDER_EXAMPLE).as_posix() for p, base in self.original.items()
+                   if (self.work/p).read_bytes() != base}
         if "stream/aot_tile.py" in changed and os.environ.get("WITH_TRITON") != "1":
             raise RuntimeError("verification of the edited AOT tile requires WITH_TRITON=1")
         self.offline("stream-build", ["bash","workflow/build_stream.sh","runs/stream"])

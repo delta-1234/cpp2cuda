@@ -3,7 +3,7 @@
   "existing_candidate_test": {
     "run": "runs/cuda-agent-oy386ha1",
     "status": "verified",
-    "seed": "examples/window_energy/repair_fixture/window_energy.cu",
+    "seed": "example/window_energy/repair_fixture/window_energy.cu",
     "seed_sha256": "9f023e3f01857b8cf7e0bd01ba79ddfd6dec633ad26d0522a42bcc5ee5d3a0fa",
     "changes": [
       "-        int g = base - R + idx + (base != 0);",

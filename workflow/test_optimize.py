@@ -90,7 +90,7 @@ class OptimizationTests(unittest.TestCase):
         self.assertFalse(result["accepted"] or result["peer_preserved"])
 
     def test_restore_and_independent_handoff(self):
-        task = Task(None,ROOT/"examples/window_energy/task.json",[])
+        task = Task(None,ROOT/"example/window_energy/task.json",[])
         args = Namespace(inspect=False,candidate=None,profile_case="many",specialist_steps=3,specialist_trials=1,task="")
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

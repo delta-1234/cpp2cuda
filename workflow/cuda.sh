@@ -36,6 +36,10 @@ case "${1:-}" in
         ;;
     --generate-cuda)
         shift
+        if [[ ${1:-} == OrderFillRateSpread.cpp && ! -e OrderFillRateSpread.cpp ]]; then
+            shift
+            set -- example/order-fill-rate-spread/OrderFillRateSpread.cpp "$@"
+        fi
         for option in "$@"; do
             case "$option" in
                 --per-file|--no-per-file) exec "$WORKFLOW_PYTHON" workflow/generate_cuda.py "$@" ;;
@@ -45,7 +49,7 @@ case "${1:-}" in
         ;;
     --build-generated)
         shift
-        exec bash workflow/build_generated.sh "${1:-generated/order-fill-rate}" "${2:-runs/generated}" . "${CUDA_SM:-86}"
+        exec bash workflow/build_generated.sh "${1:-example/order-fill-rate-spread/generated}" "${2:-runs/generated}" example/order-fill-rate-spread "${CUDA_SM:-86}"
         ;;
     --generated)
         shift

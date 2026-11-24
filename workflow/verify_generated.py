@@ -7,6 +7,7 @@ import statistics
 import sys
 from pathlib import Path
 
+from example_paths import EXPECTED_OUTPUT, SAMPLE_TICKS
 from check import compare, edge_input
 from probe import cupti_paths
 from scale import file_info
@@ -39,7 +40,7 @@ class Evaluator:
         for path in (self.source, self.source.with_name("factor_replay.hpp")):
             shutil.copyfile(path, self.oracle/path.name)
         self.offline("oracle-build", [self.cxx, "-std=c++17", "-O3", self.source.name, "-o", "runs/cpu"], self.oracle)
-        shutil.copyfile(self.run.root/"sample_ticks.csv", self.work/"sample.csv")
+        shutil.copyfile(self.run.root/SAMPLE_TICKS, self.work/"sample.csv")
         edge_input(self.work/"edge.csv")
         with (self.work/"edge.csv").open() as src:
             header = src.readline()
@@ -55,7 +56,7 @@ class Evaluator:
             self.simulate(n, seed)
         for case in ("header-only", "warmup499", "short-window", "edge", "sample", "orders-32768", LARGE):
             self.reference(case)
-        if file_info(self.gold["sample"]) != file_info(self.run.root/"factor_output.csv"):
+        if file_info(self.gold["sample"]) != file_info(self.run.root/EXPECTED_OUTPUT):
             raise RuntimeError("CPU sample differs from frozen reference")
         if with_trace:
             self.prepare_trace()

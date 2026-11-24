@@ -63,16 +63,16 @@ def scripted_agent(system,messages):
     if "Reply with OK" in system:
         return "OK"
     initial = json.loads(messages[0]["content"])
-    assert "driver" in initial["hardware"] and "stream/scan.cu" in initial["editable"]
+    assert "driver" in initial["hardware"] and "example/order-fill-rate-spread/stream/scan.cu" in initial["editable"]
     turn = sum(m["role"]=="assistant" for m in messages)
     marker = "#error OFFLINE_AGENT_REPAIR_TEST\n"
     line = "__device__ Changes add("
     actions = [
         {"action":"read","path":"../.ssh/id_rsa"},
-        {"action":"read","path":"stream/scan.cu"},
-        {"action":"edit","path":"stream/scan.cu","old":line,"new":marker+line},
+        {"action":"read","path":"example/order-fill-rate-spread/stream/scan.cu"},
+        {"action":"edit","path":"example/order-fill-rate-spread/stream/scan.cu","old":line,"new":marker+line},
         {"action":"verify"},
-        {"action":"edit","path":"stream/scan.cu","old":marker,"new":"// Verified model API test change.\n"},
+        {"action":"edit","path":"example/order-fill-rate-spread/stream/scan.cu","old":marker,"new":"// Verified model API test change.\n"},
         {"action":"verify"},
         {"action":"benchmark","orders":[2600],"repeat":1},
         {"action":"finish","summary":"模拟端点已收到真实设备的构建诊断、验证与计时。"},
@@ -150,8 +150,8 @@ def main():
         assert DUMMY not in report_path.read_text()
         assert r["actions"][0]["error"] and r["actions"][3]["error"]
         assert len(r["results"]["median_ms"])==(10 if env["WITH_TRITON"]=="1" else 8)
-        assert "// Verified model API test change." in (repo/"stream/scan.cu").read_text()
-        assert "// Verified model API test change." not in (ROOT/"stream/scan.cu").read_text()
+        assert "// Verified model API test change." in (repo/"example/order-fill-rate-spread/stream/scan.cu").read_text()
+        assert "// Verified model API test change." not in (ROOT/"example/order-fill-rate-spread/stream/scan.cu").read_text()
         print("Full isolated API/GPU loop verified:", report_path)
 
 

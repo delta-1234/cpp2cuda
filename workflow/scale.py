@@ -11,6 +11,8 @@ import tempfile
 import time
 from pathlib import Path
 
+from example_paths import ORDER_EXAMPLE, SAMPLE_TICKS
+
 ROOT = Path(__file__).resolve().parents[1]
 MODES = ("legacy", "cpu", "simt", "tile")
 DEFAULT_SIZES = "1400,1500,1600,2000,2600,4096,8192,32768,65536,81920,98304,114688,131072,262144,524288,1048576,2097152"
@@ -59,7 +61,7 @@ class Worker:
 
 def prepare(folder, sizes, seed):
     generator = folder/"generator"
-    subprocess.run([os.getenv("CXX","c++"),"-std=c++17","-O3",ROOT/"OrderFillRateSpread.cpp","-o",generator],check=True)
+    subprocess.run([os.getenv("CXX","c++"),"-std=c++17","-O3",ROOT/ORDER_EXAMPLE/"OrderFillRateSpread.cpp","-o",generator],check=True)
     # The standalone legacy calculation supplies the oracle for every timed run.
     cases = {}
     for size in sizes:
@@ -117,7 +119,7 @@ def main():
             for mode in modes:
                 workers[mode] = Worker(exe,mode,phase=="warm")
                 if phase=="warm":
-                    workers[mode].run(ROOT/"sample_ticks.csv", folder/f"{mode}.csv")
+                    workers[mode].run(ROOT/SAMPLE_TICKS, folder/f"{mode}.csv")
             for size in sizes:
                 timings = {m:[] for m in modes}
                 for trial in range(args.repeat):

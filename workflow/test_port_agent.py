@@ -127,7 +127,7 @@ class PortTests(unittest.TestCase):
             (root/"workflow").mkdir()
             for name in ("build_port.sh","probe.py"):
                 shutil.copyfile(ROOT/"workflow"/name,root/"workflow"/name)
-            task = Task(None,ROOT/"examples/window_energy/task.json",[])
+            task = Task(None,ROOT/"example/window_energy/task.json",[])
             with patch("port_agent.ROOT",root):
                 agent = Agent(Namespace(inspect=False),{"model":"test"},task)
             agent.audit["observations"] = {"gpu":{},"toolchain":{}}
@@ -149,7 +149,7 @@ class PortTests(unittest.TestCase):
 @unittest.skipUnless(GPU, "use --gpu on the CUDA node")
 class GPURepairTests(unittest.TestCase):
     def test_repair_loop_and_turn_limit_rollback(self):
-        project = ROOT/"examples/window_energy"
+        project = ROOT/"example/window_energy"
         args = Namespace(inspect=False, stage_timeout=180, max_steps=4, model_timeout=60, task="regression",
                          candidate=project/"repair_fixture",extra_orders=[])
         agent = Agent(args,{"model":"scripted-controller-test"},Task(None,project/"task.json",[]))

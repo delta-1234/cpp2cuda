@@ -1,5 +1,5 @@
---- a/generated/order-fill-rate/kernels.cu
-+++ b/generated/order-fill-rate/kernels.cu
+--- a/example/order-fill-rate-spread/generated/kernels.cu
++++ b/example/order-fill-rate-spread/generated/kernels.cu
 @@ -47,34 +47,52 @@
      out.alpha = (ask_volume == 0 || bid_volume == 0) ? quiet_nan() : (ask_rate - bid_rate);
  }

@@ -13,6 +13,7 @@ import tempfile
 import time
 from pathlib import Path
 
+from example_paths import EXPECTED_OUTPUT, ORDER_EXAMPLE, SAMPLE_TICKS
 from check import compare, edge_input, materialize
 from probe import inventory
 
@@ -71,7 +72,7 @@ def native_build(name, env, device, out):
             args += [f"-gencode=arch=compute_{target},code=compute_{target}"]
     if name == "shared_tile":
         args.append("-DSHARED_TILE")
-    args += [ROOT/"cuda/native.cu", "-o", out/name]
+    args += [ROOT/ORDER_EXAMPLE/"cuda/native.cu", "-o", out/name]
     execute(args)
     return [out/name], list(map(str, args))
 
@@ -91,10 +92,10 @@ def workflow(args, out, report):
         raise RuntimeError("missing C++17 host compiler")
     sdk = Path("/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
     flags = ["-isysroot", sdk] if platform.system() == "Darwin" and sdk.exists() else []
-    execute([cc, "-std=c++17", "-O2", *flags, ROOT/"OrderFillRateSpread.cpp", "-o", cpu])
+    execute([cc, "-std=c++17", "-O2", *flags, ROOT/ORDER_EXAMPLE/"OrderFillRateSpread.cpp", "-o", cpu])
     main = Case(cpu, args.input, out/"main")
-    if args.input.resolve() == (ROOT/"sample_ticks.csv").resolve():
-        compare(ROOT/"factor_output.csv", main.ref)
+    if args.input.resolve() == (ROOT/SAMPLE_TICKS).resolve():
+        compare(ROOT/EXPECTED_OUTPUT, main.ref)
     edge_csv = out/"edge_ticks.csv"
     edge_input(edge_csv)
     edge = Case(cpu, edge_csv, out/"edge")
@@ -113,7 +114,7 @@ def workflow(args, out, report):
     report["cpu"] = {"status": "verified", "rows": main.rows, "edge_rows": edge.rows,
                      "empty_rows": empty.rows, "wall_ms": cpu_times, "median_wall_ms": cpu_ms}
     packed_cpu = out/"packed_cpu"
-    execute([cc, "-std=c++17", "-O3", *flags, ROOT/"workflow/packed_cpu.cpp", "-o", packed_cpu])
+    execute([cc, "-std=c++17", "-O3", *flags, ROOT/ORDER_EXAMPLE/"packed_cpu.cpp", "-o", packed_cpu])
     packed_raw = main.folder/"packed_cpu.bin"
     packed_times = [float(execute([packed_cpu, main.windows, packed_raw])) for _ in range(args.repeat)]
     packed_csv = main.folder/"packed_cpu.csv"
@@ -131,7 +132,7 @@ def workflow(args, out, report):
                     result.update(status="unavailable", reason=probe["output"])
                     continue
                 script = "cutile_backend.py" if name == "cutile" else "triton_tile.py"
-                cmd = [sys.executable, ROOT/"cuda"/script]
+                cmd = [sys.executable, ROOT/ORDER_EXAMPLE/"cuda"/script]
             else:
                 if not env["nvcc"]:
                     result.update(status="unavailable", reason="nvcc not found")
@@ -169,7 +170,7 @@ def workflow(args, out, report):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--input", type=Path, default=ROOT/"sample_ticks.csv")
+    p.add_argument("--input", type=Path, default=ROOT/SAMPLE_TICKS)
     p.add_argument("--device", type=int, default=0, help="visible CUDA device ordinal")
     p.add_argument("--repeat", type=int, default=3)
     p.add_argument("--probe-only", action="store_true")

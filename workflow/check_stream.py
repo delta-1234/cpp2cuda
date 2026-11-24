@@ -6,6 +6,7 @@ import tempfile
 from pathlib import Path
 
 from check import edge_input
+from example_paths import EXPECTED_OUTPUT, SAMPLE_TICKS
 from scale import ROOT, Worker, file_info
 
 
@@ -19,7 +20,7 @@ def main():
     edge_input(edge)
     empty = run/"empty.csv"
     many = run/"many.csv"
-    with (ROOT/"sample_ticks.csv").open() as src, many.open("w") as dst:
+    with (ROOT/SAMPLE_TICKS).open() as src, many.open("w") as dst:
         header = src.readline()
         empty.write_text(header)
         dst.write(header)
@@ -60,11 +61,11 @@ def main():
     workers = {}
     try:
         for mode in modes: workers[mode] = Worker(args.exe.resolve(),mode,True)
-        for src in [ROOT/"sample_ticks.csv",edge,*cuts,many,empty,edge]:
+        for src in [ROOT/SAMPLE_TICKS,edge,*cuts,many,empty,edge]:
             gold = run/"cpu-ref.csv"
             subprocess.run([args.exe,"legacy",src,gold],check=True,stdout=subprocess.DEVNULL)
             sha,rows = file_info(gold)
-            if src.name=="sample_ticks.csv" and sha!=file_info(ROOT/"factor_output.csv")[0]:
+            if src.name=="sample_ticks.csv" and sha!=file_info(ROOT/EXPECTED_OUTPUT)[0]:
                 raise ValueError("sample differs from repository fixture")
             for mode,w in workers.items():
                 dst = run/f"{mode}.csv"
