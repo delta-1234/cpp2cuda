@@ -38,7 +38,7 @@ case "${1:-}" in
                 --per-file|--no-per-file) exec "$WORKFLOW_PYTHON" workflow/generate_cuda.py "$@" ;;
             esac
         done
-        exec "$WORKFLOW_PYTHON" workflow/port_agent.py "$@"
+        exec "$WORKFLOW_PYTHON" workflow/port_agent.py --optimize "$@"
         ;;
     --build-generated)
         shift

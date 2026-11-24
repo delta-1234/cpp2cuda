@@ -40,8 +40,17 @@ def driver_devices():
             call("cuDeviceTotalMem_v2", C.byref(memory), device)
             bus = C.create_string_buffer(32)
             call("cuDeviceGetPCIBusId", bus, len(bus), device)
+            # CUdevice_attribute values from the Toolkit cuda.h public driver ABI.
+            attributes = {}
+            for key, attr in {"sm_count":16, "warp_size":10, "max_threads_per_block":1,
+                              "max_threads_per_sm":39, "shared_bytes_per_block":8,
+                              "shared_bytes_per_sm":81, "optin_shared_bytes_per_block":97,
+                              "registers_per_sm":82, "l2_bytes":38, "memory_bus_bits":37}.items():
+                value = C.c_int()
+                if lib.cuDeviceGetAttribute(C.byref(value), attr, device) == 0:
+                    attributes[key] = value.value
             info["devices"].append({"ordinal": ordinal, "name": name.value.decode(), "pci_bus_id": bus.value.decode(),
-                                    "cc": f"{major.value}{minor.value}", "memory_bytes": memory.value})
+                                    "cc": f"{major.value}{minor.value}", **attributes, "memory_bytes": memory.value})
     except (AttributeError, OSError, RuntimeError) as exc:
         info["error"] = str(exc)
     return info
@@ -71,7 +80,7 @@ def toolchain(preferred=None):
         info["nvcc_arches"] = command([nvcc, "--list-gpu-arch"])
     info["runtime_headers"] = [str(h) for root in dict.fromkeys(roots)
                                for h in [root/"include/cuda_runtime.h", *root.glob("targets/*/include/cuda_runtime.h")] if h.is_file()]
-    for name in ("ptxas", "tileiras", "compute-sanitizer"):
+    for name in ("ptxas", "tileiras", "compute-sanitizer", "nsys"):
         path = next((str(p/"bin"/name) for p in roots if os.access(p/"bin"/name, os.X_OK)), None) or shutil.which(name)
         info[name] = path
     return info

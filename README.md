@@ -66,6 +66,25 @@ bash workflow/cuda.sh --agent --source examples/window_energy/window_energy.cpp
 
 `--generate-cuda` 默认使用上述 agent。`--generate-cuda OrderFillRateSpread.cpp --per-file` 可复现以前逐文件生成的流程。单独的 `--agent '维护任务'` 继续用于修改仓库中已存在的实现。
 
+### 按实际 GPU 分别优化 SIMT 和 Tile
+
+`--generate-cuda` 默认在转写验收后依次启动 SIMT 和 Tile 两个专项 agent。用 `--no-optimize` 只做转写、验收和端到端测试。通用 `--agent --source` 或 `--agent --spec` 配合 `--optimize` 可使用相同的专项流程。已有可编译的候选可以直接作为起点。
+
+```sh
+# 在 计算节点 上复用已安装的开源 Hugging Face ReAct 后端和仓库的模型 API
+WORKFLOW_PYTHON="$(command -v python3)" \
+  bash workflow/cuda.sh --generate-cuda OrderFillRateSpread.cpp \
+    --candidate generated/order-fill-rate --backend transformers --profile-case orders-131072
+```
+
+两个 agent 各有独立对话和最多 12 轮工具调用决策，可用 `--specialist-steps` 调整。深度搜索可加 `--specialist-trials 3 --specialist-steps 24`，要求每个角色至少实际验证、测量三种不同的候选版本。SIMT agent 重点检查线程到数据的映射、合并访问、分支、warp 归约及寄存器压力。Tile agent 重点检查分块形状、共享内存复用、bank conflict、同步和尾块。两者都能看到目标卡的 SM 数、warp 大小、线程与共享内存上限、L2 容量，以及实测的内核启动次数、块形状、每线程寄存器数和共享内存用量。
+
+`trial` 接收本次改动的硬件依据，然后重建、全量验证、测端到端时间，再运行本地 Nsight Systems。默认选择 CPU 基准中耗时最长的用例，也可以用 `--profile-case` 指定能代表生产负载且会启动 GPU 的用例。两个后端在同一卡上交替采样，各采三次，内核指标为该进程所有 CUDA 内核运行时间之和的中位数。冷启动端到端基准在独立的无 profiler 进程中测量，包含文件 I/O 和 CUDA 初始化。
+
+默认保留条件为目标内核中位数至少下降 3%，另一种内核及每个基准用例上两个 GPU 模式的端到端耗时增幅均在 5% 以内。较慢或错误的草稿可供诊断，下一位 agent 从已选版本开始。若某个 agent 未能测完一个新版本，报告将标为未完成，并保留通过验证的候选。查看 `report.json` 的 `optimization.baseline`、`roles.simt.trials`、`roles.tile.trials` 和 `optimization.selected`，可核对每个提案的假设、源码检查点、测量值和取舍。
+
+`--backend builtin` 是默认的轻量工具循环。`--backend transformers` 使用 计算节点 上已有的 Transformers 4.41.2 `ReactJsonAgent` 管理动作解析、工具调度与对话记忆。两种后端均读取常规 API 配置，通过同一控制器离线执行工具；可用的 Python 环境需预先准备好对应运行库。
+
 ### 诊断和修复已有 CUDA 候选
 
 ```sh

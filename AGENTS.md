@@ -4,6 +4,8 @@
 
 编程手册位于 `offline_docs/nvidia/`，包含原版 PDF、可按页检索的文本和 SHA-256 清单。资料准备使用 `workflow/prepare_docs.py`，运行中的 agent 只查询本地副本，先核对资料版本与工具链。工具协议、通用输入输出约定和示例参见 README。收到错误时可通过 `diagnostics`、`log` 和 `test_case` 定位失败，修改后全量验证。检查点与回退语义详见 `offline_docs/agent-repair.md`。
 
+因子入口默认在完整转写后运行两个专项优化 agent。通用任务用 `--optimize` 开启，已有候选通过 `--candidate` 提供。先用目标设备建立正确性、端到端和 Nsight 内核基准，再依次运行 SIMT 与 Tile 会话。每次 `trial` 须说明基于硬件的优化假设，控制器以同一用例实测选版。检查 `report.json` 的 `optimization` 字段。可用 `--backend transformers` 选择预装的 Hugging Face ReAct 工具运行时，命令见 README。
+
 以下步骤描述订单因子及既有实现的维护和专项基准。`--agent '维护任务'` 使用这一流程。CPU 判定规则在 `OrderFillRateSpread.cpp` 和 `factor_replay.hpp`，窗口归约的验收入口为 `workflow/run.py`，流式路径的验收入口为 `workflow/check_stream.py` 和 `workflow/scale.py`。
 
 ### 1. 先盘点环境

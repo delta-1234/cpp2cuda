@@ -1,4 +1,6 @@
 __pycache__/
 runs/
 order_fill_rate_spread
-/.env
+.env
+.env.*
+!/.env.example

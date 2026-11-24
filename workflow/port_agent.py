@@ -333,34 +333,36 @@ class Agent(OfflineRun):
                    "contract":contract,"reference_sources":list(self.task.files),"entry":self.task.entry,
                    "cases":"built-in factor suite" if self.task.factor else self.task.cases,
                    "fixtures":self.task.fixtures,"initial_candidate":sorted(p.name for p in self.files.iterdir())}
-        messages = [{"role":"user","content":json.dumps(initial,ensure_ascii=False)}]
-        for step in range(1,self.args.max_steps+1):
-            reply = self.scrub(complete(self.cfg,SYSTEM,messages,stream=True,timeout=self.args.model_timeout))
-            (self.dir/f"reply-{step:02d}.txt").write_text(reply)
+        done = lambda: self.audit["status"] in ("verified","analyzed","blocked")
+        self.dialog("port", SYSTEM, initial, self.args.max_steps, self.act, done)
+        if not done():
+            self.recover_at_limit()
+
+    def dialog(self, role, system, initial, turns, act, done):
+        backend = getattr(self.args, "backend", "builtin")
+        self.audit["backend"] = backend
+
+        def model(step, prompt, messages):
+            reply = self.scrub(complete(self.cfg,prompt,messages,stream=True,timeout=self.args.model_timeout))
+            prefix = "" if role == "port" else role + "-"
+            (self.dir/f"{prefix}reply-{step:02d}.txt").write_text(reply)
+            return reply
+
+        def dispatch(step, actions):
             observations = []
-            try:
-                actions = decode(reply)
-                self.repair.passed("decode")
-            except (ValueError,TypeError) as exc:
-                actions = []
-                incident = self.repair.failure("decode",str(exc))
-                observations.append({"error":str(exc),"incident":incident["id"],"occurrences":incident["count"],
-                                     "next":"Return only a JSON tool call or the raw write block."})
-                self.audit["actions"].append({"turn":step,"tool":"decode","error":str(exc)})
-                self.record()
             for a in actions:
-                entry = {"turn":step, **{k:v for k,v in a.items() if k not in ("code","summary","input","old","new")}}
+                entry = {"role":role,"turn":step, **{k:v for k,v in a.items() if k not in ("code","summary","input","old","new")}}
                 print(f"[{step}] {a['tool']} {a.get('topic',a.get('path',''))}",flush=True)
                 previous_commands = len(self.audit.get("commands",[]))
                 if self.evaluator is not None: self.evaluator.last_case = None
                 try:
-                    result = self.act(a)
+                    result = act(a)
                     observations.append({"tool":a["tool"],"result":result})
                     self.repair.passed(a["tool"],{"case":a.get("case"),"mode":a.get("mode")})
                 except (OSError,RuntimeError,KeyError,ValueError,TypeError) as exc:
                     entry["error"] = self.scrub(str(exc))[-5000:]
                     commands = self.audit.get("commands",[])[previous_commands:]
-                    target = getattr(self.evaluator,"last_case",None) if a["tool"] in ("verify","test_case") else None
+                    target = getattr(self.evaluator,"last_case",None) if a["tool"] in ("verify","test_case","trial") else None
                     incident = self.repair.failure(a["tool"],entry["error"],target,commands[-1]["log"] if commands else None)
                     incident["source_sha256"] = self.repair.files()
                     hint = {"incident":incident["id"],"occurrences":incident["count"],"log":incident["log"],
@@ -370,13 +372,37 @@ class Agent(OfflineRun):
                         hint.update(loop=incident["loop"],next="Re-read the relevant log/source, change the hypothesis, or restore a checkpoint.")
                     observations.append({"tool":a["tool"],"error":entry["error"],"repair":hint})
                 with (self.dir/"tools.jsonl").open("a") as log:
-                    log.write(self.scrub(json.dumps({"turn":step,**observations[-1]},ensure_ascii=False))+"\n")
+                    log.write(self.scrub(json.dumps({"role":role,"turn":step,**observations[-1]},ensure_ascii=False))+"\n")
                 self.audit["actions"].append(entry)
                 self.record()
-                if self.audit["status"] in ("verified","analyzed","blocked"): return
+                if done(): break
                 if "error" in entry: break
+            return observations
+
+        def decode_failure(step, exc):
+            diagnostic = self.scrub(str(exc))[:2000]
+            incident = self.repair.failure("decode",diagnostic)
+            self.audit["actions"].append({"role":role,"turn":step,"tool":"decode","error":diagnostic})
+            self.record()
+            return [{"error":diagnostic,"incident":incident["id"],"next":"Return a JSON tool call or raw write block."}]
+
+        if backend == "transformers":
+            from dialog import transformers_dialog
+            transformers_dialog(system, initial, turns, model, decode, dispatch, done, decode_failure)
+            return
+        messages = [{"role":"user","content":json.dumps(initial,ensure_ascii=False)}]
+        for step in range(1,turns+1):
+            reply = model(step,system,messages)
+            try:
+                actions = decode(reply)
+                self.repair.passed("decode")
+            except (ValueError,TypeError) as exc:
+                observations = decode_failure(step,exc)
+            else:
+                observations = dispatch(step,actions)
+            if done(): return
             messages.extend([{"role":"assistant","content":reply},{"role":"user","content":self.scrub(json.dumps(observations,ensure_ascii=False))}])
-        self.recover_at_limit()
+
 
 
 def main():
@@ -392,7 +418,14 @@ def main():
     p.add_argument("--max-steps","--attempts",type=int,default=26)
     p.add_argument("--stage-timeout",type=int,default=300)
     p.add_argument("--model-timeout",type=int,default=600)
+    p.add_argument("--backend", choices=["builtin","transformers"], default="builtin")
+    p.add_argument("--optimize", action=argparse.BooleanOptionalAction, default=False)
+    p.add_argument("--specialist-steps", type=int, default=12, help="independent model turns per optimizer")
+    p.add_argument("--specialist-trials", type=int, default=1, help="minimum distinct measured candidates per optimizer")
+    p.add_argument("--profile-case", help="representative case for Nsight profiling")
     args = p.parse_args()
+    if args.optimize and args.inspect: p.error("--optimize needs a port or a candidate")
+    if min(args.specialist_steps,args.specialist_trials) < 1: p.error("specialist limits must be positive")
     if min(args.max_steps,args.model_timeout,args.stage_timeout)<1: p.error("limits must be positive")
     if args.source and args.source_option: p.error("provide source once")
     try:
@@ -409,7 +442,11 @@ def main():
     run = Agent(args,cfg,task)
     print(run.dir,flush=True)
     try:
-        run.execute()
+        if args.optimize:
+            from optimize import optimize
+            optimize(run)
+        else:
+            run.execute()
     except (OSError,RuntimeError,ValueError) as exc:
         run.audit.update(status="failed",error=run.scrub(str(exc)))
         print(run.audit["error"],file=sys.stderr)
