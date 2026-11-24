@@ -90,7 +90,7 @@ class OfflineRun:
         log = self.dir / f"{self.log_index:02d}-{name}.log"
         # The parent alone owns provider credentials. Children see only the compiler/GPU environment.
         env = {k:os.environ[k] for k in ("PATH","CUDA_HOME","CUDA_PATH","CUDA_SM","CUDA_VISIBLE_DEVICES",
-               "CXX","NVCC_CCBIN","WITH_TRITON","WORKFLOW_PYTHON","LD_LIBRARY_PATH","LANG") if k in os.environ}
+               "CXX","NVCC_CCBIN","NSYS","WITH_TRITON","WORKFLOW_PYTHON","LD_LIBRARY_PATH","LANG") if k in os.environ}
         env.update(self.compiler_env)
         env.update(PIP_NO_INDEX="1", PIP_DISABLE_PIP_VERSION_CHECK="1", PYTHONNOUSERSITE="1")
         cmd = ["unshare","-Urnmpf","--mount-proc","--","bash",str(ROOT/"workflow/agent_jail.sh"),
@@ -99,10 +99,16 @@ class OfflineRun:
             proc = subprocess.Popen(cmd, stdout=f, stderr=subprocess.STDOUT, env=env, start_new_session=True)
             try:
                 code = proc.wait(timeout=self.args.stage_timeout)
-            except subprocess.TimeoutExpired:
-                os.killpg(proc.pid, signal.SIGKILL)
-                proc.wait()
-                raise RuntimeError(f"{name} timed out; see {log.name}")
+            except subprocess.TimeoutExpired as exc:
+                raise RuntimeError(f"{name} timed out; see {log.name}") from exc
+            finally:
+                # Each stage owns a process group outside the controller's terminal session.
+                if proc.returncode is None:
+                    try:
+                        os.killpg(proc.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    proc.wait()
         with log.open("rb") as f:
             f.seek(max(0, log.stat().st_size-tail_bytes))
             tail = self.scrub(f.read().decode(errors="replace").strip())

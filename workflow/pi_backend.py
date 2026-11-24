@@ -109,7 +109,8 @@ async def session(binary, work, cfg, names, system, initial, turns, timeout, dis
                         if (model.get("provider"), model.get("id")) != ("factorport", cfg["model"]):
                             raise RuntimeError("Pi did not select the configured provider and model")
                         ready = True
-                        await send({"type": "prompt", "message": json.dumps(initial, ensure_ascii=False)})
+                        task = {**initial, "model_turn_budget": turns}
+                        await send({"type": "prompt", "message": json.dumps(task, ensure_ascii=False)})
                         deadline = clock() + timeout
                 elif kind == "turn_start":
                     if not ready:
@@ -134,7 +135,8 @@ async def session(binary, work, cfg, names, system, initial, turns, timeout, dis
                         failed_action = "error" in result
                         if done():
                             return
-                    value = scrub(json.dumps(result, ensure_ascii=False))
+                    feedback = {**result, "model_turns_remaining_after_this_turn": turns - step}
+                    value = scrub(json.dumps(feedback, ensure_ascii=False))
                     await send({"type": "extension_ui_response", "id": e["id"], "value": value})
                     deadline = clock() + timeout
                 elif kind == "message_end":

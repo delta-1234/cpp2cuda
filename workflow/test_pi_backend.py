@@ -117,7 +117,11 @@ class PiRpcTests(unittest.TestCase):
                     self.assertEqual((path, auth, req["model"]), ("/v1/chat/completions", "Bearer test-secret", "local-model"))
                     self.assertEqual({t["function"]["name"] for t in req["tools"]}, {"fp_"+name for name in TOOLS[role]})
                 self.assertIn("probe before finishing", json.dumps(requests[1][2]["messages"]))
-                self.assertIn("observed", json.dumps(requests[2][2]["messages"]))
+                history = requests[2][2]["messages"]
+                prompt = next(m["content"][0]["text"] for m in history if m["role"] == "user")
+                self.assertEqual(json.loads(prompt)["model_turn_budget"], 4)
+                self.assertEqual(json.loads(history[-1]["content"]),
+                                 {"result": "observed", "model_turns_remaining_after_this_turn": 2})
 
     def test_provider_error_stops_without_dispatch(self):
         with model_server([]) as (cfg, requests):

@@ -474,6 +474,10 @@ def main():
             optimize(run)
         else:
             run.execute()
+    except KeyboardInterrupt:
+        run.audit.update(status="interrupted", summary="Run interrupted. See checkpoints for verified revisions.")
+        print(run.audit["summary"], file=sys.stderr)
+        return 130
     except (OSError,RuntimeError,ValueError) as exc:
         run.audit.update(status="failed",error=run.scrub(str(exc)))
         print(run.audit["error"],file=sys.stderr)

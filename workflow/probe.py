@@ -83,6 +83,10 @@ def toolchain(preferred=None):
     for name in ("ptxas", "tileiras", "compute-sanitizer", "nsys", "cuobjdump"):
         path = next((str(p/"bin"/name) for p in roots if os.access(p/"bin"/name, os.X_OK)), None) or shutil.which(name)
         info[name] = path
+    if os.environ.get("NSYS"):
+        info["nsys"] = shutil.which(os.environ["NSYS"])
+    if info["nsys"]:
+        info["nsys_version"] = command([info["nsys"], "--version"])
     return info
 
 

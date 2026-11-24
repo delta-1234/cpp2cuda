@@ -1,0 +1,808 @@
+{
+  "backend": "pi",
+  "pi_version": "1.6.0",
+  "model": "qwen3.8-max",
+  "protocol": "chat",
+  "device": {
+    "devices": [
+      {
+        "ordinal": 0,
+        "name": "NVIDIA GeForce RTX 3090",
+        "cc": "86",
+        "sm_count": 82,
+        "warp_size": 32,
+        "max_threads_per_block": 1024,
+        "max_threads_per_sm": 1536,
+        "shared_bytes_per_block": 49152,
+        "shared_bytes_per_sm": 102400,
+        "optin_shared_bytes_per_block": 101376,
+        "registers_per_sm": 65536,
+        "l2_bytes": 6291456,
+        "memory_bus_bits": 384,
+        "memory_bytes": 25430786048
+      }
+    ],
+    "driver_api_version": 12040
+  },
+  "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2021 NVIDIA Corporation\nBuilt on Sun_Mar_21_19:15:46_PDT_2021\nCuda compilation tools, release 11.3, V11.3.58\nBuild cuda_11.3.r11.3/compiler.29745058_0",
+  "nsight": "NVIDIA Nsight Systems version 2022.1.3.3-1c7b5f7",
+  "input_manifest": "examples/window_energy/task.json",
+  "input_sha256": {
+    "window_energy.cpp": "bd73d929d786ae162c249efbb1679e2f27f414ee68320465389c277575188891"
+  },
+  "inspect": {
+    "run": "cuda-agent-1ylyo581",
+    "status": "analyzed",
+    "calls": [
+      {
+        "turn": 1,
+        "tool": "probe"
+      },
+      {
+        "turn": 1,
+        "tool": "probe"
+      },
+      {
+        "turn": 2,
+        "tool": "finish"
+      }
+    ]
+  },
+  "migration": {
+    "run": "cuda-agent-ndsx1ldx",
+    "started_from_cpp_only": true,
+    "calls": [
+      {
+        "turn": 1,
+        "tool": "probe"
+      },
+      {
+        "turn": 1,
+        "tool": "probe"
+      },
+      {
+        "turn": 1,
+        "tool": "read"
+      },
+      {
+        "turn": 2,
+        "tool": "select_toolchain"
+      },
+      {
+        "turn": 2,
+        "tool": "baseline"
+      },
+      {
+        "turn": 2,
+        "tool": "write"
+      },
+      {
+        "turn": 3,
+        "tool": "build"
+      },
+      {
+        "turn": 4,
+        "tool": "verify"
+      },
+      {
+        "turn": 5,
+        "tool": "benchmark"
+      },
+      {
+        "turn": 6,
+        "tool": "finish"
+      }
+    ],
+    "selected_before_pause": "86795b5bd555feeb",
+    "source_sha256": {
+      "window_energy_cuda.cu": "17346bc1c5ad8130e531570efb5cbded2a94d292bf06534fee0a82c5b7cd4959"
+    }
+  },
+  "optimization": {
+    "run": "cuda-agent-tb7q84yx",
+    "resumed_from": "runs/cuda-agent-ndsx1ldx/checkpoints/86795b5bd555feeb",
+    "status": "verified",
+    "case": "many",
+    "policy": {
+      "target_kernel_gain_min": 0.03,
+      "peer_and_end_to_end_regression_max": 0.05
+    },
+    "trials_required_per_role": 1,
+    "baseline": {
+      "checkpoint": "86795b5bd555feeb",
+      "end_to_end_median_ms": {
+        "singleton": {
+          "cpu": 2.491,
+          "simt": 228.393,
+          "tile": 230.892
+        },
+        "tail": {
+          "cpu": 2.391,
+          "simt": 222.993,
+          "tile": 219.031
+        },
+        "many": {
+          "cpu": 3.879,
+          "simt": 203.767,
+          "tile": 212.233
+        }
+      },
+      "kernels": {
+        "simt": {
+          "median_us": 5.28,
+          "samples_us": [
+            5.312,
+            5.28,
+            5.28
+          ],
+          "capture_attempts": [
+            1,
+            1,
+            1
+          ],
+          "kernels": [
+            {
+              "name": "simt_window_kernel(const int *, int *, int)",
+              "launches": 1,
+              "us": 2.656,
+              "block": [
+                256,
+                1,
+                1
+              ],
+              "registers_per_thread": 16,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                33,
+                1,
+                1
+              ]
+            },
+            {
+              "name": "fill_base_kernel(int *, int)",
+              "launches": 1,
+              "us": 2.624,
+              "block": [
+                256,
+                1,
+                1
+              ],
+              "registers_per_thread": 16,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                33,
+                1,
+                1
+              ]
+            }
+          ],
+          "entry_sass_sha256": [
+            "0df43f3b8e4000dbd4b8d6c23c5229a8ae115151ebdfabc1a6d2997c739f60fc",
+            "73fc7a7eb1977d1f27b8eee81155d4a10f525188c31d7a2feaa8626b2e3c55b4"
+          ],
+          "launch_config_sha256": "c84969733239d47dca5ae145fad4b57b15a3334e76b510de3af86d4b361ec348"
+        },
+        "tile": {
+          "median_us": 5.6,
+          "samples_us": [
+            5.6,
+            5.536,
+            5.632
+          ],
+          "capture_attempts": [
+            1,
+            1,
+            1
+          ],
+          "kernels": [
+            {
+              "name": "tile_window_kernel(const int *, int *, int)",
+              "launches": 1,
+              "us": 2.912,
+              "block": [
+                256,
+                1,
+                1
+              ],
+              "registers_per_thread": 16,
+              "static_shared_bytes": 1040,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                33,
+                1,
+                1
+              ]
+            },
+            {
+              "name": "fill_base_kernel(int *, int)",
+              "launches": 1,
+              "us": 2.688,
+              "block": [
+                256,
+                1,
+                1
+              ],
+              "registers_per_thread": 16,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                33,
+                1,
+                1
+              ]
+            }
+          ],
+          "entry_sass_sha256": [
+            "73fc7a7eb1977d1f27b8eee81155d4a10f525188c31d7a2feaa8626b2e3c55b4",
+            "743138c895aefd9dfd2e117d2d447165a65e1afa593e2bf7811fae2134fd59e9"
+          ],
+          "launch_config_sha256": "b67f2fd0cc6776736673d2e29473fdfe7caf3bf8b14748d8f0065ffa2b1384cb"
+        }
+      }
+    },
+    "roles": {
+      "simt": {
+        "status": "measured",
+        "start": "86795b5bd555feeb",
+        "selected": "c67d2d6d2724dea4",
+        "calls": [
+          {
+            "turn": 1,
+            "tool": "read"
+          },
+          {
+            "turn": 1,
+            "tool": "diagnostics"
+          },
+          {
+            "turn": 2,
+            "tool": "write"
+          },
+          {
+            "turn": 3,
+            "tool": "build"
+          },
+          {
+            "turn": 4,
+            "tool": "trial"
+          }
+        ],
+        "trials": [
+          {
+            "hypothesis": "Fuse the fill into the SIMT stencil: because s[j]=((j%17)-8)^2 is a pure function of the index, each lane can regenerate its own 5-tap window in registers (constant-modulus via multiply-shift, no divergence beyond the two boundary lanes) instead of loading a materialised array. This deletes the entire fill_base_kernel launch from the SIMT path — 2.624 us of the incumbent 5.28 us median, i.e. ~50% of the measured kernel time — plus its global store/load round trip and one L2 working set. Lane->data mapping stays contiguous so the single remaining store is a fully coalesced 128-byte warp segment; register pressure stays near 16 regs/thread so occupancy is unchanged. Tile path keeps fill_base_kernel + tile_window_kernel with identical SASS and launch geometry.",
+            "against": "86795b5bd555feeb",
+            "accepted": true,
+            "target_changed": true,
+            "peer_preserved": true,
+            "target_kernel_ratio": 0.5272727272727272,
+            "peer_kernel_ratio": 1.022857142857143,
+            "end_to_end_ratios": {
+              "singleton": {
+                "simt": 0.7088658584107219,
+                "tile": 0.7301552240874521
+              },
+              "tail": {
+                "simt": 0.7264891723058572,
+                "tile": 0.716784382119426
+              },
+              "many": {
+                "simt": 0.8535925836862691,
+                "tile": 0.6578194719954013
+              }
+            },
+            "checkpoint": "c67d2d6d2724dea4",
+            "end_to_end_median_ms": {
+              "singleton": {
+                "cpu": 2.615,
+                "simt": 161.9,
+                "tile": 168.587
+              },
+              "tail": {
+                "cpu": 2.672,
+                "simt": 162.002,
+                "tile": 156.998
+              },
+              "many": {
+                "cpu": 3.965,
+                "simt": 173.934,
+                "tile": 139.611
+              }
+            },
+            "kernels": {
+              "simt": {
+                "median_us": 2.784,
+                "samples_us": [
+                  2.719,
+                  2.816,
+                  2.784
+                ],
+                "capture_attempts": [
+                  1,
+                  1,
+                  1
+                ],
+                "kernels": [
+                  {
+                    "name": "simt_window_kernel(int *, int)",
+                    "launches": 1,
+                    "us": 2.784,
+                    "block": [
+                      256,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 16,
+                    "static_shared_bytes": 0,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      33,
+                      1,
+                      1
+                    ]
+                  }
+                ],
+                "entry_sass_sha256": [
+                  "797b1858bd3e4fb4c1bdce79d5ea61dddb656899299a3de7b076757081bced9d"
+                ],
+                "launch_config_sha256": "4ff4b18c47cbe0724bdd18ced0d3d29dccdbb894e620629becae19976735c07b"
+              },
+              "tile": {
+                "median_us": 5.728,
+                "samples_us": [
+                  5.728,
+                  6.24,
+                  5.536
+                ],
+                "capture_attempts": [
+                  1,
+                  1,
+                  1
+                ],
+                "kernels": [
+                  {
+                    "name": "tile_window_kernel(const int *, int *, int)",
+                    "launches": 1,
+                    "us": 3.04,
+                    "block": [
+                      256,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 16,
+                    "static_shared_bytes": 1040,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      33,
+                      1,
+                      1
+                    ]
+                  },
+                  {
+                    "name": "fill_base_kernel(int *, int)",
+                    "launches": 1,
+                    "us": 2.688,
+                    "block": [
+                      256,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 16,
+                    "static_shared_bytes": 0,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      33,
+                      1,
+                      1
+                    ]
+                  }
+                ],
+                "entry_sass_sha256": [
+                  "73fc7a7eb1977d1f27b8eee81155d4a10f525188c31d7a2feaa8626b2e3c55b4",
+                  "743138c895aefd9dfd2e117d2d447165a65e1afa593e2bf7811fae2134fd59e9"
+                ],
+                "launch_config_sha256": "b67f2fd0cc6776736673d2e29473fdfe7caf3bf8b14748d8f0065ffa2b1384cb"
+              }
+            }
+          }
+        ]
+      },
+      "tile": {
+        "status": "measured",
+        "start": "c67d2d6d2724dea4",
+        "selected": "c67d2d6d2724dea4",
+        "calls": [
+          {
+            "turn": 1,
+            "tool": "read"
+          },
+          {
+            "turn": 1,
+            "tool": "diagnostics"
+          },
+          {
+            "turn": 1,
+            "tool": "experiment"
+          },
+          {
+            "turn": 2,
+            "tool": "edit"
+          },
+          {
+            "turn": 2,
+            "tool": "edit"
+          },
+          {
+            "turn": 2,
+            "tool": "edit"
+          },
+          {
+            "turn": 3,
+            "tool": "build"
+          },
+          {
+            "turn": 3,
+            "tool": "read"
+          },
+          {
+            "turn": 4,
+            "tool": "trial"
+          }
+        ],
+        "trials": [
+          {
+            "hypothesis": "Tile path: fuse the base-sequence generation into the cooperative shared-memory staging so the tile block regenerates its 256+2*2 halo samples from the index in registers instead of loading them from a materialised global array. Mechanism: at the profiled size (n~8448, 33 blocks x 256 threads) the work per kernel is only a few thousand 5-tap folds, so the tile path was bound by (a) a second full grid launch (fill_base_kernel, 2.688 us of the 5.728 us median) and (b) the extra global store + reload round trip through L2 for data that is a pure function of the index. Removing the fill launch halves the kernel count and eliminates the dependent global traffic; the staging loop now issues only IMAD/LOP3 arithmetic plus conflict-free unit-stride shared stores. Genuine tiling is preserved: one __shared__ int[260] per block, cooperative halo staging, a single __syncthreads(), and each staged sample still reused by five threads through bank-conflict-free shared reads (lane t reads sh[t..t+4], so every unrolled tap touches consecutive banks). Geometry, masking of the out-of-range halos (staged as 0, reproducing the [0,n) truncation) and the gi<n tail guard are unchanged, and int indices stay well within range for n<=1e6. A free experiment confirmed bit-exact output vs the CPU oracle for n in {1,2,3,4,5,16,17,18,33,255,256,257,511,512,513,1000,8448,65535} and measured 3.949 us -> 1.890 us per iteration; a 512-wide tile with two adjacent outputs per thread and an int2 store was not faster (1.911 us), so the incumbent 256x256 tile geometry was kept. SIMT kernel source and launch branch untouched.",
+            "against": "c67d2d6d2724dea4",
+            "accepted": false,
+            "target_changed": true,
+            "peer_preserved": true,
+            "target_kernel_ratio": 0.5363128491620112,
+            "peer_kernel_ratio": 0.9888649425287357,
+            "end_to_end_ratios": {
+              "singleton": {
+                "simt": 1.0147251389746756,
+                "tile": 1.0030607342203137
+              },
+              "tail": {
+                "simt": 0.9673769459636301,
+                "tile": 1.0824278016280462
+              },
+              "many": {
+                "simt": 0.9764278404452263,
+                "tile": 1.0858170201488424
+              }
+            },
+            "checkpoint": "7324324790d1daf4",
+            "end_to_end_median_ms": {
+              "singleton": {
+                "cpu": 2.604,
+                "simt": 164.284,
+                "tile": 169.103
+              },
+              "tail": {
+                "cpu": 2.421,
+                "simt": 156.717,
+                "tile": 169.939
+              },
+              "many": {
+                "cpu": 3.787,
+                "simt": 169.834,
+                "tile": 151.592
+              }
+            },
+            "kernels": {
+              "simt": {
+                "median_us": 2.753,
+                "samples_us": [
+                  2.656,
+                  2.753,
+                  2.784
+                ],
+                "capture_attempts": [
+                  1,
+                  1,
+                  1
+                ],
+                "kernels": [
+                  {
+                    "name": "simt_window_kernel(int *, int)",
+                    "launches": 1,
+                    "us": 2.753,
+                    "block": [
+                      256,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 16,
+                    "static_shared_bytes": 0,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      33,
+                      1,
+                      1
+                    ]
+                  }
+                ],
+                "entry_sass_sha256": [
+                  "797b1858bd3e4fb4c1bdce79d5ea61dddb656899299a3de7b076757081bced9d"
+                ],
+                "launch_config_sha256": "4ff4b18c47cbe0724bdd18ced0d3d29dccdbb894e620629becae19976735c07b"
+              },
+              "tile": {
+                "median_us": 3.072,
+                "samples_us": [
+                  3.072,
+                  2.72,
+                  3.2
+                ],
+                "capture_attempts": [
+                  1,
+                  1,
+                  1
+                ],
+                "kernels": [
+                  {
+                    "name": "tile_window_kernel(int *, int)",
+                    "launches": 1,
+                    "us": 3.072,
+                    "block": [
+                      256,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 16,
+                    "static_shared_bytes": 1040,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      33,
+                      1,
+                      1
+                    ]
+                  }
+                ],
+                "entry_sass_sha256": [
+                  "3bde3211a3ccae0ac2f42269de454e4b9084e52b3c5346f166d9a5a61c1ce839"
+                ],
+                "launch_config_sha256": "d02c6983783054c5609a77db31c2399877a23cf8a86c0791199046c0ede3544a"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "selected": {
+      "checkpoint": "c67d2d6d2724dea4",
+      "end_to_end_median_ms": {
+        "singleton": {
+          "cpu": 2.615,
+          "simt": 161.9,
+          "tile": 168.587
+        },
+        "tail": {
+          "cpu": 2.672,
+          "simt": 162.002,
+          "tile": 156.998
+        },
+        "many": {
+          "cpu": 3.965,
+          "simt": 173.934,
+          "tile": 139.611
+        }
+      },
+      "kernels": {
+        "simt": {
+          "median_us": 2.784,
+          "samples_us": [
+            2.719,
+            2.816,
+            2.784
+          ],
+          "capture_attempts": [
+            1,
+            1,
+            1
+          ],
+          "kernels": [
+            {
+              "name": "simt_window_kernel(int *, int)",
+              "launches": 1,
+              "us": 2.784,
+              "block": [
+                256,
+                1,
+                1
+              ],
+              "registers_per_thread": 16,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                33,
+                1,
+                1
+              ]
+            }
+          ],
+          "entry_sass_sha256": [
+            "797b1858bd3e4fb4c1bdce79d5ea61dddb656899299a3de7b076757081bced9d"
+          ],
+          "launch_config_sha256": "4ff4b18c47cbe0724bdd18ced0d3d29dccdbb894e620629becae19976735c07b"
+        },
+        "tile": {
+          "median_us": 5.728,
+          "samples_us": [
+            5.728,
+            6.24,
+            5.536
+          ],
+          "capture_attempts": [
+            1,
+            1,
+            1
+          ],
+          "kernels": [
+            {
+              "name": "tile_window_kernel(const int *, int *, int)",
+              "launches": 1,
+              "us": 3.04,
+              "block": [
+                256,
+                1,
+                1
+              ],
+              "registers_per_thread": 16,
+              "static_shared_bytes": 1040,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                33,
+                1,
+                1
+              ]
+            },
+            {
+              "name": "fill_base_kernel(int *, int)",
+              "launches": 1,
+              "us": 2.688,
+              "block": [
+                256,
+                1,
+                1
+              ],
+              "registers_per_thread": 16,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                33,
+                1,
+                1
+              ]
+            }
+          ],
+          "entry_sass_sha256": [
+            "73fc7a7eb1977d1f27b8eee81155d4a10f525188c31d7a2feaa8626b2e3c55b4",
+            "743138c895aefd9dfd2e117d2d447165a65e1afa593e2bf7811fae2134fd59e9"
+          ],
+          "launch_config_sha256": "b67f2fd0cc6776736673d2e29473fdfe7caf3bf8b14748d8f0065ffa2b1384cb"
+        }
+      }
+    }
+  },
+  "selected_source_dir": "generated/window-energy-pi",
+  "selected_source_sha256": {
+    "window_energy_cuda.cu": "fe3beb426d8f6b429f5d2bc8987282fccae20fe2476f666d50d0f93e9d8bc336"
+  },
+  "validation": {
+    "output_sha256": {
+      "singleton": "913f5d1da2feaf4deeccc9e55cbb350a20f12b3f507e87be85dbb77fdd3cb9bc",
+      "tail": "c411fa1ee241aefa6415e81e762791c1631f0c9235b41b61d2d7223665c977c2",
+      "many": "c5393eb76950901a9f305579c30a1e82a8c2b6a0a41d8c24bd62ecaccac35bba"
+    },
+    "successful_gpu_launches": {
+      "simt": [
+        "_Z18simt_window_kernelPii"
+      ],
+      "tile": [
+        "_Z16fill_base_kernelPii",
+        "_Z18tile_window_kernelPKiPii"
+      ]
+    },
+    "memcheck": [
+      "simt",
+      "tile"
+    ]
+  },
+  "final_end_to_end_ms": {
+    "singleton": {
+      "samples_ms": {
+        "cpu": [
+          2.756,
+          2.495,
+          2.625
+        ],
+        "simt": [
+          215.645,
+          213.167,
+          233.429
+        ],
+        "tile": [
+          223.86,
+          221.605,
+          218.11
+        ]
+      },
+      "median_ms": {
+        "cpu": 2.625,
+        "simt": 215.645,
+        "tile": 221.605
+      }
+    },
+    "tail": {
+      "samples_ms": {
+        "cpu": [
+          2.732,
+          2.667,
+          2.357
+        ],
+        "simt": [
+          228.291,
+          217.791,
+          209.078
+        ],
+        "tile": [
+          145.2,
+          193.723,
+          196.74
+        ]
+      },
+      "median_ms": {
+        "cpu": 2.667,
+        "simt": 217.791,
+        "tile": 193.723
+      }
+    },
+    "many": {
+      "samples_ms": {
+        "cpu": [
+          3.589,
+          3.776,
+          3.537
+        ],
+        "simt": [
+          220.432,
+          217.777,
+          258.191
+        ],
+        "tile": [
+          216.187,
+          218.233,
+          202.241
+        ]
+      },
+      "median_ms": {
+        "cpu": 3.589,
+        "simt": 220.432,
+        "tile": 216.187
+      }
+    }
+  },
+  "workload": [
+    {
+      "name": "singleton",
+      "args": [
+        "1"
+      ]
+    },
+    {
+      "name": "tail",
+      "args": [
+        "259"
+      ]
+    },
+    {
+      "name": "many",
+      "args": [
+        "8193"
+      ]
+    }
+  ]
+}

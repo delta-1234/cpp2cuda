@@ -43,6 +43,8 @@ bash workflow/cuda.sh --agent --spec examples/window_energy/task.json \
 
 在其他节点，可在配置好模型 API 和本地 CUDA 工具链后直接运行 Python 入口。`CUDA_VISIBLE_DEVICES` 指定获分配的 GPU，`CUDA_HOME` 和 `NVCC_CCBIN` 可指定 Toolkit 和兼容的主机编译器。
 
+独立安装的 Nsight Systems 可通过 `NSYS` 指定可执行文件。计算节点 使用 CUDA 11.3 编译，使用本机的 Nsight Systems 2022.1.3 采样。如果一次导出没有 GPU 内核记录，控制器最多采集三次。报告记录每个有效样本的采集次数，连续三次空采样会使测量失败。
+
 ```sh
 python3 workflow/port_agent.py --spec examples/window_energy/task.json --optimize --profile-case many
 ```
@@ -160,6 +162,17 @@ echo "ef77dbe4379b3bdeb425a1e1b862fa3c915c255000dfe4965c98eee96a5765d1  $archive
 
 也可用 `FACTORPORT_PI_BIN` 指定已有 Pi 可执行文件的绝对路径。其次查找仓库中的 `runs/deps/pi-1.6.0/pi/pi`，最后查找 `PATH` 中的 `pi`。Pi 启动时使用离线模式，CUDA 文档从仓库读取。可运行 `python3 workflow/test_pi_backend.py`，通过本地模拟的模型端点验证真实 Pi 的工具协议、纠错和轮数限制。
 
+### Pi 在 RTX 3090 上的实测
+
+Pi 1.6.0 使用配置的 `qwen3.8-max` 将五点窗口因子的 C++ 源码迁移到 RTX 3090。迁移阶段生成了 SIMT 和共享内存 Tile 两条路径。恢复运行时，控制器从已选检查点重新测量，两位专项 agent 各提交一个候选。最终源码通过了 1、259 和 8,193 个输出的 CPU 逐字节对照、CUPTI 内核启动检查和 Compute Sanitizer 显存检查。[选中的 CUDA 源码](generated/window-energy-pi/window_energy_cuda.cu) · [测量与选版记录](validation/pi-rtx3090.json)
+
+| 专项 | 接手时内核耗时 | 候选内核耗时 | 选版结果 |
+| --- | ---: | ---: | --- |
+| SIMT | 5.280 µs | 2.784 µs | 采用。将依下标生成输入和窗口求和合为一次内核启动。 |
+| Tile | 5.728 µs | 3.072 µs | 保留原 Tile。候选在 259 和 8,193 个输出上的 Tile 端到端中位数分别增加 8.2% 和 8.6%，超过 5% 门槛。 |
+
+内核时间为 8,193 个输出上三次采样的中位数。恢复选中源码并重新编译后，该用例的冷启动端到端中位数为 CPU 3.589 ms、SIMT 220.432 ms、Tile 216.187 ms。这个规模下 CPU 更快。
+
 ## 运行结果
 
 每次运行会打印独立的 `runs/cuda-agent-*/` 目录。查看 `candidate/port/` 获取选中的 CUDA 源码。`candidate/runs/replay` 可用 `simt` 或 `tile` 加原 CPU 命令的参数运行。
@@ -168,6 +181,15 @@ echo "ef77dbe4379b3bdeb425a1e1b862fa3c915c255000dfe4965c98eee96a5765d1  $archive
 | --- | --- |
 | `report.json` | GPU 与工具链、CPU 比对、显存检查、端到端耗时。启用优化时，`optimization` 还记录起点、两个 agent 的试验和最终选版。 |
 | `tools.jsonl`、分步日志 | 模型调用了哪个工具，得到了什么观测，哪一步出现了差异。 |
-| `checkpoints/` | 通过全量验收的候选源码和对应版本。可通过 `--candidate 上次运行的/candidate/port` 继续优化。 |
+| `checkpoints/` | 通过全量正确性验收的源码，每个版本一个目录。专项优化的选版结果记录在 `optimization.selected.checkpoint`。 |
+
+专项优化中途停止后，可把已选检查点传给 `--candidate`。这会开启新的 Pi 会话，重新编译、验证并测量起点，再把实际测量交给两个专项 agent。若中断发生在首次性能选版之前，可从报告的 `last_verified_checkpoint` 恢复已通过正确性验收的源码。
+
+```sh
+run=runs/cuda-agent-ndsx1ldx  # 换成自己的运行目录
+checkpoint=$(python3 -c 'import json,sys; r=json.load(open(sys.argv[1])); print(r.get("optimization", {}).get("selected", {}).get("checkpoint") or r["last_verified_checkpoint"])' "$run/report.json")
+bash workflow/cuda.sh --agent --backend pi --spec examples/window_energy/task.json \
+  --candidate "$run/checkpoints/$checkpoint" --optimize --profile-case many
+```
 
 `verified` 表示所选代码通过正确性验收并完成计时。是否值得部署，要看目标工作负载的端到端结果。仓库包含通用窗口算子的迁移与故障修复记录，以及订单示例的交易数据格式、预热语义、流式回放和不同规模的 GPU/CPU 实测结果。[通用迁移记录](validation/port-agent-rtx3090.json) · [纠错记录](validation/agent-repair-rtx3090.json) · [双 agent 硬件优化实测](validation/factorport-specialists-rtx3090.json) · [订单因子示例与基准](examples/order-fill-rate-spread/README.md)

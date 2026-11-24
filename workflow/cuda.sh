@@ -4,6 +4,9 @@ set -eu
 cd "$(dirname "$0")/.."
 export CUDA_HOME="${CUDA_HOME:-/usr/local/cuda-11.3}"
 export NVCC_CCBIN="${NVCC_CCBIN:-/usr/bin/g++-7}"
+# The separately installed Nsight reliably exports short CUDA 11.3 kernels on this node.
+reference_nsys=/usr/local/cuda-11.7/nsight-systems-2022.1.3/bin/nsys
+if [[ -x $reference_nsys ]]; then export NSYS="${NSYS:-$reference_nsys}"; fi
 # Preserve an existing scheduler allocation, including an intentionally empty mask.
 export WORKFLOW_PYTHON="${WORKFLOW_PYTHON:-python3}"
 case "${1:-}" in

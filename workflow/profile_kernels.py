@@ -30,7 +30,7 @@ def entry_hashes(cuobjdump, executable, launches):
     return {mode:sorted(hashes[name] for name in set(symbols)) for mode,symbols in launches.items()}
 
 
-def measure(nsys, mode, args):
+def capture(nsys, mode, args):
     output = "runs/actual"
     named = "{output}" in args
     Path(output).unlink(missing_ok=True)
@@ -43,6 +43,11 @@ def measure(nsys, mode, args):
                         'out=$1; shift; exec "$@" > "$out"', "_", os.devnull if named else output,
                         "runs/replay", mode, *argv], check=True)
         with sqlite3.connect("file:"+prefix+".sqlite?mode=ro", uri=True) as db:
+            # Some short-lived targets exit before Nsight exports device activity.
+            has_kernels = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
+                                     ("CUPTI_ACTIVITY_KIND_KERNEL",)).fetchone()
+            if not has_kernels:
+                return None
             rows = db.execute("""
                 SELECT s.value, COUNT(*), SUM(k.end-k.start), k.blockX,k.blockY,k.blockZ,
                        k.registersPerThread,k.staticSharedMemory,k.dynamicSharedMemory,k.gridX,k.gridY,k.gridZ
@@ -50,14 +55,25 @@ def measure(nsys, mode, args):
                 GROUP BY k.demangledName,k.blockX,k.blockY,k.blockZ,k.registersPerThread,
                          k.staticSharedMemory,k.dynamicSharedMemory,k.gridX,k.gridY,k.gridZ ORDER BY SUM(k.end-k.start) DESC
                 """).fetchall()
-    if not rows or sum(r[2] for r in rows) <= 0:
-        raise ValueError("no timed CUDA kernels for this case")
+    if not rows:
+        return None
+    if sum(r[2] for r in rows) <= 0:
+        raise ValueError("nonpositive CUDA kernel duration")
     launches = sorted((r[0],r[1],*r[3:]) for r in rows)
     return {"launch_config_sha256":hashlib.sha256(json.dumps(launches).encode()).hexdigest(),
             "total_kernel_us": sum(r[2] for r in rows)/1000,
             "kernels":[{"name":r[0],"launches":r[1],"us":r[2]/1000,"block":r[3:6],
                         "registers_per_thread":r[6],"static_shared_bytes":r[7],
                         "dynamic_shared_bytes":r[8],"grid":r[9:12]} for r in rows[:20]]}
+
+
+def measure(nsys, mode, args):
+    for attempt in range(1, 4):
+        sample = capture(nsys, mode, args)
+        if sample is not None:
+            return {**sample, "capture_attempts": attempt}
+        print(f"Nsight capture {attempt} for {mode} contained no CUDA kernels.", file=sys.stderr)
+    raise RuntimeError(f"No CUDA kernel activity in three independent Nsight captures for {mode}")
 
 
 if __name__ == "__main__":

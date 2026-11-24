@@ -1,6 +1,7 @@
 """Portable regressions for the agent tool protocol, offline library and CPU contract."""
 import json
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -9,6 +10,7 @@ from argparse import Namespace
 from pathlib import Path
 from unittest.mock import patch
 
+from api_agent import OfflineRun
 from knowledge import Library
 from port_agent import Agent, ROOT, decode
 from port_task import CAPTURE, Task
@@ -20,6 +22,19 @@ if GPU: sys.argv.remove("--gpu")
 
 
 class PortTests(unittest.TestCase):
+    def test_interrupted_stage_reaps_process_group(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = OfflineRun(Path(tmp), {}, Namespace(stage_timeout=30), "stop-test-")
+            with patch("api_agent.subprocess.Popen") as spawn, patch("api_agent.os.killpg") as kill:
+                proc = spawn.return_value
+                proc.returncode = None
+                proc.wait.side_effect = [KeyboardInterrupt(), -signal.SIGKILL]
+                with self.assertRaises(KeyboardInterrupt):
+                    run.offline("build", ["unused"])
+                self.assertTrue(spawn.call_args.kwargs["start_new_session"])
+                kill.assert_called_once_with(proc.pid, signal.SIGKILL)
+                self.assertEqual(proc.wait.call_count, 2)
+
     def test_knowledge_and_protocol(self):
         lib = Library()
         hit = lib.search("__syncthreads", "cuda-guide-11.3")[0]

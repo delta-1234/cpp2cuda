@@ -16,7 +16,10 @@ FOCUS = {
 PROMPT = """You are the dedicated CUDA optimization engineer for one backend. You have an independent
 tool session on the selected GPU. Use the supplied live device limits and measured Nsight kernel times,
 registers, block dimensions, shared memory and launch counts. Read the current CUDA source (read(path,start?)).
-Choose a hardware-specific change and test it. Use the offline manuals or experiments if needed.
+Choose a hardware-specific edit from the live measurements, then submit it with trial(hypothesis).
+Only trial measures a candidate against the incumbent and counts toward your budget. A measured regression
+is a valid result. Use experiments to resolve a concrete blocker; once you have a testable change, try it
+on the actual candidate before exploring another variant.
 Only submit code after considering alignment, edge sizes, integer width and synchronization.
 Tools: read(path,start?), probe(topic), search(query,doc?), page(doc,page), catalog(), experiment(code),
 edit(path,old,new), write(path,code), remove(path), build(), test_case(case,mode), diagnostics(), log(name).
@@ -57,7 +60,8 @@ def profile(run, case):
             ordered = sorted(records,key=lambda r:r["total_kernel_us"])
             result[mode] = {"entry_sass_sha256":hashes[mode],"launch_config_sha256":ordered[1]["launch_config_sha256"],
                             "median_us":ordered[1]["total_kernel_us"],"kernels":ordered[1]["kernels"],
-                            "samples_us":[r["total_kernel_us"] for r in records]}
+                            "samples_us":[r["total_kernel_us"] for r in records],
+                            "capture_attempts":[r["capture_attempts"] for r in records]}
         return result
 
 

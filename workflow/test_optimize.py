@@ -1,5 +1,6 @@
 """Exercise specialist handoff and selection without a CUDA device or an API key."""
 import importlib.metadata
+import subprocess
 import tempfile
 import unittest
 from argparse import Namespace
@@ -10,6 +11,7 @@ from optimize import decision, optimize
 from port_agent import Agent, ROOT
 from port_task import Task
 from profile_kernels import entry_hashes
+from profile_kernels import measure as measure_sample
 
 
 def metrics(key, simt, tile, end=10.0):
@@ -22,6 +24,20 @@ def metrics(key, simt, tile, end=10.0):
 
 
 class OptimizationTests(unittest.TestCase):
+    def test_missing_nsight_activity_is_resampled(self):
+        sample = {"total_kernel_us": 3.5}
+        with patch("profile_kernels.capture", side_effect=[None, sample]) as capture:
+            self.assertEqual(measure_sample("nsys", "simt", ["7"]), {**sample, "capture_attempts": 2})
+            self.assertEqual(capture.call_count, 2)
+        with patch("profile_kernels.capture", return_value=None) as capture:
+            with self.assertRaisesRegex(RuntimeError, "three independent"):
+                measure_sample("nsys", "tile", ["7"])
+            self.assertEqual(capture.call_count, 3)
+        with patch("profile_kernels.capture", side_effect=subprocess.CalledProcessError(1, "nsys")) as capture:
+            with self.assertRaises(subprocess.CalledProcessError):
+                measure_sample("nsys", "simt", ["7"])
+            capture.assert_called_once()
+
     def test_react_tool_observations_and_retry(self):
         try:
             compatible = importlib.metadata.version("transformers") == "4.41.2"
