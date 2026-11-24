@@ -1,0 +1,692 @@
+{
+  "run": "cuda-agent-7_vxkuh9",
+  "profile": "OrderFillRateSpread example",
+  "agent_backend": "transformers",
+  "runtime": "Hugging Face Transformers 4.41.2 ReactJsonAgent",
+  "model": "qwen3.8-max",
+  "device": {
+    "devices": [
+      {
+        "ordinal": 0,
+        "name": "NVIDIA GeForce RTX 3090",
+        "cc": "86",
+        "sm_count": 82,
+        "warp_size": 32,
+        "max_threads_per_block": 1024,
+        "max_threads_per_sm": 1536,
+        "shared_bytes_per_block": 49152,
+        "shared_bytes_per_sm": 102400,
+        "optin_shared_bytes_per_block": 101376,
+        "registers_per_sm": 65536,
+        "l2_bytes": 6291456,
+        "memory_bus_bits": 384,
+        "memory_bytes": 25430786048
+      }
+    ],
+    "driver_api_version": 12040
+  },
+  "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2021 NVIDIA Corporation\nBuilt on Sun_Mar_21_19:15:46_PDT_2021\nCuda compilation tools, release 11.3, V11.3.58\nBuild cuda_11.3.r11.3/compiler.29745058_0",
+  "seed_source": "generated/order-fill-rate",
+  "selected_source_patch": null,
+  "cpu_reference_cases": [
+    "edge",
+    "header-only",
+    "orders-131072",
+    "orders-32768",
+    "sample",
+    "short-window",
+    "warmup499"
+  ],
+  "memcheck": [
+    "simt",
+    "tile"
+  ],
+  "actual_kernel_launches": {
+    "simt": [
+      "_ZN66_GLOBAL__N__42_tmpxft_0000004c_00000000_7_kernels_cpp1_ii_0982093c11simt_kernelEPKN3gpu8InputRowEPNS0_9OutputRowEi"
+    ],
+    "tile": [
+      "_ZN66_GLOBAL__N__42_tmpxft_0000004c_00000000_7_kernels_cpp1_ii_0982093c11tile_kernelEPKN3gpu8InputRowEPNS0_9OutputRowEi"
+    ]
+  },
+  "final_source_sha256": {
+    "gpu.hpp": "4b7500faa0b6a281c6a77e4a138d68d9df62d0081c3e03c3025d153d5f7bd358",
+    "host.cpp": "2ccf7977bd9e589264cafd52f6926eae02e4e72258dbbb0e480cb7a5d1fd6e45",
+    "kernels.cu": "660cd7d60387a5a31d13dc03b20b9c51c924481c78d104fa280a62a2391247c1"
+  },
+  "optimization": {
+    "profile_case": "orders-131072",
+    "metric": "sum of device kernel durations",
+    "policy": {
+      "target_kernel_gain_min": 0.03,
+      "peer_and_end_to_end_regression_max": 0.05
+    },
+    "roles": {
+      "simt": {
+        "start": "613fc5dadb777e0b",
+        "trials": [
+          {
+            "hypothesis": "Replace per-row SIMT threads with warp-coalesced row processing: each warp handles 32 consecutive rows, lanes load contiguous feature slots and reduce via __shfl_down_sync. This improves Ampere memory coalescing while preserving block size and launch geometry.",
+            "against": "613fc5dadb777e0b",
+            "checkpoint": "9b9e6679dc11a4c4",
+            "profile": {
+              "simt": {
+                "entry_sass_sha256": [
+                  "d9feea30704427aa37ad6d43ee98f26f9d6b1a8fe82310e2563d58dee8450296"
+                ],
+                "launch_config_sha256": "8e23ea5869f7dd461dd00ac5a22ba7663ac4fd5ca9c748c9b436c704bedb8665",
+                "median_us": 241.25,
+                "kernels": [
+                  {
+                    "name": "(anonymous namespace)::simt_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+                    "launches": 1,
+                    "us": 167.009,
+                    "block": [
+                      128,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 36,
+                    "static_shared_bytes": 0,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      512,
+                      1,
+                      1
+                    ]
+                  },
+                  {
+                    "name": "(anonymous namespace)::simt_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+                    "launches": 1,
+                    "us": 74.241,
+                    "block": [
+                      128,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 36,
+                    "static_shared_bytes": 0,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      230,
+                      1,
+                      1
+                    ]
+                  }
+                ],
+                "samples_us": [
+                  241.25,
+                  263.202,
+                  225.986
+                ]
+              },
+              "tile": {
+                "entry_sass_sha256": [
+                  "f0f561c2defb44e31d54f16634cbf3149d776a73f2adfbb8c86f99b1a1d20c7c"
+                ],
+                "launch_config_sha256": "197e56beb4b29c6f85e9c8fdeab228414a09da4ade096eab0eb59d08f4b01645",
+                "median_us": 260.801,
+                "kernels": [
+                  {
+                    "name": "(anonymous namespace)::tile_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+                    "launches": 1,
+                    "us": 176.865,
+                    "block": [
+                      128,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 35,
+                    "static_shared_bytes": 4096,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      8192,
+                      1,
+                      1
+                    ]
+                  },
+                  {
+                    "name": "(anonymous namespace)::tile_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+                    "launches": 1,
+                    "us": 83.936,
+                    "block": [
+                      128,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 35,
+                    "static_shared_bytes": 4096,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      3668,
+                      1,
+                      1
+                    ]
+                  }
+                ],
+                "samples_us": [
+                  260.801,
+                  242.529,
+                  279.297
+                ]
+              }
+            },
+            "end_to_end_ms": {
+              "orders-32768": {
+                "cpu": 75.382,
+                "simt": 257.701,
+                "tile": 253.531
+              },
+              "orders-131072": {
+                "cpu": 260.744,
+                "simt": 483.048,
+                "tile": 493.918
+              }
+            },
+            "accepted": false,
+            "target_changed": true,
+            "peer_preserved": true,
+            "target_kernel_ratio": 0.5966291995894696,
+            "peer_kernel_ratio": 0.9290895100211608,
+            "end_to_end_ratios": {
+              "orders-32768": {
+                "simt": 1.205703324209886,
+                "tile": 1.1761941434085512
+              },
+              "orders-131072": {
+                "simt": 1.034585564360677,
+                "tile": 1.095674472979598
+              }
+            },
+            "source_patch": "examples/order-fill-rate-spread/simt-trial.patch"
+          }
+        ],
+        "status": "measured",
+        "selected": "613fc5dadb777e0b"
+      },
+      "tile": {
+        "start": "613fc5dadb777e0b",
+        "trials": [
+          {
+            "hypothesis": "On Ampere RTX 3090, warp shuffle reduction avoids the per-row shared-memory tree and many __syncthreads barriers. Keeping the 8-row tile, each warp reduces its 32 slots in registers, writes four padded warp partials per row to shared memory, and one block barrier lets the first threads combine and emit the tile. This reduces barrier stalls, shared traffic, and tail masking while preserving cooperative tiling.",
+            "against": "613fc5dadb777e0b",
+            "checkpoint": "18f5afb4d26b0531",
+            "profile": {
+              "simt": {
+                "entry_sass_sha256": [
+                  "fc04a991270f1bb0b12a8ae74720ea7631087e0e18ef705c35cb41febddf9503"
+                ],
+                "launch_config_sha256": "e70d19247898d934c7c2e1ba3a6922397008cbbc65ce53df86fe07f687127ba2",
+                "median_us": 418.805,
+                "kernels": [
+                  {
+                    "name": "(anonymous namespace)::simt_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+                    "launches": 1,
+                    "us": 335.159,
+                    "block": [
+                      128,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 40,
+                    "static_shared_bytes": 0,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      512,
+                      1,
+                      1
+                    ]
+                  },
+                  {
+                    "name": "(anonymous namespace)::simt_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+                    "launches": 1,
+                    "us": 83.646,
+                    "block": [
+                      128,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 40,
+                    "static_shared_bytes": 0,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      230,
+                      1,
+                      1
+                    ]
+                  }
+                ],
+                "samples_us": [
+                  418.805,
+                  422.261,
+                  411.061
+                ]
+              },
+              "tile": {
+                "entry_sass_sha256": [
+                  "352bb4c3d29c1715dc383d56dd78b13961a25b34a81b0e59d27624c9acdb7d13"
+                ],
+                "launch_config_sha256": "8d21e3645f435c22aac2bfaa57b3f5c20dae1baa6268c74a427815c6202927a8",
+                "median_us": 281.816,
+                "kernels": [
+                  {
+                    "name": "(anonymous namespace)::tile_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+                    "launches": 1,
+                    "us": 191.643,
+                    "block": [
+                      128,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 40,
+                    "static_shared_bytes": 1152,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      8192,
+                      1,
+                      1
+                    ]
+                  },
+                  {
+                    "name": "(anonymous namespace)::tile_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+                    "launches": 1,
+                    "us": 90.173,
+                    "block": [
+                      128,
+                      1,
+                      1
+                    ],
+                    "registers_per_thread": 40,
+                    "static_shared_bytes": 1152,
+                    "dynamic_shared_bytes": 0,
+                    "grid": [
+                      3668,
+                      1,
+                      1
+                    ]
+                  }
+                ],
+                "samples_us": [
+                  281.816,
+                  282.073,
+                  281.688
+                ]
+              }
+            },
+            "end_to_end_ms": {
+              "orders-32768": {
+                "cpu": 76.73,
+                "simt": 243.516,
+                "tile": 241.073
+              },
+              "orders-131072": {
+                "cpu": 256.501,
+                "simt": 497.148,
+                "tile": 491.418
+              }
+            },
+            "accepted": false,
+            "target_changed": true,
+            "peer_preserved": true,
+            "target_kernel_ratio": 1.0039543151909827,
+            "peer_kernel_ratio": 1.035735925115307,
+            "end_to_end_ratios": {
+              "orders-32768": {
+                "simt": 1.1393360937609656,
+                "tile": 1.1183983447149644
+              },
+              "orders-131072": {
+                "simt": 1.064784750481902,
+                "tile": 1.0901286411159101
+              }
+            },
+            "source_patch": "examples/order-fill-rate-spread/tile-trial.patch"
+          }
+        ],
+        "status": "measured",
+        "selected": "613fc5dadb777e0b"
+      }
+    },
+    "baseline": {
+      "checkpoint": "613fc5dadb777e0b",
+      "profile": {
+        "simt": {
+          "entry_sass_sha256": [
+            "fc04a991270f1bb0b12a8ae74720ea7631087e0e18ef705c35cb41febddf9503"
+          ],
+          "launch_config_sha256": "e70d19247898d934c7c2e1ba3a6922397008cbbc65ce53df86fe07f687127ba2",
+          "median_us": 404.355,
+          "kernels": [
+            {
+              "name": "(anonymous namespace)::simt_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+              "launches": 1,
+              "us": 324.962,
+              "block": [
+                128,
+                1,
+                1
+              ],
+              "registers_per_thread": 40,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                512,
+                1,
+                1
+              ]
+            },
+            {
+              "name": "(anonymous namespace)::simt_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+              "launches": 1,
+              "us": 79.393,
+              "block": [
+                128,
+                1,
+                1
+              ],
+              "registers_per_thread": 40,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                230,
+                1,
+                1
+              ]
+            }
+          ],
+          "samples_us": [
+            404.355,
+            389.988,
+            405.924
+          ]
+        },
+        "tile": {
+          "entry_sass_sha256": [
+            "f0f561c2defb44e31d54f16634cbf3149d776a73f2adfbb8c86f99b1a1d20c7c"
+          ],
+          "launch_config_sha256": "197e56beb4b29c6f85e9c8fdeab228414a09da4ade096eab0eb59d08f4b01645",
+          "median_us": 280.706,
+          "kernels": [
+            {
+              "name": "(anonymous namespace)::tile_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+              "launches": 1,
+              "us": 188.801,
+              "block": [
+                128,
+                1,
+                1
+              ],
+              "registers_per_thread": 35,
+              "static_shared_bytes": 4096,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                8192,
+                1,
+                1
+              ]
+            },
+            {
+              "name": "(anonymous namespace)::tile_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+              "launches": 1,
+              "us": 91.905,
+              "block": [
+                128,
+                1,
+                1
+              ],
+              "registers_per_thread": 35,
+              "static_shared_bytes": 4096,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                3668,
+                1,
+                1
+              ]
+            }
+          ],
+          "samples_us": [
+            280.259,
+            281.634,
+            280.706
+          ]
+        }
+      },
+      "end_to_end_ms": {
+        "orders-32768": {
+          "cpu": 74.751,
+          "simt": 213.735,
+          "tile": 215.552
+        },
+        "orders-131072": {
+          "cpu": 264.595,
+          "simt": 466.9,
+          "tile": 450.789
+        }
+      }
+    },
+    "trial_budget_per_role": 1,
+    "selected": {
+      "checkpoint": "613fc5dadb777e0b",
+      "profile": {
+        "simt": {
+          "entry_sass_sha256": [
+            "fc04a991270f1bb0b12a8ae74720ea7631087e0e18ef705c35cb41febddf9503"
+          ],
+          "launch_config_sha256": "e70d19247898d934c7c2e1ba3a6922397008cbbc65ce53df86fe07f687127ba2",
+          "median_us": 404.355,
+          "kernels": [
+            {
+              "name": "(anonymous namespace)::simt_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+              "launches": 1,
+              "us": 324.962,
+              "block": [
+                128,
+                1,
+                1
+              ],
+              "registers_per_thread": 40,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                512,
+                1,
+                1
+              ]
+            },
+            {
+              "name": "(anonymous namespace)::simt_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+              "launches": 1,
+              "us": 79.393,
+              "block": [
+                128,
+                1,
+                1
+              ],
+              "registers_per_thread": 40,
+              "static_shared_bytes": 0,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                230,
+                1,
+                1
+              ]
+            }
+          ],
+          "samples_us": [
+            404.355,
+            389.988,
+            405.924
+          ]
+        },
+        "tile": {
+          "entry_sass_sha256": [
+            "f0f561c2defb44e31d54f16634cbf3149d776a73f2adfbb8c86f99b1a1d20c7c"
+          ],
+          "launch_config_sha256": "197e56beb4b29c6f85e9c8fdeab228414a09da4ade096eab0eb59d08f4b01645",
+          "median_us": 280.706,
+          "kernels": [
+            {
+              "name": "(anonymous namespace)::tile_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+              "launches": 1,
+              "us": 188.801,
+              "block": [
+                128,
+                1,
+                1
+              ],
+              "registers_per_thread": 35,
+              "static_shared_bytes": 4096,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                8192,
+                1,
+                1
+              ]
+            },
+            {
+              "name": "(anonymous namespace)::tile_kernel(gpu::InputRow const*, gpu::OutputRow*, int)",
+              "launches": 1,
+              "us": 91.905,
+              "block": [
+                128,
+                1,
+                1
+              ],
+              "registers_per_thread": 35,
+              "static_shared_bytes": 4096,
+              "dynamic_shared_bytes": 0,
+              "grid": [
+                3668,
+                1,
+                1
+              ]
+            }
+          ],
+          "samples_us": [
+            280.259,
+            281.634,
+            280.706
+          ]
+        }
+      },
+      "end_to_end_ms": {
+        "orders-32768": {
+          "cpu": 74.751,
+          "simt": 213.735,
+          "tile": 215.552
+        },
+        "orders-131072": {
+          "cpu": 264.595,
+          "simt": 466.9,
+          "tile": 450.789
+        }
+      }
+    }
+  },
+  "final_cold_benchmark": {
+    "orders-32768": {
+      "events": 56560,
+      "forecasts": 22794,
+      "samples_ms": {
+        "cpu": [
+          89.899,
+          76.945,
+          76.684
+        ],
+        "simt": [
+          214.855,
+          193.759,
+          225.587
+        ],
+        "tile": [
+          202.794,
+          229.793,
+          239.764
+        ]
+      },
+      "median_ms": {
+        "cpu": 76.945,
+        "simt": 214.855,
+        "tile": 229.793
+      }
+    },
+    "orders-131072": {
+      "events": 226950,
+      "forecasts": 94880,
+      "samples_ms": {
+        "cpu": [
+          254.046,
+          260.561,
+          260.033
+        ],
+        "simt": [
+          447.055,
+          443.029,
+          507.841
+        ],
+        "tile": [
+          427.845,
+          426.76,
+          443.663
+        ]
+      },
+      "median_ms": {
+        "cpu": 260.033,
+        "simt": 447.055,
+        "tile": 427.845
+      }
+    }
+  },
+  "pilot": {
+    "run": "cuda-agent-s229yv2r",
+    "status": "superseded after two SIMT trials",
+    "scope_regression": "The second SIMT proposal also edited Tile. Rebuilding three recorded checkpoints detected the cross-backend change in the Tile entry instructions.",
+    "checkpoint_instruction_hashes": [
+      {
+        "checkpoint": "613fc5dadb777e0b",
+        "entry_sass_sha256": {
+          "simt": [
+            "fc04a991270f1bb0b12a8ae74720ea7631087e0e18ef705c35cb41febddf9503"
+          ],
+          "tile": [
+            "f0f561c2defb44e31d54f16634cbf3149d776a73f2adfbb8c86f99b1a1d20c7c"
+          ]
+        }
+      },
+      {
+        "checkpoint": "3b0b75c43ddf569c",
+        "entry_sass_sha256": {
+          "simt": [
+            "2baa514aad0df34842f3511795605e049cffab6be5d899dee8da46bb6b6dc242"
+          ],
+          "tile": [
+            "f0f561c2defb44e31d54f16634cbf3149d776a73f2adfbb8c86f99b1a1d20c7c"
+          ]
+        }
+      },
+      {
+        "checkpoint": "3610fc0f38127e57",
+        "entry_sass_sha256": {
+          "simt": [
+            "2baa514aad0df34842f3511795605e049cffab6be5d899dee8da46bb6b6dc242"
+          ],
+          "tile": [
+            "17647412b04cee84d5b5ee33f086c480e064d4d0796565863a44d5f6d89e4d1f"
+          ]
+        }
+      }
+    ],
+    "simt_trials": [
+      {
+        "hypothesis": "Replace one-thread-per-row SIMT with warp-per-row: each warp reads one row's 128 slots as two coalesced 512B int4 phases and reduces four 64-bit sums with warp shuffles, eliminating the 1040B strided per-thread feature accesses.",
+        "accepted": false,
+        "target_kernel_ratio": 0.555800366812015
+      },
+      {
+        "hypothesis": "Second tuning: keep warp-coalesced SIMT rows, but also replace the Tile shared-memory tree with warp-shuffle reductions plus a 4-warp shared combine, and drop the redundant post-kernel device synchronize before the synchronous D2H copy.",
+        "accepted": false,
+        "target_kernel_ratio": 0.5546464879571487
+      }
+    ]
+  }
+}

@@ -1,0 +1,121 @@
+--- a/generated/order-fill-rate/kernels.cu
++++ b/generated/order-fill-rate/kernels.cu
+@@ -82,30 +82,34 @@
+ __global__ void tile_kernel(const gpu::InputRow* __restrict__ input,
+                             gpu::OutputRow* __restrict__ output,
+                             int count) {
+-    __shared__ long long shared[4 * kSlots];
+-
+-    long long* s_ask_volume = shared;
+-    long long* s_ask_filled = shared + kSlots;
+-    long long* s_bid_volume = shared + 2 * kSlots;
+-    long long* s_bid_filled = shared + 3 * kSlots;
+-
+-    int tile_start = static_cast<int>(blockIdx.x) * kTileRows;
+-    int tile_end = tile_start + kTileRows;
+-    if (tile_end > count)
+-        tile_end = count;
+-
+-    int t = threadIdx.x;
+-
+-    for (int row = tile_start; row < tile_end; ++row) {
+-        const gpu::InputRow& in = input[row];
++    enum { kWarps = kSlots / 32, kTilePad = kTileRows + 1 };
++    __shared__ long long s_ask_volume[kWarps][kTilePad];
++    __shared__ long long s_ask_filled[kWarps][kTilePad];
++    __shared__ long long s_bid_volume[kWarps][kTilePad];
++    __shared__ long long s_bid_filled[kWarps][kTilePad];
++
++    const int tile_start = static_cast<int>(blockIdx.x) * kTileRows;
++    int tile_rows = kTileRows;
++    if (tile_start + tile_rows > count)
++        tile_rows = count - tile_start;
++    if (tile_rows <= 0)
++        return;
++
++    const int t = threadIdx.x;
++    const int lane = t & 31;
++    const int warp = t >> 5;
++    const unsigned full_mask = 0xffffffffu;
++
++    for (int r = 0; r < tile_rows; ++r) {
++        const gpu::InputRow& in = input[tile_start + r];
++
++        long long volume = static_cast<long long>(in.features[t]);
++        long long filled = static_cast<long long>(in.features[kSlots + t]);
+
+         long long ask_volume = 0;
+         long long ask_filled = 0;
+         long long bid_volume = 0;
+         long long bid_filled = 0;
+-
+-        long long volume = static_cast<long long>(in.features[t]);
+-        long long filled = static_cast<long long>(in.features[kSlots + t]);
+
+         if (volume > 0) {
+             ask_volume = volume;
+@@ -115,29 +119,42 @@
+             bid_filled = filled;
+         }
+
+-        s_ask_volume[t] = ask_volume;
+-        s_ask_filled[t] = ask_filled;
+-        s_bid_volume[t] = bid_volume;
+-        s_bid_filled[t] = bid_filled;
+-        __syncthreads();
+-
+-        for (int stride = kSlots / 2; stride > 0; stride >>= 1) {
+-            if (t < stride) {
+-                s_ask_volume[t] += s_ask_volume[t + stride];
+-                s_ask_filled[t] += s_ask_filled[t + stride];
+-                s_bid_volume[t] += s_bid_volume[t + stride];
+-                s_bid_filled[t] += s_bid_filled[t + stride];
+-            }
+-            __syncthreads();
+-        }
+-
+-        if (t == 0) {
+-            finish_output_row(output[row], in,
+-                              s_ask_volume[0], s_ask_filled[0],
+-                              s_bid_volume[0], s_bid_filled[0]);
+-        }
+-        __syncthreads();
++#pragma unroll
++        for (int offset = 16; offset > 0; offset >>= 1) {
++            ask_volume += __shfl_down_sync(full_mask, ask_volume, offset);
++            ask_filled += __shfl_down_sync(full_mask, ask_filled, offset);
++            bid_volume += __shfl_down_sync(full_mask, bid_volume, offset);
++            bid_filled += __shfl_down_sync(full_mask, bid_filled, offset);
++        }
++
++        if (lane == 0) {
++            s_ask_volume[warp][r] = ask_volume;
++            s_ask_filled[warp][r] = ask_filled;
++            s_bid_volume[warp][r] = bid_volume;
++            s_bid_filled[warp][r] = bid_filled;
++        }
++    }
++
++    __syncthreads();
++
++    if (t < tile_rows) {
++        const int r = t;
++        long long ask_volume = 0;
++        long long ask_filled = 0;
++        long long bid_volume = 0;
++        long long bid_filled = 0;
++
++#pragma unroll
++        for (int w = 0; w < kWarps; ++w) {
++            ask_volume += s_ask_volume[w][r];
++            ask_filled += s_ask_filled[w][r];
++            bid_volume += s_bid_volume[w][r];
++            bid_filled += s_bid_filled[w][r];
++        }
++
++        finish_output_row(output[tile_start + r], input[tile_start + r],
++                          ask_volume, ask_filled, bid_volume, bid_filled);
+     }
+ }
+
+ }  // namespace

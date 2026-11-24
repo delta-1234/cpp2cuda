@@ -80,7 +80,7 @@ def toolchain(preferred=None):
         info["nvcc_arches"] = command([nvcc, "--list-gpu-arch"])
     info["runtime_headers"] = [str(h) for root in dict.fromkeys(roots)
                                for h in [root/"include/cuda_runtime.h", *root.glob("targets/*/include/cuda_runtime.h")] if h.is_file()]
-    for name in ("ptxas", "tileiras", "compute-sanitizer", "nsys"):
+    for name in ("ptxas", "tileiras", "compute-sanitizer", "nsys", "cuobjdump"):
         path = next((str(p/"bin"/name) for p in roots if os.access(p/"bin"/name, os.X_OK)), None) or shutil.which(name)
         info[name] = path
     return info

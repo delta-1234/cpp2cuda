@@ -41,11 +41,10 @@ def profile(run, case):
         helper.write((run.root/"workflow/profile_kernels.py").read_bytes())
         helper.flush()
         script = Path(helper.name)
-        toolkit, _ = run.hardware()
         launches = run.audit["validation"]["successful_gpu_launches"]
         symbols = {m:sorted(set(launches[m])) for m in MODES}
         hashes = json.loads(run.offline("kernel-fingerprints", [sys.executable, "-I", script.name,
-                            "--fingerprint", toolkit/"bin/cuobjdump", json.dumps(symbols)]))
+                            "--fingerprint", run.env["cuobjdump"], json.dumps(symbols)]))
         samples = {m:[] for m in MODES}
         for i in range(3):
             for mode in (MODES if i % 2 == 0 else reversed(MODES)):
@@ -99,6 +98,11 @@ def optimize(run):
     if not run.timed:
         run.execute()
         if run.audit["status"] == "blocked": return
+    missing = [name for name in ("nsys","cuobjdump") if not run.env.get(name)]
+    if missing:
+        run.audit.update(status="blocked",missing_tools=missing,
+                         summary="CUDA port verified and timed. Specialist tuning requires " + ", ".join(missing))
+        return
     cases = run.audit["benchmark"]
     case = run.args.profile_case or max(cases,key=lambda k:cases[k]["median_ms"]["cpu"])
     run.audit["status"] = "optimizing"

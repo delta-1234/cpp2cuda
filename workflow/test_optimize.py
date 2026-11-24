@@ -44,6 +44,14 @@ class OptimizationTests(unittest.TestCase):
         self.assertEqual(tools,["probe","finish"])
         self.assertEqual(errors,[1])
 
+    def test_missing_profiler_preserves_verified_port(self):
+        run = Namespace(args=Namespace(candidate=None), timed=True, env={"cuobjdump":"cuobjdump"},
+                        audit={"benchmark":{"many":{}},"validation":{"case":"passed"}})
+        optimize(run)
+        self.assertEqual(run.audit["missing_tools"],["nsys"])
+        self.assertEqual(run.audit["status"],"blocked")
+        self.assertIn("validation",run.audit)
+
     def test_gates(self):
         before = metrics("start",100,100)
         for after, expected in [(metrics("gain",96,101), True), (metrics("noise",99,100),False),
@@ -77,7 +85,7 @@ class OptimizationTests(unittest.TestCase):
                 run = Agent(args,{"model":"test"},task)
             code = run.files/"kernel.cu"
             code.write_text("seed")
-            run.env.update(driver={"devices":[{"cc":"86"}]},nvcc_version="test")
+            run.env.update(driver={"devices":[{"cc":"86"}]},nvcc_version="test",nsys="nsys",cuobjdump="cuobjdump")
             original_act = run.act
 
             def act(action):

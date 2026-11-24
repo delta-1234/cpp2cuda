@@ -8,6 +8,19 @@ bash workflow/cuda.sh --generate-cuda OrderFillRateSpread.cpp
 
 该入口会生成 SIMT 与 Tile 候选，验证正确性并分别优化内核。可用 `--no-optimize` 只运行转写和验收。`--extra-orders 524288 2097152` 会额外生成这两种规模的模拟订单。显式传入 `--per-file` 可复现早期逐文件生成器。参考程序、因子定义和固定输出分别保存在 [OrderFillRateSpread.cpp](../../OrderFillRateSpread.cpp)、[factor_replay.hpp](../../factor_replay.hpp) 和 [factor_output.csv](../../factor_output.csv)。
 
+## 两个专项 agent 的实测
+
+在 RTX 3090（82 个 SM，计算能力 8.6）上，以仓库里的模型移植为起点，使用配置的模型 API 和 Hugging Face ReAct 后端。下表使用 131,072 笔委托作为内核测量用例，每个角色各试一个独立候选。内核列为三次 Nsight 采样的中位数，端到端列为三次冷启动 CSV 回放的中位数。选版还检查 32,768 笔委托用例，以及另一条路径的机器码、启动配置与耗时。
+
+| 角色 | 起点内核（μs） | 候选内核（μs） | 起点端到端（ms） | 候选端到端（ms） | 选版 |
+| --- | ---: | ---: | ---: | ---: | --- |
+| SIMT | 404.36 | 241.25 | 466.90 | 483.05 | 保留起点 |
+| Tile | 280.71 | 281.82 | 450.79 | 491.42 | 保留起点 |
+
+两条路径均通过七组 CPU 逐字节对照和 Compute Sanitizer 显存检查。两个候选补丁都可分别应用在仓库随附的起点上，复原模型当时编译的源码。[SIMT 实验补丁](simt-trial.patch) · [Tile 实验补丁](tile-trial.patch)
+
+完整报告保留每个候选的硬件假设、采样值、机器码指纹和选版判定。[计算节点 专项优化记录](../../validation/factorport-specialists-rtx3090.json)
+
 ## 运行已验证的示例移植
 
 先前的逐文件实验使用 `qwen3.8-max` 分三次生成了 [主机程序](../../generated/order-fill-rate/host.cpp)、[GPU 接口](../../generated/order-fill-rate/gpu.hpp) 与 [CUDA 内核](../../generated/order-fill-rate/kernels.cu)。三个文件均可在 计算节点 的原始回复中按 SHA-256 核对。SIMT 每个线程计算一行，Tile 使用 128 个线程在共享内存中归约订单，每块最多处理 8 行。主机复用原头文件的逐笔回放，按输出时点在内存中打包窗口，每 65,536 行为一批。同一进程中的批次复用显存。

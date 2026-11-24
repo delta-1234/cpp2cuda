@@ -25,6 +25,8 @@ bash workflow/cuda.sh --agent --spec examples/window_energy/task.json \
 python3 workflow/port_agent.py --spec examples/window_energy/task.json --optimize --profile-case many
 ```
 
+单文件因子也可用简写 `bash workflow/cuda.sh --generate-cuda path/to/factor.cpp` 一次完成迁移和优化。
+
 如需先独立盘点环境，可运行 `bash workflow/cuda.sh --agent --inspect --task "检查已分配 GPU 和工具链"`。
 
 ## 接入自己的因子
@@ -99,4 +101,4 @@ WORKFLOW_PYTHON="$(command -v python3)" \
 | `tools.jsonl`、分步日志 | 模型调用了哪个工具，得到了什么观测，哪一步出现了差异。 |
 | `checkpoints/` | 通过全量验收的候选源码和对应版本。可通过 `--candidate 上次运行的/candidate/port` 继续优化。 |
 
-`verified` 表示所选代码通过正确性验收并完成计时。是否值得部署，要看目标工作负载的端到端结果。仓库包含通用窗口算子的迁移与故障修复记录，以及订单示例的交易数据格式、预热语义、流式回放和不同规模的 GPU/CPU 实测结果。[通用迁移记录](validation/port-agent-rtx3090.json) · [纠错记录](validation/agent-repair-rtx3090.json) · [订单因子示例与基准](examples/order-fill-rate-spread/README.md)
+`verified` 表示所选代码通过正确性验收并完成计时。是否值得部署，要看目标工作负载的端到端结果。仓库包含通用窗口算子的迁移与故障修复记录，以及订单示例的交易数据格式、预热语义、流式回放和不同规模的 GPU/CPU 实测结果。[通用迁移记录](validation/port-agent-rtx3090.json) · [纠错记录](validation/agent-repair-rtx3090.json) · [双 agent 硬件优化实测](validation/factorport-specialists-rtx3090.json) · [订单因子示例与基准](examples/order-fill-rate-spread/README.md)

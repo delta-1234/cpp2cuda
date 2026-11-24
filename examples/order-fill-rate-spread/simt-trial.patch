@@ -1,0 +1,80 @@
+--- a/generated/order-fill-rate/kernels.cu
++++ b/generated/order-fill-rate/kernels.cu
+@@ -47,34 +47,52 @@
+     out.alpha = (ask_volume == 0 || bid_volume == 0) ? quiet_nan() : (ask_rate - bid_rate);
+ }
+
+-// One SIMT thread independently computes one output row.
++// One SIMT warp cooperatively computes a contiguous run of output rows.
+ __global__ void simt_kernel(const gpu::InputRow* __restrict__ input,
+                             gpu::OutputRow* __restrict__ output,
+                             int count) {
+-    int row = static_cast<int>(blockIdx.x) * blockDim.x + threadIdx.x;
+-    if (row >= count)
+-        return;
+-
+-    const gpu::InputRow& in = input[row];
+-    long long ask_volume = 0;
+-    long long ask_filled = 0;
+-    long long bid_volume = 0;
+-    long long bid_filled = 0;
+-
+-    for (int i = 0; i < kSlots; ++i) {
+-        long long volume = static_cast<long long>(in.features[i]);
+-        long long filled = static_cast<long long>(in.features[kSlots + i]);
+-
+-        if (volume > 0) {
+-            ask_volume += volume;
+-            ask_filled += filled;
+-        } else if (volume < 0) {
+-            bid_volume -= volume;
+-            bid_filled += filled;
+-        }
+-    }
+-
+-    finish_output_row(output[row], in, ask_volume, ask_filled, bid_volume, bid_filled);
++    const unsigned int count_u = static_cast<unsigned int>(count);
++    const unsigned int warp_start =
++        blockIdx.x * blockDim.x + (threadIdx.x & ~31u);
++    unsigned int warp_end = warp_start + 32u;
++    if (warp_end > count_u)
++        warp_end = count_u;
++
++    const unsigned int lane = threadIdx.x & 31u;
++    constexpr unsigned int full_mask = 0xffffffffu;
++
++    for (unsigned int row = warp_start; row < warp_end; ++row) {
++        const gpu::InputRow& in = input[row];
++        long long ask_volume = 0;
++        long long ask_filled = 0;
++        long long bid_volume = 0;
++        long long bid_filled = 0;
++
++        #pragma unroll
++        for (int i = static_cast<int>(lane); i < kSlots; i += 32) {
++            long long volume = static_cast<long long>(in.features[i]);
++            long long filled = static_cast<long long>(in.features[kSlots + i]);
++
++            if (volume > 0) {
++                ask_volume += volume;
++                ask_filled += filled;
++            } else if (volume < 0) {
++                bid_volume -= volume;
++                bid_filled += filled;
++            }
++        }
++
++        #pragma unroll
++        for (int offset = 16; offset > 0; offset >>= 1) {
++            ask_volume += __shfl_down_sync(full_mask, ask_volume, offset);
++            ask_filled += __shfl_down_sync(full_mask, ask_filled, offset);
++            bid_volume += __shfl_down_sync(full_mask, bid_volume, offset);
++            bid_filled += __shfl_down_sync(full_mask, bid_filled, offset);
++        }
++
++        if (lane == 0u)
++            finish_output_row(output[row], in, ask_volume, ask_filled, bid_volume, bid_filled);
++    }
+ }
+
+ // One block processes a small tile of rows. For each row, all threads
