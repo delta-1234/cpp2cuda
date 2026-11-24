@@ -130,6 +130,36 @@ WORKFLOW_PYTHON="$(command -v python3)" \
   --optimize --profile-case many --backend transformers
 ```
 
+### 使用 Pi 驱动 agent
+
+在 计算节点 的仓库根目录执行以下命令即可复用配置好的模型 API。模型端点需要支持流式原生函数调用。默认后端为 `builtin`，选择 `--backend pi` 后，环境分析、源码迁移和两个专项优化角色都由 Pi 管理对话和工具调用。
+
+```sh
+# 验证当前模型能通过 Pi 读取真实 GPU 和编译器信息
+bash workflow/cuda.sh --agent --backend pi --inspect --task "报告 GPU 型号、计算能力和 nvcc 版本"
+
+# 从通用因子的 C++ 源码开始，生成、验收并优化两种 CUDA 实现
+bash workflow/cuda.sh --agent --backend pi --spec examples/window_energy/task.json \
+  --optimize --profile-case many
+```
+
+工作流以 RPC 模式启动独立的 Pi 进程，每个角色使用临时配置目录。Pi 通过 `fp_probe`、`fp_edit`、`fp_verify` 等原生函数调用现有控制器，工具出错时会把诊断和定向重测提示送回模型。启动时会核对实际模型和角色的工具清单。Pi 的内置 shell、文件工具、MCP 和扩展自动发现均已关闭。API 密钥通过 Pi 进程的环境变量传入，编译和运行候选代码沿用离线沙箱。报告的 `backend`、`pi_version` 和 `actions` 可用于核对实际运行路径。原有的 `--max-steps` 与 `--specialist-steps` 分别控制迁移和专项优化的模型轮数。
+
+本次测试使用官方 Pi 1.6.0 独立版。Linux x86-64 用户可在联网准备机下载同一归档，然后把归档和仓库一起传到计算节点。[Pi 1.6.0 官方发布页](https://github.com/earendil-works/pi/releases/tag/v1.6.0)
+
+```sh
+# 准备机
+curl -fL -o pi-linux-x64.tar.gz \
+  https://github.com/earendil-works/pi/releases/download/v1.6.0/pi-linux-x64.tar.gz
+
+# 离线计算节点，在仓库根目录执行，归档路径按实际位置填写
+archive=/path/to/pi-linux-x64.tar.gz
+echo "ef77dbe4379b3bdeb425a1e1b862fa3c915c255000dfe4965c98eee96a5765d1  $archive" | sha256sum -c - && \
+  mkdir -p runs/deps/pi-1.6.0 && tar -xzf "$archive" -C runs/deps/pi-1.6.0
+```
+
+也可用 `FACTORPORT_PI_BIN` 指定已有 Pi 可执行文件的绝对路径。其次查找仓库中的 `runs/deps/pi-1.6.0/pi/pi`，最后查找 `PATH` 中的 `pi`。Pi 启动时使用离线模式，CUDA 文档从仓库读取。可运行 `python3 workflow/test_pi_backend.py`，通过本地模拟的模型端点验证真实 Pi 的工具协议、纠错和轮数限制。
+
 ## 运行结果
 
 每次运行会打印独立的 `runs/cuda-agent-*/` 目录。查看 `candidate/port/` 获取选中的 CUDA 源码。`candidate/runs/replay` 可用 `simt` 或 `tile` 加原 CPU 命令的参数运行。

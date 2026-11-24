@@ -18,7 +18,6 @@ tool session on the selected GPU. Use the supplied live device limits and measur
 registers, block dimensions, shared memory and launch counts. Read the current CUDA source (read(path,start?)).
 Choose a hardware-specific change and test it. Use the offline manuals or experiments if needed.
 Only submit code after considering alignment, edge sizes, integer width and synchronization.
-Return a JSON object {"tool":"NAME", ...arguments} or an ordered list of up to 6 calls.
 Tools: read(path,start?), probe(topic), search(query,doc?), page(doc,page), catalog(), experiment(code),
 edit(path,old,new), write(path,code), remove(path), build(), test_case(case,mode), diagnostics(), log(name).
 trial(hypothesis: a short explanation of the hardware mechanism) builds, independently verifies both modes,

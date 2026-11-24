@@ -2,6 +2,8 @@
 
 通用移植入口为 `bash workflow/cuda.sh --agent --source <程序.cpp>` 或 `--agent --spec <任务.json>`。原因子通过 `--generate-cuda OrderFillRateSpread.cpp` 进入同一工具循环。`--agent --inspect --task '问题'` 支持无源码的节点分析。模型根据本地观测选择探测、查阅手册、实验、生成用例、写代码、编译和验证。控制器以独立 CPU 结果和真实 GPU 启动记录验收。
 
+在通用入口追加 `--backend pi` 可选择 Pi RPC 后端。Pi 用配置的模型 API 调用当前角色的 `fp_*` 工具。控制器执行工具并验收，运行中的 agent 不下载依赖。Pi 的离线准备和 计算节点 命令见 README。
+
 编程手册位于 `offline_docs/nvidia/`，包含原版 PDF、可按页检索的文本和 SHA-256 清单。资料准备使用 `workflow/prepare_docs.py`，运行中的 agent 只查询本地副本，先核对资料版本与工具链。工具协议、通用输入输出约定和示例参见 README。收到错误时可通过 `diagnostics`、`log` 和 `test_case` 定位失败，修改后全量验证。检查点与回退语义详见 `offline_docs/agent-repair.md`。
 
 因子入口默认在完整转写后运行两个专项优化 agent。通用任务用 `--optimize` 开启，已有候选通过 `--candidate` 提供。先用目标设备建立正确性、端到端和 Nsight 内核基准，再依次运行 SIMT 与 Tile 会话。每次 `trial` 须说明基于硬件的优化假设，控制器以同一用例实测选版。检查 `report.json` 的 `optimization` 字段。可用 `--backend transformers` 选择预装的 Hugging Face ReAct 工具运行时，命令见 README。
