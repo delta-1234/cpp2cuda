@@ -1,0 +1,929 @@
+{
+  "device": {
+    "devices": [
+      {
+        "ordinal": 0,
+        "name": "NVIDIA GeForce RTX 3090",
+        "cc": "86",
+        "sm_count": 82,
+        "warp_size": 32,
+        "max_threads_per_block": 1024,
+        "max_threads_per_sm": 1536,
+        "shared_bytes_per_block": 49152,
+        "shared_bytes_per_sm": 102400,
+        "optin_shared_bytes_per_block": 101376,
+        "registers_per_sm": 65536,
+        "l2_bytes": 6291456,
+        "memory_bus_bits": 384,
+        "memory_bytes": 25430786048
+      }
+    ],
+    "driver_api_version": 12040
+  },
+  "nsys": "NVIDIA Nsight Systems version 2022.1.3.3-1c7b5f7",
+  "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2021 NVIDIA Corporation\nBuilt on Sun_Mar_21_19:15:46_PDT_2021\nCuda compilation tools, release 11.3, V11.3.58\nBuild cuda_11.3.r11.3/compiler.29745058_0",
+  "host_cxx": "c++ (GCC) 12.3.0",
+  "nvcc_ccbin": "/usr/bin/g++-7",
+  "cpu": "Intel(R) Xeon(R) Gold 6248R CPU @ 3.00GHz",
+  "core": 6,
+  "warmup": 5,
+  "repeat": 11,
+  "seed": 91028,
+  "unit": "us",
+  "cpu_sampling": "Unprofiled separate process; at least 50 ms warmup, calibrate batches to >=500 us, divide each elapsed time by its batch size.",
+  "method": "Median warm single-thread CPU compute / median sum of all CUDA kernel activity per factor evaluation. Includes session grouping, CUB scan, returns and rank. Excludes CSV, host staging, transfers, CUDA setup, host launch overhead and gaps between kernels.",
+  "sources_sha256": {
+    "MomentumRank.cpp": "003f7880b474cade0584588777dcd09b1716901b2fac66a51b0fb7a1c10c6309",
+    "rank_cpu.hpp": "89b0a458ed7bd25a3eefbdbd64412af4f77755879321007b8b9620b9a10c8473",
+    "rank_io.hpp": "5ace69553c72c2a2a8300625c6da08415aec7967093c75e59df72d1fdeafb69b",
+    "generated/replay.cu": "df1d985f2a42c6389d5c375dd50b904747719376916021c6ae180325bb0dad30",
+    "benchmark/cpu.cpp": "91f453b51567775d9ba8db96b80463dcb0bc4dc3fecafb8c61e082815987fe51",
+    "benchmark/compute.cu": "2bdd883585a7918c66b3f180e907dc198b69ab55a99f2a56b43eece15ec791ec",
+    "benchmark_compute.py": "e366d47ef87913e136d1aebbeb71718dfc576bb06e32b841bd2d0bbcf0a4ca54",
+    "verify_holdout.py": "278c800f5d7b2cb260d6a51e8b5febafd8f956bf1cfc6d2b5ec8fdaa880d22e0"
+  },
+  "cases": {
+    "sessions": {
+      "rows": 17,
+      "sessions": 5,
+      "max_session_rows": 8,
+      "input_sha256": "bfa788c27986f9ab55dcb2d7824792412daec743e1b82d1f62a81bb48400e0c6",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 2048,
+      "samples_us": {
+        "cpu": [
+          0.463421386719,
+          0.460537597656,
+          0.461155761719,
+          0.461654296875,
+          0.463850585938,
+          0.460581542969,
+          0.459904296875,
+          0.460164550781,
+          0.467600097656,
+          0.461989746094,
+          0.461181152344
+        ],
+        "simt": [
+          17.6,
+          17.536,
+          18.143,
+          17.504,
+          17.92,
+          17.375,
+          17.184,
+          17.503,
+          17.984,
+          17.824,
+          17.632
+        ],
+        "tile": [
+          19.2,
+          19.296,
+          18.815,
+          19.167,
+          18.879,
+          19.36,
+          19.136,
+          19.2,
+          18.752,
+          19.456,
+          18.88
+        ]
+      },
+      "median_us": {
+        "cpu": 0.461181152344,
+        "simt": 17.6,
+        "tile": 19.167
+      },
+      "speedup_vs_cpu": {
+        "simt": 0.026203474564999996,
+        "tile": 0.02406120688391506
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 3.84,
+        "tile": 5.472
+      }
+    },
+    "boundaries": {
+      "rows": 866,
+      "sessions": 5,
+      "max_session_rows": 513,
+      "input_sha256": "0df416c2352d57035a7d1cabdcff2228367e2d884e14ee585e48445c50785e76",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 16,
+      "samples_us": {
+        "cpu": [
+          42.3676875,
+          42.4071875,
+          42.3245,
+          41.552375,
+          41.9215625,
+          41.611625,
+          41.709625,
+          41.82425,
+          41.737875,
+          41.8478125,
+          42.096125
+        ],
+        "simt": [
+          32.639,
+          32.224,
+          31.232,
+          31.104,
+          31.456,
+          32.448,
+          32.639,
+          31.936,
+          30.977,
+          31.424,
+          32.512
+        ],
+        "tile": [
+          32.384,
+          31.936,
+          30.431,
+          29.888,
+          31.392,
+          31.807,
+          31.84,
+          31.52,
+          29.855,
+          29.696,
+          32.224
+        ]
+      },
+      "median_us": {
+        "cpu": 41.8478125,
+        "simt": 31.936,
+        "tile": 31.52
+      },
+      "speedup_vs_cpu": {
+        "simt": 1.3103648703657316,
+        "tile": 1.3276590260152286
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 18.528,
+        "tile": 17.632
+      }
+    },
+    "holdout": {
+      "rows": 6417,
+      "sessions": 7,
+      "max_session_rows": 5003,
+      "input_sha256": "adac99c1ac11c7ed681051e31dcd0ca087a1cf0bc7e61f55940b00600ad80163",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 2,
+      "samples_us": {
+        "cpu": [
+          455.768,
+          457.2985,
+          457.8455,
+          521.2945,
+          691.556,
+          614.52,
+          456.979,
+          456.223,
+          453.8155,
+          455.7875,
+          459.826
+        ],
+        "simt": [
+          183.134,
+          182.751,
+          182.656,
+          182.367,
+          182.912,
+          183.006,
+          182.623,
+          182.622,
+          183.455,
+          182.399,
+          181.279
+        ],
+        "tile": [
+          5469.343,
+          3333.228,
+          5457.31,
+          3338.988,
+          5462.879,
+          3333.324,
+          5472.287,
+          3336.076,
+          5460.031,
+          3574.347,
+          3326.891
+        ]
+      },
+      "median_us": {
+        "cpu": 457.2985,
+        "simt": 182.656,
+        "tile": 3574.347
+      },
+      "speedup_vs_cpu": {
+        "simt": 2.5036051375262787,
+        "tile": 0.12793903333951628
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 167.999,
+        "tile": 3559.179
+      }
+    },
+    "1d-256s": {
+      "rows": 256,
+      "sessions": 1,
+      "max_session_rows": 256,
+      "input_sha256": "e11e8bdbd7c6d3b05b0f6d8e0dd2010426b9ab94235b56e9dd16ebc481a4b504",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 128,
+      "samples_us": {
+        "cpu": [
+          7.0368125,
+          7.0283046875,
+          7.0256640625,
+          6.967015625,
+          7.0419296875,
+          7.0227421875,
+          7.0238125,
+          7.044546875,
+          7.1126875,
+          7.045765625,
+          9.41525
+        ],
+        "simt": [
+          24.576,
+          23.136,
+          23.359,
+          24.543,
+          24.576,
+          24.64,
+          23.648,
+          23.168,
+          23.04,
+          23.136,
+          24.959
+        ],
+        "tile": [
+          23.007,
+          22.4,
+          23.103,
+          23.072,
+          24.479,
+          24.479,
+          22.687,
+          22.656,
+          22.432,
+          22.783,
+          24.095
+        ]
+      },
+      "median_us": {
+        "cpu": 7.0368125,
+        "simt": 23.648,
+        "tile": 23.007
+      },
+      "speedup_vs_cpu": {
+        "simt": 0.2975648046346414,
+        "tile": 0.30585528317468597
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 10.4,
+        "tile": 9.824
+      }
+    },
+    "2d-256s": {
+      "rows": 512,
+      "sessions": 2,
+      "max_session_rows": 256,
+      "input_sha256": "fe77dcbfedd5ba184ab167f9e4bab0ff9c80120ab286df5c3672c4b98008da2e",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 32,
+      "samples_us": {
+        "cpu": [
+          20.14928125,
+          19.9725625,
+          20.33978125,
+          20.24265625,
+          20.27665625,
+          20.2819375,
+          20.327875,
+          20.32178125,
+          20.2074375,
+          20.21071875,
+          20.079125
+        ],
+        "simt": [
+          24.672,
+          23.167,
+          23.936,
+          24.832,
+          24.705,
+          23.68,
+          23.135,
+          22.943,
+          23.104,
+          22.849,
+          23.201
+        ],
+        "tile": [
+          23.552,
+          22.528,
+          22.752,
+          23.202,
+          24.192,
+          24.064,
+          22.176,
+          22.208,
+          22.4,
+          22.08,
+          23.103
+        ]
+      },
+      "median_us": {
+        "cpu": 20.24265625,
+        "simt": 23.201,
+        "tile": 22.752
+      },
+      "speedup_vs_cpu": {
+        "simt": 0.8724906792810654,
+        "tile": 0.8897088717475387
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 10.24,
+        "tile": 9.664
+      }
+    },
+    "4d-256s": {
+      "rows": 1024,
+      "sessions": 4,
+      "max_session_rows": 256,
+      "input_sha256": "e3ae4b9649fbcfc0cc106bf8f3d79948c871964a30e7630f85ab68a51ac03e1f",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 16,
+      "samples_us": {
+        "cpu": [
+          53.2618125,
+          53.5763125,
+          53.00725,
+          53.4583125,
+          52.1819375,
+          51.807125,
+          52.0273125,
+          51.94325,
+          52.2924375,
+          51.970875,
+          51.68675
+        ],
+        "simt": [
+          25.152,
+          23.872,
+          23.104,
+          23.359,
+          23.232,
+          25.088,
+          24.48,
+          24.991,
+          25.184,
+          23.999,
+          23.904
+        ],
+        "tile": [
+          24.32,
+          23.84,
+          22.302,
+          22.369,
+          22.72,
+          23.136,
+          24.542,
+          24.128,
+          24.48,
+          23.872,
+          22.463
+        ]
+      },
+      "median_us": {
+        "cpu": 52.1819375,
+        "simt": 23.999,
+        "tile": 23.84
+      },
+      "speedup_vs_cpu": {
+        "simt": 2.174337993249719,
+        "tile": 2.1888396602348994
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 10.495,
+        "tile": 9.792
+      }
+    },
+    "8d-256s": {
+      "rows": 2048,
+      "sessions": 8,
+      "max_session_rows": 256,
+      "input_sha256": "461ff9d85a2945f8a3082cf6e7578f83a0842303760f2ada23cf89e2bb5dce79",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 8,
+      "samples_us": {
+        "cpu": [
+          122.469,
+          121.79525,
+          122.9735,
+          124.61175,
+          122.0535,
+          120.9385,
+          120.326125,
+          125.53225,
+          122.61675,
+          121.09725,
+          121.8395
+        ],
+        "simt": [
+          24.319,
+          24.415,
+          24.8,
+          24.48,
+          24.672,
+          24.48,
+          23.328,
+          24.702,
+          24.832,
+          24.736,
+          24.641
+        ],
+        "tile": [
+          24.448,
+          24.352,
+          24.639,
+          24.257,
+          24.608,
+          24.608,
+          23.457,
+          24.032,
+          24.224,
+          23.84,
+          24.64
+        ]
+      },
+      "median_us": {
+        "cpu": 122.0535,
+        "simt": 24.641,
+        "tile": 24.352
+      },
+      "speedup_vs_cpu": {
+        "simt": 4.953268942007224,
+        "tile": 5.012052398160315
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 10.112,
+        "tile": 9.856
+      }
+    },
+    "16d-256s": {
+      "rows": 4096,
+      "sessions": 16,
+      "max_session_rows": 256,
+      "input_sha256": "740bec74ea932fe867660a50a2bfe2a0592b985de184ca921410d4d45bcb0e21",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 2,
+      "samples_us": {
+        "cpu": [
+          372.496,
+          363.3345,
+          368.5915,
+          372.8005,
+          367.2395,
+          363.7975,
+          364.473,
+          361.922,
+          366.99,
+          365.804,
+          367.2475
+        ],
+        "simt": [
+          25.12,
+          25.119,
+          23.104,
+          23.07,
+          23.328,
+          24.64,
+          25.248,
+          26.079,
+          25.76,
+          26.304,
+          25.472
+        ],
+        "tile": [
+          24.543,
+          24.384,
+          22.656,
+          22.304,
+          23.04,
+          24.447,
+          24.799,
+          24.704,
+          26.112,
+          25.12,
+          25.343
+        ]
+      },
+      "median_us": {
+        "cpu": 366.99,
+        "simt": 25.12,
+        "tile": 24.543
+      },
+      "speedup_vs_cpu": {
+        "simt": 14.609474522292993,
+        "tile": 14.952939738418287
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 10.208,
+        "tile": 9.952
+      }
+    },
+    "32d-256s": {
+      "rows": 8192,
+      "sessions": 32,
+      "max_session_rows": 256,
+      "input_sha256": "6d7ba7de90e4775b698692bb7232398b7dc3cb9ee62c0a6c22d075b91c44342c",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 1,
+      "samples_us": {
+        "cpu": [
+          527.523,
+          527.891,
+          528.736,
+          526.293,
+          525.728,
+          527.668,
+          530.84,
+          525.413,
+          527.15,
+          526.649,
+          526.332
+        ],
+        "simt": [
+          25.984,
+          25.568,
+          25.118,
+          24.032,
+          24.128,
+          25.632,
+          25.632,
+          25.408,
+          25.056,
+          23.776,
+          23.712
+        ],
+        "tile": [
+          25.504,
+          25.664,
+          23.328,
+          23.04,
+          23.424,
+          24.384,
+          25.121,
+          25.217,
+          23.167,
+          22.848,
+          23.36
+        ]
+      },
+      "median_us": {
+        "cpu": 527.15,
+        "simt": 25.118,
+        "tile": 23.424
+      },
+      "speedup_vs_cpu": {
+        "simt": 20.986941635480534,
+        "tile": 22.504696038251364
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 10.463,
+        "tile": 9.792
+      }
+    },
+    "64d-256s": {
+      "rows": 16384,
+      "sessions": 64,
+      "max_session_rows": 256,
+      "input_sha256": "59033342212c769efe4d6bead5086b033ac17e3a333b929eb53cfa5ace69d9fc",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 1,
+      "samples_us": {
+        "cpu": [
+          1050.098,
+          1059.695,
+          1052.964,
+          1053.107,
+          1054.434,
+          1059.88,
+          1053.175,
+          1056.147,
+          1059.806,
+          1053.807,
+          1054.033
+        ],
+        "simt": [
+          27.36,
+          26.624,
+          26.816,
+          26.398,
+          26.431,
+          26.752,
+          26.368,
+          26.208,
+          26.016,
+          26.24,
+          26.142
+        ],
+        "tile": [
+          25.984,
+          26.015,
+          25.952,
+          26.016,
+          26.176,
+          25.888,
+          26.239,
+          25.792,
+          26.144,
+          26.336,
+          26.08
+        ]
+      },
+      "median_us": {
+        "cpu": 1054.033,
+        "simt": 26.398,
+        "tile": 26.016
+      },
+      "speedup_vs_cpu": {
+        "simt": 39.92851731191757,
+        "tile": 40.514798585485856
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 10.976,
+        "tile": 10.592
+      }
+    },
+    "256d-256s": {
+      "rows": 65536,
+      "sessions": 256,
+      "max_session_rows": 256,
+      "input_sha256": "e45078ed3148afb687bad6a55e534c710e5ae6ad53ac83155fc9bc680143ade3",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 1,
+      "samples_us": {
+        "cpu": [
+          4264.051,
+          4266.28,
+          4254.618,
+          4256.885,
+          4270.133,
+          4273.499,
+          4255.239,
+          4261.285,
+          4277.259,
+          4263.45,
+          4250.108
+        ],
+        "simt": [
+          48.544,
+          48.448,
+          48.608,
+          48.672,
+          50.272,
+          50.207,
+          50.56,
+          50.368,
+          50.944,
+          50.24,
+          50.335
+        ],
+        "tile": [
+          36.48,
+          36.959,
+          36.864,
+          36.992,
+          37.824,
+          37.76,
+          37.984,
+          37.631,
+          37.856,
+          38.272,
+          37.791
+        ]
+      },
+      "median_us": {
+        "cpu": 4263.45,
+        "simt": 50.24,
+        "tile": 37.76
+      },
+      "speedup_vs_cpu": {
+        "simt": 84.86166401273884,
+        "tile": 112.90916313559322
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 31.968,
+        "tile": 19.712
+      }
+    },
+    "1024d-256s": {
+      "rows": 262144,
+      "sessions": 1024,
+      "max_session_rows": 256,
+      "input_sha256": "19224dc5bf84bf22e58255152d035cedb3ec84dbd9fa93b34285d84fc733b975",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 1,
+      "samples_us": {
+        "cpu": [
+          17688.748,
+          17588.535,
+          17646.876,
+          17620.648,
+          17606.762,
+          17761.446,
+          17664.897,
+          17691.286,
+          17665.621,
+          17699.128,
+          19462.045
+        ],
+        "simt": [
+          127.04,
+          125.984,
+          124.191,
+          122.048,
+          121.312,
+          119.52,
+          120.159,
+          119.553,
+          119.487,
+          119.903,
+          119.52
+        ],
+        "tile": [
+          77.951,
+          77.983,
+          76.255,
+          76.289,
+          74.848,
+          75.104,
+          74.367,
+          72.959,
+          73.312,
+          74.687,
+          74.91
+        ]
+      },
+      "median_us": {
+        "cpu": 17665.621,
+        "simt": 120.159,
+        "tile": 74.91
+      },
+      "speedup_vs_cpu": {
+        "simt": 147.01870854451184,
+        "tile": 235.82460285676146
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 92.255,
+        "tile": 47.104
+      }
+    },
+    "64d-1024s": {
+      "rows": 65536,
+      "sessions": 64,
+      "max_session_rows": 1024,
+      "input_sha256": "65346cdeee8ebe9363250d35546dd9948a520288ec3ea28591f7e85c2ea98144",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 1,
+      "samples_us": {
+        "cpu": [
+          4818.941,
+          4834.497,
+          4838.257,
+          4829.254,
+          4824.07,
+          4817.112,
+          4818.764,
+          4823.008,
+          4821.655,
+          4821.677,
+          4822.738
+        ],
+        "simt": [
+          132.159,
+          132.095,
+          132.223,
+          131.551,
+          131.711,
+          131.68,
+          131.84,
+          132.031,
+          131.967,
+          131.84,
+          132.48
+        ],
+        "tile": [
+          49.759,
+          48.672,
+          48.672,
+          48.863,
+          48.992,
+          48.544,
+          48.992,
+          46.782,
+          48.991,
+          48.96,
+          48.48
+        ]
+      },
+      "median_us": {
+        "cpu": 4822.738,
+        "simt": 131.967,
+        "tile": 48.863
+      },
+      "speedup_vs_cpu": {
+        "simt": 36.54503019694317,
+        "tile": 98.69917933814952
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 114.08,
+        "tile": 30.912
+      }
+    },
+    "16d-4096s": {
+      "rows": 65536,
+      "sessions": 16,
+      "max_session_rows": 4096,
+      "input_sha256": "0fdd0374b44ffd4f93ff7158598b162bf0a1f7c11e4b87f893cb65ccb8c627a1",
+      "all_gpu_outputs_match_cpu": true,
+      "capture_attempts": 1,
+      "cpu_batch_size": 1,
+      "samples_us": {
+        "cpu": [
+          5368.689,
+          5338.498,
+          5340.649,
+          5333.16,
+          5304.003,
+          5302.498,
+          5312.72,
+          5295.751,
+          5319.861,
+          5326.099,
+          5293.722
+        ],
+        "simt": [
+          488.414,
+          488.798,
+          488.957,
+          484.286,
+          482.27,
+          484.637,
+          484.19,
+          473.374,
+          471.102,
+          472.765,
+          473.533
+        ],
+        "tile": [
+          169.439,
+          169.534,
+          168.48,
+          168.48,
+          167.359,
+          167.647,
+          164.319,
+          164.127,
+          163.423,
+          163.743,
+          161.695
+        ]
+      },
+      "median_us": {
+        "cpu": 5319.861,
+        "simt": 484.19,
+        "tile": 167.359
+      },
+      "speedup_vs_cpu": {
+        "simt": 10.98713521551457,
+        "tile": 31.78712229399076
+      },
+      "rank_kernel_only_median_us": {
+        "simt": 465.726,
+        "tile": 148.959
+      }
+    }
+  }
+}

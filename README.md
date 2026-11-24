@@ -225,7 +225,7 @@ Pi 1.6.0 使用配置的 `qwen3.8-max` 将五点窗口因子的 C++ 源码迁移
 
 内核时间为 8,193 个输出上三次采样的中位数。恢复选中源码并重新编译后，该用例的冷启动端到端中位数为 CPU 3.589 ms、SIMT 220.432 ms、Tile 216.187 ms。这个规模下 CPU 更快。
 
-截面动量排名示例通过同一通用入口迁移。Pi 修复了首轮草稿中的交易日索引和 Tile 同步问题。最终 CPU、SIMT、Tile 均与独立参考实现在 6,417 行留出数据上逐字节一致。866 行输入的冷启动中位数分别为 4.410、149.911 和 146.687 ms。[示例与复现命令](example/momentum_rank/README.md) · [验证报告](example/momentum_rank/validation/pi-rtx3090.json)
+截面动量排名示例通过同一通用入口迁移。Pi 修复了首轮草稿中的交易日索引和 Tile 同步问题。最终 CPU、SIMT、Tile 均与独立参考实现在 6,417 行留出数据上逐字节一致。866 行输入的冷启动中位数分别为 4.410、149.911 和 146.687 ms。单独测量这 866 行的计算，SIMT 和 Tile 相对单线程 CPU 分别快 1.31× 和 1.33×。每天 256 只证券时，两条 GPU 路径均在 512 到 1,024 行之间超过 CPU。[纯计算时间与各规模加速比](example/momentum_rank/README.md#单线程-cpu-与-gpu-的纯计算耗时) · [示例与复现命令](example/momentum_rank/README.md) · [验证报告](example/momentum_rank/validation/pi-rtx3090.json)
 
 ## 运行结果
 
