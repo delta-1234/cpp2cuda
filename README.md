@@ -1,8 +1,10 @@
 # FactorPort
 
-FactorPort 用 agent 工作流把量化因子的 C++ 参考实现迁移到 CUDA，并针对目标 GPU 分别优化 SIMT 和共享内存 Tile 内核。你提供因子源码和可复现的输入，原 C++ 程序提供计算真值。每次运行交付 CUDA 源码、可执行文件、正确性报告和端到端耗时。
+FactorPort 用 agent 工作流把量化因子的 C++ 参考实现迁移到 CUDA，并针对目标 GPU 分别优化 SIMT 和共享内存 Tile 内核。你提供因子源码和可复现的输入，原 C++ 程序提供计算真值。迁移通过验收后，运行目录中会保存 CUDA 源码、可执行文件、正确性报告和端到端耗时。
 
 `OrderFillRateSpread.cpp` 是一个完整的高频因子示例。其他因子可以使用自己的输入格式、窗口、预热规则和输出列。[订单成交率差示例](example/order-fill-rate-spread/README.md) · [通用窗口算子样例](example/window_energy/task.json)
+
+[快速开始](#快速开始) · [选择 Agent 后端](#选择-agent-后端) · [模型 API 配置](#模型-api-配置) · [许可证](#许可证)
 
 ## 仓库结构
 
@@ -64,6 +66,55 @@ python3 workflow/port_agent.py --spec example/window_energy/task.json --optimize
 
 如需先独立盘点环境，可运行 `bash workflow/cuda.sh --agent --inspect --task "检查已分配 GPU 和工具链"`。
 
+## 选择 Agent 后端
+
+`--backend` 选择由谁管理模型对话和工具调用，默认值为 `builtin`。三个后端都使用配置的模型 API。迁移 agent、SIMT 优化 agent 和 Tile 优化 agent 共用本次选择，由同一个控制器编译、比对 CPU 结果并检查 GPU 内核启动。
+
+| `--backend` | 工具调用方式 | 依赖与适用场景 |
+| --- | --- | --- |
+| `builtin`（默认） | Python 控制器解析模型返回的 JSON 动作或源码写入块。 | 无需额外的 agent 框架。首次迁移或使用仅支持文本生成的端点时可选。 |
+| `transformers` | Hugging Face `ReactJsonAgent` 管理 ReAct 对话，通过 `cuda_tools` 分发模型返回的动作。 | 需要本地可导入 `transformers.agents.ReactJsonAgent` 的 Python 环境。已验证版本为 Transformers 4.41.2，模型推理通过配置的 API 执行。 |
+| `pi` | Pi CLI 以 RPC 模式运行。模型通过原生函数调用请求当前角色可用的 `fp_*` 工具。 | 需要 Pi 可执行文件，以及支持流式函数调用和工具结果回传的模型端点。已验证版本为 Pi 1.6.0。 |
+
+以下三条命令运行同一项窗口因子任务，任选一条。三者都生成 SIMT 和共享内存 Tile 两条 CUDA 路径，`--optimize` 再启用两个专项优化 agent。
+
+```sh
+# 内置后端，也可以省略 --backend builtin
+bash workflow/cuda.sh --agent --spec example/window_energy/task.json --optimize --backend builtin
+
+# Hugging Face ReAct，先激活安装了相应 Transformers 版本的 Python 环境
+WORKFLOW_PYTHON="$(command -v python3)" \
+  bash workflow/cuda.sh --agent --spec example/window_energy/task.json --optimize --backend transformers
+
+# Pi 原生工具调用
+bash workflow/cuda.sh --agent --spec example/window_energy/task.json --optimize --backend pi
+```
+
+### 哪些入口支持选择后端
+
+| 入口 | 行为 |
+| --- | --- |
+| `--agent --source <程序.cpp>` 或 `--agent --spec <任务.json>` | 可任选三个后端。默认执行迁移、验证和测速，添加 `--optimize` 启用专项优化。 |
+| `--agent --inspect --task '问题'` | 可任选三个后端。只分析节点环境，适合检查模型能否调用工具并返回实际 GPU 与编译器信息。 |
+| `--generate-cuda <程序.cpp>` | 默认进入同一套可选后端的工作流并开启专项优化，`--no-optimize` 可关闭。 |
+| `--agent '维护任务'` | 使用订单示例专用的 API 维护循环，后端固定。 |
+| `--generate-cuda <程序.cpp> --per-file` 或 `--no-per-file` | 显式传入任一标志都会选择订单示例的旧版生成器，分别按文件或整组生成，后端固定。 |
+
+其他 Linux 节点可用 `python3 workflow/port_agent.py --help` 查看同一通用入口的参数。Agent 后端由命令行选择，模型地址、模型 ID 和协议由 API 配置决定。[模型 API 配置](#模型-api-配置) · [Pi 离线部署](#pi-离线部署与检查)
+
+### 运行生成的 CUDA 代码
+
+已经完成迁移时，直接运行该次生成的可执行文件即可。第一个参数 `simt` 或 `tile` 选择 CUDA 实现，后续参数沿用原 CPU 程序的约定。例如，下面的命令用两种实现各计算 259 个窗口输出。
+
+```sh
+run=runs/cuda-agent-tb7q84yx  # 实测示例，换成自己的运行目录
+"$run/candidate/runs/replay" simt 259 > "$run/simt.out"
+"$run/candidate/runs/replay" tile 259 > "$run/tile.out"
+cmp "$run/simt.out" "$run/tile.out"
+```
+
+订单示例另有流式回放入口 `--stream`，支持增量 CPU（`cpu`）、扫描 CPU（`legacy`）、CUDA（`simt`、`tile`）及预编译的 Triton（`triton`）。该示例的窗口打包验证器还会按本机依赖测试 Triton Tile 和 NVIDIA cuTile，`--require-cutile` 会将 cuTile 列为必验项。[订单示例的构建与回放命令](example/order-fill-rate-spread/README.md)
+
 ## 接入自己的因子
 
 **单文件程序**可以直接传给 `--source`。例如，一个从标准输出返回结果、接受一个行情文件路径的因子，可以按下面的方式运行。`--input` 中的路径相对于源文件目录。没有现成用例时，模型也可以阅读源码并提出小型测试。
@@ -122,7 +173,7 @@ flowchart TD
 
 编译或比对失败后，agent 可以读取日志、定位首个差异、定向重测并修复。源码改动会使先前的验收失效。已验证的源码保存在检查点中。如果专项 agent 耗尽轮数仍未测足有效候选，控制器保留已选版本，在报告中标记优化未完成。[修复与回退机制](offline_docs/agent-repair.md) · [操作约定](AGENTS.md)
 
-## 模型 API、后端和离线资料
+## 模型 API 配置
 
 仓库根目录的 `.env` 保存模型连接配置。交互式配置会隐藏密钥并设置 0600 权限。Git 忽略本地环境文件，仓库提供空密钥模板。[配置模板](.env.example)
 
@@ -135,28 +186,17 @@ flowchart TD
 
 同名环境变量优先。可用 `FACTOR_API_CONFIG` 显式指定 dotenv 或 JSON 文件。其余情况下依次查找仓库 `.env`、`~/.config/order-fill-rate-cuda/api.json` 和 `~/.env`。外层控制器访问配置的模型端点，工具执行和 CUDA 文档检索均在本地完成。源文件和工具观测会按需发送给模型，预先准备的官方手册放在 `offline_docs/nvidia/`。[离线知识库](offline_docs/README.md)
 
-`--backend builtin` 使用内置工具循环。`--backend transformers` 接入开源 Hugging Face `ReactJsonAgent`，复用同一组受控工具、API 配置和验收规则。计算节点 已预装兼容的 Transformers 4.41.2，可使用以下命令。
+三个后端均支持两种 API 协议。设置 `FACTOR_API_PROTOCOL=chat` 使用 `/chat/completions`，设置为 `responses` 使用 `/responses`。节点完全断网时，可将 `OPENAI_BASE_URL` 指向节点上已部署的兼容推理服务。使用远程模型时，节点需要能访问该端点。
+
+### Pi 离线部署与检查
+
+`bash workflow/cuda.sh --check-api` 会向配置的模型发送一次文本请求。要验证 Pi 的原生工具调用，可在同一节点运行下面的检查，核对报告中的 `backend`、`pi_version` 和 `actions`。
 
 ```sh
-WORKFLOW_PYTHON="$(command -v python3)" \
-  bash workflow/cuda.sh --agent --spec example/window_energy/task.json \
-  --optimize --profile-case many --backend transformers
-```
-
-### 使用 Pi 驱动 agent
-
-在 计算节点 的仓库根目录执行以下命令即可复用配置好的模型 API。模型端点需要支持流式原生函数调用。默认后端为 `builtin`，选择 `--backend pi` 后，环境分析、源码迁移和两个专项优化角色都由 Pi 管理对话和工具调用。
-
-```sh
-# 验证当前模型能通过 Pi 读取真实 GPU 和编译器信息
 bash workflow/cuda.sh --agent --backend pi --inspect --task "报告 GPU 型号、计算能力和 nvcc 版本"
-
-# 从通用因子的 C++ 源码开始，生成、验收并优化两种 CUDA 实现
-bash workflow/cuda.sh --agent --backend pi --spec example/window_energy/task.json \
-  --optimize --profile-case many
 ```
 
-工作流以 RPC 模式启动独立的 Pi 进程，每个角色使用临时配置目录。Pi 通过 `fp_probe`、`fp_edit`、`fp_verify` 等原生函数调用现有控制器，工具出错时会把诊断和定向重测提示送回模型。启动时会核对实际模型和角色的工具清单。Pi 的内置 shell、文件工具、MCP 和扩展自动发现均已关闭。API 密钥通过 Pi 进程的环境变量传入，编译和运行候选代码沿用离线沙箱。报告的 `backend`、`pi_version` 和 `actions` 可用于核对实际运行路径。原有的 `--max-steps` 与 `--specialist-steps` 分别控制迁移和专项优化的模型轮数。
+工作流以 RPC 模式启动独立的 Pi 进程，每个角色使用临时配置目录。Pi 通过 `fp_probe`、`fp_edit`、`fp_verify` 等原生函数调用现有控制器，工具出错时会把诊断和定向重测提示送回模型。启动时会核对实际模型和角色的工具清单。Pi 的内置 shell、文件工具、MCP 和扩展自动发现均已关闭。API 密钥通过 Pi 进程的环境变量传入，编译和运行候选代码沿用离线沙箱。原有的 `--max-steps` 与 `--specialist-steps` 分别控制迁移和专项优化的模型轮数。
 
 本次测试使用官方 Pi 1.6.0 独立版。Linux x86-64 用户可在联网准备机下载同一归档，然后把归档和仓库一起传到计算节点。[Pi 1.6.0 官方发布页](https://github.com/earendil-works/pi/releases/tag/v1.6.0)
 
@@ -194,7 +234,7 @@ Pi 1.6.0 使用配置的 `qwen3.8-max` 将五点窗口因子的 C++ 源码迁移
 | `tools.jsonl`、分步日志 | 模型调用了哪个工具，得到了什么观测，哪一步出现了差异。 |
 | `checkpoints/` | 通过全量正确性验收的源码，每个版本一个目录。专项优化的选版结果记录在 `optimization.selected.checkpoint`。 |
 
-专项优化中途停止后，可把已选检查点传给 `--candidate`。这会开启新的 Pi 会话，重新编译、验证并测量起点，再把实际测量交给两个专项 agent。若中断发生在首次性能选版之前，可从报告的 `last_verified_checkpoint` 恢复已通过正确性验收的源码。
+专项优化中途停止后，可把已选检查点传给 `--candidate`。这会用所选后端开启新的会话，重新编译、验证并测量起点，再把实际测量交给两个专项 agent。若中断发生在首次性能选版之前，可从报告的 `last_verified_checkpoint` 恢复已通过正确性验收的源码。
 
 ```sh
 run=runs/cuda-agent-ndsx1ldx  # 换成自己的运行目录
@@ -204,3 +244,26 @@ bash workflow/cuda.sh --agent --backend pi --spec example/window_energy/task.jso
 ```
 
 `verified` 表示所选代码通过正确性验收并完成计时。是否值得部署，要看目标工作负载的端到端结果。仓库包含通用窗口算子的迁移与故障修复记录，以及订单示例的交易数据格式、预热语义、流式回放和不同规模的 GPU/CPU 实测结果。[通用迁移记录](validation/port-agent-rtx3090.json) · [纠错记录](example/window_energy/validation/agent-repair-rtx3090.json) · [双 agent 硬件优化实测](example/order-fill-rate-spread/validation/factorport-specialists-rtx3090.json) · [订单因子示例与基准](example/order-fill-rate-spread/README.md)
+
+## 验证安装
+
+在仓库根目录运行以下命令。通用测试使用本地夹具，Pi 协议测试使用回环模拟端点。对应后端已经安装时，测试会实际启动其运行时。GPU 纠错回归在 计算节点 编译候选、运行 CPU 对照并验证检查点回退。
+
+```sh
+# 本地回归
+python3 -m unittest discover -s workflow -p 'test_*.py'
+
+# 已配置的模型端点连通性
+bash workflow/cuda.sh --check-api
+
+# 计算节点 的真实 GPU 纠错回归
+bash workflow/cuda.sh --test-repair
+```
+
+通用 agent 的报告以 `analyzed` 表示完成环境分析，`verified` 表示通过验证和测速，`verified_fallback` 表示恢复检查点后重新验收成功。遇到 `blocked` 时查看报告中的 `summary` 和缺失依赖。遇到 `failed` 时查看 `error` 和工具日志。
+
+## 许可证
+
+FactorPort 的原创代码和项目文档采用 **MIT License**（SPDX 标识符 `MIT`）。可以使用、修改、分发和商用。在分发软件副本或其实质性部分时，请保留版权声明和许可声明。[许可证全文](LICENSE)
+
+`offline_docs/nvidia/` 中的 NVIDIA 手册 PDF 及其可检索文本遵循原文档的版权声明和许可条款。Pi、Transformers 和 CUDA Toolkit 等第三方软件也各自遵循上游许可证。用户提供的因子源码和数据沿用各自的授权。[NVIDIA 文档来源](offline_docs/sources.json)
