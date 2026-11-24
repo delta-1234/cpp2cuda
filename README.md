@@ -2,7 +2,7 @@
 
 FactorPort 用 agent 工作流把量化因子的 C++ 参考实现迁移到 CUDA，并针对目标 GPU 分别优化 SIMT 和共享内存 Tile 内核。你提供因子源码和可复现的输入，原 C++ 程序提供计算真值。迁移通过验收后，运行目录中会保存 CUDA 源码、可执行文件、正确性报告和端到端耗时。
 
-`OrderFillRateSpread.cpp` 是一个完整的高频因子示例。其他因子可以使用自己的输入格式、窗口、预热规则和输出列。[订单成交率差示例](example/order-fill-rate-spread/README.md) · [通用窗口算子样例](example/window_energy/task.json)
+`OrderFillRateSpread.cpp` 是一个完整的高频因子示例。其他因子可以使用自己的输入格式、窗口、预热规则和输出列。[订单成交率差示例](example/order-fill-rate-spread/README.md) · [截面动量排名示例](example/momentum_rank/README.md) · [通用窗口算子样例](example/window_energy/task.json)
 
 [快速开始](#快速开始) · [选择 Agent 后端](#选择-agent-后端) · [模型 API 配置](#模型-api-配置) · [许可证](#许可证)
 
@@ -11,6 +11,7 @@ FactorPort 用 agent 工作流把量化因子的 C++ 参考实现迁移到 CUDA�
 | 目录 | 内容 |
 | --- | --- |
 | `example/order-fill-rate-spread/` | 订单因子的 C++ 参考程序和头文件。`data/` 存放模拟逐笔行情和预期输出，`cuda/`、`stream/` 和 `generated/` 存放不同 GPU 实现，`validation/` 保存该因子的测量记录。 |
+| `example/momentum_rank/` | 按交易日计算证券收益率的截面排名，包含 C++ 参考实现、模拟行情、Pi 生成的 CUDA 和 计算节点 验证记录。 |
 | `example/window_energy/` | 五点窗口算子的 C++ 源码、任务清单、纠错用例、Pi 生成的 CUDA 代码和验证报告。 |
 | `workflow/` | Agent、构建和验证入口、离线工具及回归测试。 |
 | `offline_docs/` | 可供 agent 离线检索的 CUDA 手册和工作流说明。 |
@@ -223,6 +224,8 @@ Pi 1.6.0 使用配置的 `qwen3.8-max` 将五点窗口因子的 C++ 源码迁移
 | Tile | 5.728 µs | 3.072 µs | 保留原 Tile。候选在 259 和 8,193 个输出上的 Tile 端到端中位数分别增加 8.2% 和 8.6%，超过 5% 门槛。 |
 
 内核时间为 8,193 个输出上三次采样的中位数。恢复选中源码并重新编译后，该用例的冷启动端到端中位数为 CPU 3.589 ms、SIMT 220.432 ms、Tile 216.187 ms。这个规模下 CPU 更快。
+
+截面动量排名示例通过同一通用入口迁移。Pi 修复了首轮草稿中的交易日索引和 Tile 同步问题。最终 CPU、SIMT、Tile 均与独立参考实现在 6,417 行留出数据上逐字节一致。866 行输入的冷启动中位数分别为 4.410、149.911 和 146.687 ms。[示例与复现命令](example/momentum_rank/README.md) · [验证报告](example/momentum_rank/validation/pi-rtx3090.json)
 
 ## 运行结果
 

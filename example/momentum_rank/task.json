@@ -1,0 +1,11 @@
+{
+  "source": "MomentumRank.cpp",
+  "profile": "stdio",
+  "description": "Port this per-session cross-sectional momentum rank factor. Reuse rank_io.hpp for CSV I/O. Calculate returns and ranks on the device. Implement separate SIMT and cooperative shared-memory Tile kernels, keeping ties, missing prices, signed integer truncation and input order exact. Probe the machine, build, verify against the CPU, benchmark, then finish.",
+  "fixtures": ["data/sessions.csv", "data/boundaries.csv", "data/empty.csv"],
+  "cases": [
+    {"name": "boundaries", "args": ["data/boundaries.csv"]},
+    {"name": "sessions", "args": ["data/sessions.csv"]},
+    {"name": "empty", "args": ["data/empty.csv"]}
+  ]
+}
