@@ -421,7 +421,7 @@ def main():
     p.add_argument("--backend", choices=["builtin","transformers"], default="builtin")
     p.add_argument("--optimize", action=argparse.BooleanOptionalAction, default=False)
     p.add_argument("--specialist-steps", type=int, default=12, help="independent model turns per optimizer")
-    p.add_argument("--specialist-trials", type=int, default=1, help="minimum distinct measured candidates per optimizer")
+    p.add_argument("--specialist-trials", type=int, default=2, help="number of distinct candidates to measure per optimizer")
     p.add_argument("--profile-case", help="representative case for Nsight profiling")
     args = p.parse_args()
     if args.optimize and args.inspect: p.error("--optimize needs a port or a candidate")

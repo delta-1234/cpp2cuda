@@ -9,10 +9,15 @@ from unittest.mock import patch
 from optimize import decision, optimize
 from port_agent import Agent, ROOT
 from port_task import Task
+from profile_kernels import entry_hashes
 
 
 def metrics(key, simt, tile, end=10.0):
-    return {"checkpoint":key,"profile":{"simt":{"median_us":simt},"tile":{"median_us":tile}},
+    profile = {m:{"median_us":value,"entry_sass_sha256":[m],"launch_config_sha256":"launch"} for m,value in
+               (("simt",simt),("tile",tile))}
+    if simt<100: profile["simt"]["entry_sass_sha256"] = ["updated-simt"]
+    if tile>=120: profile["tile"]["entry_sass_sha256"] = ["updated-tile"]
+    return {"checkpoint":key,"profile":profile,
             "end_to_end_ms":{"many":{"cpu":5.0,"simt":end,"tile":end}}}
 
 
@@ -46,6 +51,20 @@ class OptimizationTests(unittest.TestCase):
             with self.subTest(key=after["checkpoint"]):
                 self.assertEqual(decision("simt",before,after)["accepted"],expected)
 
+    def test_fingerprint_uses_instruction_bytes(self):
+        def fingerprint(name, second):
+            dump = f"Function : {name}\n /*0000*/ MOV R1, R2; /* 0x1234 */\n /* 0x{second} */\n"
+            with patch("profile_kernels.subprocess.run",return_value=Namespace(stdout=dump)):
+                return entry_hashes("cuobjdump","replay",{"simt":[name]})["simt"]
+        self.assertEqual(fingerprint("kernel_1","aa"),fingerprint("kernel_2","aa"))
+        self.assertNotEqual(fingerprint("kernel_1","aa"),fingerprint("kernel_1","ab"))
+
+    def test_prevent_cross_backend_edits(self):
+        before, after = metrics("base",100,100), metrics("candidate",60,98)
+        after["profile"]["tile"]["entry_sass_sha256"] = ["different-tile"]
+        result = decision("simt",before,after)
+        self.assertFalse(result["accepted"] or result["peer_preserved"])
+
     def test_restore_and_independent_handoff(self):
         task = Task(None,ROOT/"examples/window_energy/task.json",[])
         args = Namespace(inspect=False,candidate=None,profile_case="many",specialist_steps=3,specialist_trials=1,task="")
@@ -74,13 +93,18 @@ class OptimizationTests(unittest.TestCase):
 
             def measure(agent,case):
                 key = run.audit["last_verified_checkpoint"]
-                timings = {"seed":(100,100),"simt improved":(80,100),"tile regression":(80,120)}
+                timings = {"seed":(100,100),"both changed":(80,120),"simt improved":(80,100),"tile regression":(80,120)}
                 return metrics(key,*timings[code.read_text()])
 
             def dialog(role,system,initial,turns,dispatch,done):
                 self.assertEqual(initial["role"],role)
                 self.assertFalse(done())
                 self.assertEqual(code.read_text(),"seed" if role=="simt" else "simt improved")
+                if role=="simt":
+                    dispatch({"tool":"write","path":code.name,"code":"both changed"})
+                    with self.assertRaisesRegex(ValueError,"scope check failed"):
+                        dispatch({"tool":"trial","hypothesis":"mixed edit"})
+                    self.assertFalse(done())
                 change = "simt improved" if role=="simt" else "tile regression"
                 dispatch({"tool":"write","path":code.name,"code":change})
                 result = dispatch({"tool":"trial","hypothesis":"block geometry"})
