@@ -1,6 +1,8 @@
 # FactorPort
 
-FactorPort 用 agent 工作流把量化因子的 C++ 参考实现迁移到 CUDA，并针对目标 GPU 分别优化 SIMT 和共享内存 Tile 内核。你提供因子源码和可复现的输入，原 C++ 程序提供计算真值。迁移通过验收后，运行目录中会保存 CUDA 源码、可执行文件、正确性报告和端到端耗时。
+**FactorPort 支持离线编写、验证和优化量化因子的 CUDA 代码。** 仓库自带可检索的 NVIDIA CUDA 编程指南和最佳实践手册。Agent 可以直接查阅本地手册和已安装的 Toolkit 头文件，无需联网搜索或访问外部文档。预先装好依赖并将模型 API 指向本机的兼容推理服务后，整个工作流可在断网节点上运行。选用远程模型时，节点需要能访问配置的模型端点。[离线知识库](offline_docs/README.md) · [模型 API 配置](#模型-api-配置)
+
+你提供因子的 C++ 源码和可复现的输入。Agent 探测目标 GPU，编写 SIMT 和共享内存 Tile 两种实现。启用专项优化后，两条路径分别调优。控制器在节点上编译运行，以原 C++ 程序的输出校验结果，保存 CUDA 源码、可执行文件、正确性报告和端到端耗时。
 
 `OrderFillRateSpread.cpp` 是一个完整的高频因子示例。其他因子可以使用自己的输入格式、窗口、预热规则和输出列。[订单成交率差示例](example/order-fill-rate-spread/README.md) · [截面动量排名示例](example/momentum_rank/README.md) · [通用窗口算子样例](example/window_energy/task.json)
 
