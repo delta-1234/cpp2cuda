@@ -1,4 +1,4 @@
-# 离线 CUDA 因子转写工作流
+# FactorPort 量化因子 CUDA 迁移与优化工作流
 
 通用移植入口为 `bash workflow/cuda.sh --agent --source <程序.cpp>` 或 `--agent --spec <任务.json>`。原因子通过 `--generate-cuda OrderFillRateSpread.cpp` 进入同一工具循环。`--agent --inspect --task '问题'` 支持无源码的节点分析。模型根据本地观测选择探测、查阅手册、实验、生成用例、写代码、编译和验证。控制器以独立 CPU 结果和真实 GPU 启动记录验收。
 
