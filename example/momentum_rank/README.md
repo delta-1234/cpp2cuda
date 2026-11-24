@@ -59,7 +59,21 @@ runs/momentum-rank-cuda/replay tile example/momentum_rank/data/sessions.csv
 
 ## 测试环境与实测结果
 
-Pi 1.6.0 使用配置的 `qwen3.8-max`，在 RTX 3090（sm_86）、CUDA Toolkit 11.3 上从 C++ 生成 CUDA。首次草稿在多交易日样例上产生排名偏差，额外的竞争检查也发现了 Tile 共享计数器的读写冲突。保留草稿并将诊断交给第二次 Pi 会话后，模型修正了交易日索引和同步。最终两个后端均被 CUPTI 记录到实际内核启动，通过了逐字节比对和 Compute Sanitizer 的显存检查。
+### 测试环境与 Agent 模型
+
+| 项目 | 本次实测配置 |
+| --- | --- |
+| Agent 后端与模型 | Pi 1.6.0，通过配置的 API 调用 `qwen3.8-max`。首次会话从 C++ 生成 CUDA，第二次会话根据诊断修复候选。 |
+| 运行节点与 CPU 基线 | Intel Xeon Gold 6248R @ 3.00 GHz。纯计算基线使用单线程 C++，固定在逻辑核 6。 |
+| GPU | NVIDIA GeForce RTX 3090，计算能力 8.6（sm_86），82 个 SM。 |
+| 编译工具链 | CUDA Toolkit 11.3（nvcc 11.3.58），nvcc 主机编译器 G++ 7.5.0。CPU 参考实现使用 GCC 12.3.0，CPU 与 CUDA 均以 C++17 和 `-O3` 编译。 |
+| 计时工具 | CPU 使用 `std::chrono::steady_clock`，GPU 使用 Nsight Systems 2022.1.3.3 记录设备时间戳。 |
+
+冷启动测试与纯计算测试均运行 Pi 修复后的 CUDA 实现。迁移报告与纯计算报告中的 CUDA 源码 SHA-256 一致。[Agent 运行记录](validation/pi-rtx3090.json) · [硬件、工具版本与源码哈希](validation/compute-rtx3090.json)
+
+### 正确性与冷启动端到端耗时
+
+首次草稿在多交易日样例上产生排名偏差，额外的竞争检查也发现了 Tile 共享计数器的读写冲突。保留草稿并将诊断交给第二次 Pi 会话后，模型修正了交易日索引和同步。最终两个后端均被 CUPTI 记录到实际内核启动，通过了逐字节比对和 Compute Sanitizer 的显存检查。
 
 独立验证使用种子 91028，覆盖 7 个交易日、6417 行。最大截面有 5003 行，其中 4346 行有效，触发了 Tile 的分片路径。CPU、SIMT、Tile 的输出均与独立有理数实现一致。在固定的 866 行边界样例上，Tile 的 `racecheck` 和 `synccheck` 都报告零错误。
 
@@ -86,7 +100,7 @@ export NSYS=/usr/local/cuda-11.7/nsight-systems-2022.1.3/bin/nsys
 python3 example/momentum_rank/benchmark_compute.py --core 6 --warmup 5 --repeat 11
 ```
 
-计算节点 使用 Xeon Gold 6248R 的逻辑核 6 和 RTX 3090，每组取 11 次测量的中位数。表中耗时统一为微秒，加速比大于 1 表示 GPU 计算更快。
+14 组输入的 SIMT 和 Tile 输出均与 CPU 逐元素一致。每组取 11 次测量的中位数。表中耗时统一为微秒，加速比大于 1 表示 GPU 计算更快。
 
 | 输入（交易日 × 每日证券数） | 行数 | CPU（µs） | SIMT（µs） | Tile（µs） | SIMT 加速比 | Tile 加速比 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
