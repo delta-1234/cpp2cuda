@@ -1,0 +1,28 @@
+[
+  {
+    "input": "sample_ticks.csv",
+    "rows": 912,
+    "verified_sha256": "a5d198ecb551b9e04608534318f09888bc844aa365396ed331e4e3729c0daf9c",
+    "packed_simt_kernel_ms": [
+      0.01024,
+      0.009216,
+      0.009216,
+      0.009216,
+      0.009216
+    ],
+    "median_packed_simt_kernel_ms": 0.009216
+  },
+  {
+    "input": "runs/scale-ij_i0vze/ticks-131072.csv",
+    "rows": 94772,
+    "verified_sha256": "c2457a2a2f0d82f2e486a8b5bc56aa9af106590152e5fbe35f34287c68054bd1",
+    "packed_simt_kernel_ms": [
+      0.454592,
+      0.45184,
+      0.46608,
+      0.463552,
+      0.467392
+    ],
+    "median_packed_simt_kernel_ms": 0.463552
+  }
+]

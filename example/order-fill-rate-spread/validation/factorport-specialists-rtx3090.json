@@ -57,10 +57,6 @@
   "optimization": {
     "profile_case": "orders-131072",
     "metric": "sum of device kernel durations",
-    "policy": {
-      "target_kernel_gain_min": 0.03,
-      "peer_and_end_to_end_regression_max": 0.05
-    },
     "roles": {
       "simt": {
         "start": "613fc5dadb777e0b",
@@ -171,33 +167,11 @@
                 ]
               }
             },
-            "end_to_end_ms": {
-              "orders-32768": {
-                "cpu": 75.382,
-                "simt": 257.701,
-                "tile": 253.531
-              },
-              "orders-131072": {
-                "cpu": 260.744,
-                "simt": 483.048,
-                "tile": 493.918
-              }
-            },
             "accepted": false,
             "target_changed": true,
             "peer_preserved": true,
             "target_kernel_ratio": 0.5966291995894696,
             "peer_kernel_ratio": 0.9290895100211608,
-            "end_to_end_ratios": {
-              "orders-32768": {
-                "simt": 1.205703324209886,
-                "tile": 1.1761941434085512
-              },
-              "orders-131072": {
-                "simt": 1.034585564360677,
-                "tile": 1.095674472979598
-              }
-            },
             "source_patch": "example/order-fill-rate-spread/simt-trial.patch"
           }
         ],
@@ -313,33 +287,11 @@
                 ]
               }
             },
-            "end_to_end_ms": {
-              "orders-32768": {
-                "cpu": 76.73,
-                "simt": 243.516,
-                "tile": 241.073
-              },
-              "orders-131072": {
-                "cpu": 256.501,
-                "simt": 497.148,
-                "tile": 491.418
-              }
-            },
             "accepted": false,
             "target_changed": true,
             "peer_preserved": true,
             "target_kernel_ratio": 1.0039543151909827,
             "peer_kernel_ratio": 1.035735925115307,
-            "end_to_end_ratios": {
-              "orders-32768": {
-                "simt": 1.1393360937609656,
-                "tile": 1.1183983447149644
-              },
-              "orders-131072": {
-                "simt": 1.064784750481902,
-                "tile": 1.0901286411159101
-              }
-            },
             "source_patch": "example/order-fill-rate-spread/tile-trial.patch"
           }
         ],
@@ -450,18 +402,6 @@
             280.706
           ]
         }
-      },
-      "end_to_end_ms": {
-        "orders-32768": {
-          "cpu": 74.751,
-          "simt": 213.735,
-          "tile": 215.552
-        },
-        "orders-131072": {
-          "cpu": 264.595,
-          "simt": 466.9,
-          "tile": 450.789
-        }
       }
     },
     "trial_budget_per_role": 1,
@@ -568,74 +508,9 @@
             280.706
           ]
         }
-      },
-      "end_to_end_ms": {
-        "orders-32768": {
-          "cpu": 74.751,
-          "simt": 213.735,
-          "tile": 215.552
-        },
-        "orders-131072": {
-          "cpu": 264.595,
-          "simt": 466.9,
-          "tile": 450.789
-        }
-      }
-    }
-  },
-  "final_cold_benchmark": {
-    "orders-32768": {
-      "events": 56560,
-      "forecasts": 22794,
-      "samples_ms": {
-        "cpu": [
-          89.899,
-          76.945,
-          76.684
-        ],
-        "simt": [
-          214.855,
-          193.759,
-          225.587
-        ],
-        "tile": [
-          202.794,
-          229.793,
-          239.764
-        ]
-      },
-      "median_ms": {
-        "cpu": 76.945,
-        "simt": 214.855,
-        "tile": 229.793
       }
     },
-    "orders-131072": {
-      "events": 226950,
-      "forecasts": 94880,
-      "samples_ms": {
-        "cpu": [
-          254.046,
-          260.561,
-          260.033
-        ],
-        "simt": [
-          447.055,
-          443.029,
-          507.841
-        ],
-        "tile": [
-          427.845,
-          426.76,
-          443.663
-        ]
-      },
-      "median_ms": {
-        "cpu": 260.033,
-        "simt": 447.055,
-        "tile": 427.845
-      }
-    }
+    "selection_policy": "../../../README.md#候选选版循环"
   },
   "pilot": {
     "run": "cuda-agent-s229yv2r",

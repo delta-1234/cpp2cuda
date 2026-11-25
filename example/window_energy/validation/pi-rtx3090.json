@@ -103,30 +103,9 @@
     "resumed_from": "runs/cuda-agent-ndsx1ldx/checkpoints/86795b5bd555feeb",
     "status": "verified",
     "case": "many",
-    "policy": {
-      "target_kernel_gain_min": 0.03,
-      "peer_and_end_to_end_regression_max": 0.05
-    },
     "trials_required_per_role": 1,
     "baseline": {
       "checkpoint": "86795b5bd555feeb",
-      "end_to_end_median_ms": {
-        "singleton": {
-          "cpu": 2.491,
-          "simt": 228.393,
-          "tile": 230.892
-        },
-        "tail": {
-          "cpu": 2.391,
-          "simt": 222.993,
-          "tile": 219.031
-        },
-        "many": {
-          "cpu": 3.879,
-          "simt": 203.767,
-          "tile": 212.233
-        }
-      },
       "kernels": {
         "simt": {
           "median_us": 5.28,
@@ -278,38 +257,7 @@
             "peer_preserved": true,
             "target_kernel_ratio": 0.5272727272727272,
             "peer_kernel_ratio": 1.022857142857143,
-            "end_to_end_ratios": {
-              "singleton": {
-                "simt": 0.7088658584107219,
-                "tile": 0.7301552240874521
-              },
-              "tail": {
-                "simt": 0.7264891723058572,
-                "tile": 0.716784382119426
-              },
-              "many": {
-                "simt": 0.8535925836862691,
-                "tile": 0.6578194719954013
-              }
-            },
             "checkpoint": "c67d2d6d2724dea4",
-            "end_to_end_median_ms": {
-              "singleton": {
-                "cpu": 2.615,
-                "simt": 161.9,
-                "tile": 168.587
-              },
-              "tail": {
-                "cpu": 2.672,
-                "simt": 162.002,
-                "tile": 156.998
-              },
-              "many": {
-                "cpu": 3.965,
-                "simt": 173.934,
-                "tile": 139.611
-              }
-            },
             "kernels": {
               "simt": {
                 "median_us": 2.784,
@@ -459,38 +407,7 @@
             "peer_preserved": true,
             "target_kernel_ratio": 0.5363128491620112,
             "peer_kernel_ratio": 0.9888649425287357,
-            "end_to_end_ratios": {
-              "singleton": {
-                "simt": 1.0147251389746756,
-                "tile": 1.0030607342203137
-              },
-              "tail": {
-                "simt": 0.9673769459636301,
-                "tile": 1.0824278016280462
-              },
-              "many": {
-                "simt": 0.9764278404452263,
-                "tile": 1.0858170201488424
-              }
-            },
             "checkpoint": "7324324790d1daf4",
-            "end_to_end_median_ms": {
-              "singleton": {
-                "cpu": 2.604,
-                "simt": 164.284,
-                "tile": 169.103
-              },
-              "tail": {
-                "cpu": 2.421,
-                "simt": 156.717,
-                "tile": 169.939
-              },
-              "many": {
-                "cpu": 3.787,
-                "simt": 169.834,
-                "tile": 151.592
-              }
-            },
             "kernels": {
               "simt": {
                 "median_us": 2.753,
@@ -573,23 +490,6 @@
     },
     "selected": {
       "checkpoint": "c67d2d6d2724dea4",
-      "end_to_end_median_ms": {
-        "singleton": {
-          "cpu": 2.615,
-          "simt": 161.9,
-          "tile": 168.587
-        },
-        "tail": {
-          "cpu": 2.672,
-          "simt": 162.002,
-          "tile": 156.998
-        },
-        "many": {
-          "cpu": 3.965,
-          "simt": 173.934,
-          "tile": 139.611
-        }
-      },
       "kernels": {
         "simt": {
           "median_us": 2.784,
@@ -685,7 +585,8 @@
           "launch_config_sha256": "b67f2fd0cc6776736673d2e29473fdfe7caf3bf8b14748d8f0065ffa2b1384cb"
         }
       }
-    }
+    },
+    "selection_policy": "../../../README.md#候选选版循环"
   },
   "selected_source_dir": "example/window_energy/generated",
   "selected_source_sha256": {
@@ -710,80 +611,6 @@
       "simt",
       "tile"
     ]
-  },
-  "final_end_to_end_ms": {
-    "singleton": {
-      "samples_ms": {
-        "cpu": [
-          2.756,
-          2.495,
-          2.625
-        ],
-        "simt": [
-          215.645,
-          213.167,
-          233.429
-        ],
-        "tile": [
-          223.86,
-          221.605,
-          218.11
-        ]
-      },
-      "median_ms": {
-        "cpu": 2.625,
-        "simt": 215.645,
-        "tile": 221.605
-      }
-    },
-    "tail": {
-      "samples_ms": {
-        "cpu": [
-          2.732,
-          2.667,
-          2.357
-        ],
-        "simt": [
-          228.291,
-          217.791,
-          209.078
-        ],
-        "tile": [
-          145.2,
-          193.723,
-          196.74
-        ]
-      },
-      "median_ms": {
-        "cpu": 2.667,
-        "simt": 217.791,
-        "tile": 193.723
-      }
-    },
-    "many": {
-      "samples_ms": {
-        "cpu": [
-          3.589,
-          3.776,
-          3.537
-        ],
-        "simt": [
-          220.432,
-          217.777,
-          258.191
-        ],
-        "tile": [
-          216.187,
-          218.233,
-          202.241
-        ]
-      },
-      "median_ms": {
-        "cpu": 3.589,
-        "simt": 220.432,
-        "tile": 216.187
-      }
-    }
   },
   "workload": [
     {

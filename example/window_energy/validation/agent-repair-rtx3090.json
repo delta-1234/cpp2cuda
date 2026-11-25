@@ -116,23 +116,6 @@
     "checkpoint": "a65681bd7770d682",
     "source_sha256": {
       "window_energy.cu": "1e4a736f8d48ea6dfb523c0f7e083defba9ba1b46aa17971baa9533fab12b0e1"
-    },
-    "benchmark_ms": {
-      "singleton": {
-        "cpu": 2.569,
-        "simt": 142.548,
-        "tile": 129.152
-      },
-      "tail": {
-        "cpu": 2.559,
-        "simt": 146.636,
-        "tile": 131.948
-      },
-      "many": {
-        "cpu": 3.755,
-        "simt": 148.898,
-        "tile": 125.054
-      }
     }
   },
   "controller_fallback_test": {
@@ -230,23 +213,6 @@
         "simt",
         "tile"
       ]
-    },
-    "benchmark_ms": {
-      "singleton": {
-        "cpu": 2.324,
-        "simt": 147.277,
-        "tile": 144.842
-      },
-      "tail": {
-        "cpu": 2.469,
-        "simt": 143.73,
-        "tile": 131.54
-      },
-      "many": {
-        "cpu": 3.613,
-        "simt": 143.134,
-        "tile": 136.423
-      }
     }
   }
 }

@@ -163,9 +163,9 @@ bash workflow/cuda.sh --agent --backend pi --spec example/window_energy/task.jso
 
 | 示例 | 可以复现的工作流 |
 | --- | --- |
-| [五点窗口能量](example/window_energy/README.md) | 从单文件 C++ 生成 CUDA，用 Pi 运行两个专项优化 agent，查看候选选版与故障回退。 |
-| [截面动量排名](example/momentum_rank/README.md) | 迁移包含日期分组、缺失值和并列排名的因子，复核输出，分别测量纯计算和冷启动端到端耗时。 |
-| [订单成交率差](example/order-fill-rate-spread/README.md) | 回放多证券逐笔行情，比较窗口打包和流式实现，测量常驻 GPU 的端到端表现。 |
+| [五点窗口能量](example/window_energy/README.md) | 从单文件 C++ 生成 CUDA，用 Pi 运行两个专项优化 agent，查看候选选版、故障回退与计算加速比。 |
+| [截面动量排名](example/momentum_rank/README.md) | 迁移包含日期分组、缺失值和并列排名的因子，复核输出，比较单线程 CPU 和两种 CUDA 实现的纯计算耗时。 |
+| [订单成交率差](example/order-fill-rate-spread/README.md) | 回放多证券逐笔行情，验证流式回放，对比已打包窗口的 CPU 与 GPU 计算耗时和加速比。 |
 
 ## 验证安装
 

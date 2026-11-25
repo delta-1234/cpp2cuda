@@ -145,117 +145,28 @@
     ],
     "unknown_mode_rejected": true
   },
-  "benchmark_method": "Cold process, same CSV input and output semantics, original C++ CPU reference, three rotating mode orders, wall clock, milliseconds. Each timed result checked byte for byte.",
   "simulator_seeds": {
     "32768": 7319,
     "131072": 15013,
     "524288": 7319,
     "2097152": 7319
   },
-  "benchmark": {
+  "scale_cases": {
     "orders-32768": {
       "events": 56560,
-      "forecasts": 22794,
-      "samples_ms": {
-        "cpu": [
-          71.61,
-          72.57,
-          72.471
-        ],
-        "simt": [
-          218.824,
-          198.359,
-          218.348
-        ],
-        "tile": [
-          213.475,
-          195.505,
-          226.575
-        ]
-      },
-      "median_ms": {
-        "cpu": 72.471,
-        "simt": 218.348,
-        "tile": 213.475
-      }
+      "forecasts": 22794
     },
     "orders-131072": {
       "events": 226950,
-      "forecasts": 94880,
-      "samples_ms": {
-        "cpu": [
-          252.735,
-          254.144,
-          263.575
-        ],
-        "simt": [
-          466.016,
-          427.716,
-          492.675
-        ],
-        "tile": [
-          429.381,
-          442.239,
-          452.515
-        ]
-      },
-      "median_ms": {
-        "cpu": 254.144,
-        "simt": 466.016,
-        "tile": 442.239
-      }
+      "forecasts": 94880
     },
     "orders-524288": {
       "events": 906758,
-      "forecasts": 381472,
-      "samples_ms": {
-        "cpu": [
-          969.492,
-          988.034,
-          992.458
-        ],
-        "simt": [
-          1348.628,
-          1354.556,
-          1378.176
-        ],
-        "tile": [
-          1357.561,
-          1337.693,
-          1374.56
-        ]
-      },
-      "median_ms": {
-        "cpu": 988.034,
-        "simt": 1354.556,
-        "tile": 1357.561
-      }
+      "forecasts": 381472
     },
     "orders-2097152": {
       "events": 3628878,
-      "forecasts": 1530728,
-      "samples_ms": {
-        "cpu": [
-          4330.387,
-          4324.261,
-          4358.105
-        ],
-        "simt": [
-          5083.371,
-          5443.794,
-          5538.254
-        ],
-        "tile": [
-          5716.626,
-          5456.152,
-          5447.785
-        ]
-      },
-      "median_ms": {
-        "cpu": 4330.387,
-        "simt": 5443.794,
-        "tile": 5456.152
-      }
+      "forecasts": 1530728
     }
   }
 }

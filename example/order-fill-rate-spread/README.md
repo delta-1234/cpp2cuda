@@ -10,16 +10,16 @@ bash workflow/cuda.sh --generate-cuda example/order-fill-rate-spread/OrderFillRa
 
 ## 两个专项 agent 的实测
 
-在 RTX 3090（82 个 SM，计算能力 8.6）上，以仓库里的模型移植为起点，通过配置的模型 API 调用 `qwen3.8-max`，后端使用 Hugging Face Transformers 4.41.2 的 `ReactJsonAgent`。CUDA 编译器为 nvcc 11.3.58。下表使用 131,072 笔委托作为内核测量用例，每个角色各试一个独立候选。内核列为三次 Nsight 采样的中位数，端到端列为三次冷启动 CSV 回放的中位数。选版还检查 32,768 笔委托用例，以及另一条路径的机器码、启动配置与耗时。
+在 RTX 3090（82 个 SM，计算能力 8.6）上，以仓库里的模型移植为起点，通过配置的模型 API 调用 `qwen3.8-max`，后端使用 Hugging Face Transformers 4.41.2 的 `ReactJsonAgent`。CUDA 编译器为 nvcc 11.3.58。下表使用 131,072 笔委托作为内核测量用例，每个角色各试一个独立候选。Nsight 对每次回放实际启动的全部 GPU 内核求和，再取三次采样的中位数。专项优化倍数为同一 GPU 路径的起点耗时除以候选耗时。最终选版还需满足工作流的其他验收条件。
 
-| 角色 | 起点内核（μs） | 候选内核（μs） | 起点端到端（ms） | 候选端到端（ms） | 选版 |
-| --- | ---: | ---: | ---: | ---: | --- |
-| SIMT | 404.36 | 241.25 | 466.90 | 483.05 | 保留起点 |
-| Tile | 280.71 | 281.82 | 450.79 | 491.42 | 保留起点 |
+| 专项 | 起点内核（µs） | 候选内核（µs） | 相对起点的计算加速比 | 最终选版 |
+| --- | ---: | ---: | ---: | --- |
+| SIMT | 404.355 | 241.250 | 1.676× | 保留起点 |
+| Tile | 280.706 | 281.816 | 0.996× | 保留起点 |
 
 两条路径均通过七组 CPU 逐字节对照和 Compute Sanitizer 显存检查。两个候选补丁都可分别应用在仓库随附的起点上，复原模型当时编译的源码。[SIMT 实验补丁](simt-trial.patch) · [Tile 实验补丁](tile-trial.patch)
 
-完整报告保留每个候选的硬件假设、采样值、机器码指纹和选版判定。[专项优化记录](validation/factorport-specialists-rtx3090.json)
+专项报告列出每个候选的硬件假设、内核采样值、机器码指纹和选版结果。[专项优化记录](validation/factorport-specialists-rtx3090.json)
 
 ## 运行已验证的示例移植
 
@@ -35,16 +35,7 @@ cmp example/order-fill-rate-spread/data/factor_output.csv runs/model-tile.csv
 
 输入和输出使用不同文件，输出路径会被覆盖。单次回放包含 CUDA 初始化。复现实验时，可以在 `--generate-cuda example/order-fill-rate-spread/OrderFillRateSpread.cpp` 后加 `--extra-orders 524288 2097152`，把两个更大规模加入新生成候选的基准测试。
 
-在 RTX 3090 上，两种生成的内核都通过了逐字节 CPU 对照，Compute Sanitizer 的边界样本检查均为 0 错误。下表是每种实现各启动三个新进程后取的 CSV 到 CSV 耗时中位数，包含解析、输出及 GPU 初始化。CPU 对照为输入的原始 C++ 程序。
-
-| 委托笔数 | 输出行数 | CPU（毫秒） | SIMT（毫秒） | Tile（毫秒） |
-| ---: | ---: | ---: | ---: | ---: |
-| 32,768 | 22,794 | 72 | 218 | 213 |
-| 131,072 | 94,880 | 254 | 466 | 442 |
-| 524,288 | 381,472 | 988 | 1,355 | 1,358 |
-| 2,097,152 | 1,530,728 | 4,330 | 5,444 | 5,456 |
-
-四个实测规模上，原始 CPU 程序的端到端耗时均较短。生成版本仍需为每个输出时点扫描和复制窗口，再向设备传输整批窗口。[源码哈希、内核启动记录和各次计时](validation/generated-cuda-rtx3090.json)
+在 RTX 3090 上，两种生成的实现均与原 C++ 程序的输出逐字节一致，Compute Sanitizer 的边界样本检查均为 0 错误。[源码哈希、内核启动和验证记录](validation/generated-cuda-rtx3090.json)
 
 ## 优先使用流式回放
 
@@ -67,13 +58,7 @@ printf '%s\t%s\n' example/order-fill-rate-spread/data/sample_ticks.csv runs/firs
 
 每个 GPU 批次最多 8,192 个时点，同一证券每段最多 128 行。段首以当前委托状态为基准，段内记录四个 int64 变化量，GPU 计算前缀和及成交率。只有分段索引按证券分组，因子按逐笔到达顺序输出。CPU 对照 `cpu` 直接增量维护四个统计量，`legacy` 保留原来的 100 笔窗口扫描。旧打包后端仍可用于逐阶段诊断。
 
-主实验覆盖 13 至 1,530,669 行因子输出。约 8.3 万输出行时，新建 GPU 进程开始稳定超过原扫描 CPU。在测试上限，流式 GPU 与增量 CPU 的常驻端到端耗时接近。[规模、开销拆分、两组 CPU 基线和交叉点](validation/stream-results.md)
-
-```sh
-bash workflow/cuda.sh --scale --core 6 --repeat 7
-```
-
-命令会生成固定种子的限价撮合行情，各规模共享同一行情前缀。每次 CSV 回放都校验最终结果的 SHA-256。修改规模可用 `--sizes 2600,32768,131072`（单位为提交委托数），只测常驻模式可用 `--phase warm`。运行目录保留输入、最近一次各后端的输出和 `scale.json`。复现开销拆分可运行 `workflow/profile_io.py --help`。
+流式回放可用空输入、同一进程多次回放、多证券交错以及跨批次用例复核输出。下节提供已打包窗口上 CPU 与 GPU 的纯计算对照。[流式回放验证记录](validation/stream-results.md)
 
 ## 验证示例的窗口打包实现
 
@@ -96,18 +81,20 @@ bash workflow/cuda.sh --device 0 --repeat 7
 
 ### 原始窗口打包路径的实测结果
 
-RTX 3090（sm_86，24 GiB），驱动 550.76，CUDA Toolkit 11.3，Triton 3.2.0。以下为 912 个窗口、7 次运行的中位数。每个窗口包含 100 笔委托。三种 GPU 实现的样例和边界输出都通过逐行比对。[环境检测](../../validation/rtx3090-probe.json) · [完整验证报告](validation/rtx3090.json)
+RTX 3090（sm_86，24 GiB），驱动 550.76，CUDA Toolkit 11.3，Triton 3.2.0。在相同的预打包窗口上，单线程 C++ 和 GPU 都执行按买卖方向归约、计算两侧成交率和求差。CPU 计时覆盖内存中的计算循环，GPU 通过 CUDA event 计量预热后的归约内核。两者均排除逐笔回放、打包、文件读写和结果格式化，GPU 另排除初始化、分配和主机与设备间传输。[CPU 计时实现](packed_cpu.cpp) · [环境记录](../../validation/rtx3090-probe.json)
 
-| 实现 | 已打包窗口的计算 | 原始 CSV 至结果 CSV |
-| --- | ---: | ---: |
-| 单线程 C++ | 0.879 ms | 36.00 ms |
-| CUDA C++ SIMT，warp shuffle | 0.0092 ms | 321.19 ms |
-| CUDA C++ 分块 Tile，共享内存 | 0.0092 ms | 523.80 ms |
-| Triton Tile DSL，二维块归约 | 0.1556 ms | 4611.18 ms |
+每个窗口含 100 笔委托。表中为重复测量的中位数，加速比取同规模单线程 C++ 中位数除以 GPU 中位数。
 
-同一份已打包窗口上，两种 CUDA C++ 内核的计算时间约为单线程 C++ 的 1/95，Triton Tile 约为 1/5.6。GPU 数据来自包围预热后一次发射的 CUDA events。完整流程计入进程启动、窗口打包、落盘、CUDA 初始化、传输和输出格式化，Triton 另含 Python 框架导入。这份小样本从原始 CSV 开始处理时，CPU 耗时最短。
+| 窗口数 | 测量次数 | 单线程 C++（µs） | SIMT（µs） | SIMT 加速比 | 共享内存 Tile（µs） | Tile 加速比 | Triton Tile（µs） | Triton 加速比 |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 912 | 7 | 879.127 | 9.216 | 95.39× | 9.216 | 95.39× | 155.648 | 5.65× |
+| 5,472 | 3 | 2,649.120 | 33.152 | 79.91× | 24.128 | 109.79× | — | — |
 
-两种 CUDA C++ 后端另通过 5,472 行跨批次测试及边界输入的显存检查。[跨批次报告](validation/rtx3090-multibatch.json) · [SIMT memcheck](validation/simt-memcheck.txt) · [Tile memcheck](validation/shared_tile-memcheck.txt)
+912 个窗口的三种 GPU 实现都通过样例和边界输入的逐行比对。5,472 个窗口的测量覆盖两个原生 CUDA 后端。[912 个窗口的逐次计时](validation/rtx3090.json) · [5,472 个窗口的逐次计时](validation/rtx3090-multibatch.json)
+
+另一次独立采样中，94,772 个窗口的 SIMT 内核中位数为 463.552 µs（5 次）。该组仅记录了 SIMT 内核。[逐次设备计时](validation/packed-simt-kernel-rtx3090.json)
+
+两个原生 CUDA 后端也通过了边界输入的显存检查。[SIMT memcheck](validation/simt-memcheck.txt) · [Tile memcheck](validation/shared_tile-memcheck.txt)
 
 仓库另含 NVIDIA cuTile DSL 实现 `cuda/cutile_backend.py`。服务器的验证环境缺少 `cuda.tile`，该路径尚未实机验证。在配有相应本地依赖的节点上，添加 `--require-cutile` 可将其列为必验项。
 

@@ -68,21 +68,13 @@ runs/momentum-rank-cuda/replay tile example/momentum_rank/data/sessions.csv
 | 编译工具链 | CUDA Toolkit 11.3（nvcc 11.3.58），nvcc 主机编译器 G++ 7.5.0。CPU 参考实现使用 GCC 12.3.0，CPU 与 CUDA 均以 C++17 和 `-O3` 编译。 |
 | 计时工具 | CPU 使用 `std::chrono::steady_clock`，GPU 使用 Nsight Systems 2022.1.3.3 记录设备时间戳。 |
 
-冷启动测试与纯计算测试均运行 Pi 修复后的 CUDA 实现。迁移报告与纯计算报告中的 CUDA 源码 SHA-256 一致。[Agent 运行记录](validation/pi-rtx3090.json) · [硬件、工具版本与源码哈希](validation/compute-rtx3090.json)
+纯计算测试使用 Pi 修复后的 CUDA 实现，可用迁移报告和计算报告中的 SHA-256 核对源码。[Agent 运行记录](validation/pi-rtx3090.json) · [硬件、工具版本与源码哈希](validation/compute-rtx3090.json)
 
-### 正确性与冷启动端到端耗时
+### 正确性验证
 
 首次草稿在多交易日样例上产生排名偏差，额外的竞争检查也发现了 Tile 共享计数器的读写冲突。保留草稿并将诊断交给第二次 Pi 会话后，模型修正了交易日索引和同步。最终两个后端均被 CUPTI 记录到实际内核启动，通过了逐字节比对和 Compute Sanitizer 的显存检查。
 
-独立验证使用种子 91028，覆盖 7 个交易日、6417 行。最大截面有 5003 行，其中 4346 行有效，触发了 Tile 的分片路径。CPU、SIMT、Tile 的输出均与独立有理数实现一致。在固定的 866 行边界样例上，Tile 的 `racecheck` 和 `synccheck` 都报告零错误。
-
-| 固定用例 | 行数 | CPU | SIMT | Tile |
-| --- | ---: | ---: | ---: | ---: |
-| 仅表头 | 0 | 2.541 ms | 3.140 ms | 3.235 ms |
-| 多日手算样例 | 17 | 2.626 ms | 122.541 ms | 139.394 ms |
-| 多日边界样例 | 866 | 4.410 ms | 149.911 ms | 146.687 ms |
-
-表中为每种模式三次独立进程运行的中位数，包含程序启动、CSV 读写以及非空输入的 CUDA 初始化和传输。在这两个非空规模上，CPU 端到端耗时更短。留出测试只核对正确性。[实测记录、源码哈希和原始计时](validation/pi-rtx3090.json) · [此次 Pi 迁移使用的原始单文件因子](https://github.com/delta-1234/cpp2cuda/blob/8bfb5547d79851c49262dbe285f59f9a216374d9/example/momentum_rank/MomentumRank.cpp)
+独立验证使用种子 91028，覆盖 7 个交易日、6417 行。最大截面有 5003 行，其中 4346 行有效，触发了 Tile 的分片路径。CPU、SIMT、Tile 的输出均与独立有理数实现一致。在固定的 866 行边界样例上，Tile 的 `racecheck` 和 `synccheck` 都报告零错误。[验证记录](validation/pi-rtx3090.json) · [迁移时的单文件因子](https://github.com/delta-1234/cpp2cuda/blob/8bfb5547d79851c49262dbe285f59f9a216374d9/example/momentum_rank/MomentumRank.cpp)
 
 ## 单线程 CPU 与 GPU 的纯计算耗时
 

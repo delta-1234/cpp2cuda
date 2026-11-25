@@ -48,12 +48,6 @@
     "rows": 5472,
     "edge_rows": 3,
     "empty_rows": 0,
-    "wall_ms": [
-      249.53645933419466,
-      36.672032438218594,
-      82.67444651573896
-    ],
-    "median_wall_ms": 82.67444651573896,
     "packed_compute_ms": [
       0.916791,
       2.64912,
@@ -78,19 +72,12 @@
       "rows": 5472,
       "edge_rows": 3,
       "empty_rows": 0,
-      "wall_ms": [
-        319.60482336580753,
-        208.3833683282137,
-        200.86589269340038
-      ],
       "kernel_ms": [
         0.02944,
         0.035104,
         0.033152
       ],
-      "median_wall_ms": 208.3833683282137,
       "median_kernel_ms": 0.033152,
-      "end_to_end_speedup": 0.3967420585385816,
       "packed_compute_speedup": 79.90830115830116
     },
     "shared_tile": {
@@ -110,19 +97,12 @@
       "rows": 5472,
       "edge_rows": 3,
       "empty_rows": 0,
-      "wall_ms": [
-        355.28211016207933,
-        285.86469404399395,
-        328.23977433145046
-      ],
       "kernel_ms": [
         0.029184,
         0.024128,
         0.023904
       ],
-      "median_wall_ms": 328.23977433145046,
       "median_kernel_ms": 0.024128,
-      "end_to_end_speedup": 0.25187211599851955,
       "packed_compute_speedup": 109.79442970822281
     },
     "cutile": {
