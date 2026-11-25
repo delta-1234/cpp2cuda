@@ -19,14 +19,13 @@ bash workflow/cuda.sh --generate-cuda example/order-fill-rate-spread/OrderFillRa
 
 两条路径均通过七组 CPU 逐字节对照和 Compute Sanitizer 显存检查。两个候选补丁都可分别应用在仓库随附的起点上，复原模型当时编译的源码。[SIMT 实验补丁](simt-trial.patch) · [Tile 实验补丁](tile-trial.patch)
 
-完整报告保留每个候选的硬件假设、采样值、机器码指纹和选版判定。[计算节点 专项优化记录](validation/factorport-specialists-rtx3090.json)
+完整报告保留每个候选的硬件假设、采样值、机器码指纹和选版判定。[专项优化记录](validation/factorport-specialists-rtx3090.json)
 
 ## 运行已验证的示例移植
 
-先前的逐文件实验使用 `qwen3.8-max` 分三次生成了 [主机程序](generated/host.cpp)、[GPU 接口](generated/gpu.hpp) 与 [CUDA 内核](generated/kernels.cu)。三个文件均可在 计算节点 的原始回复中按 SHA-256 核对。SIMT 每个线程计算一行，Tile 使用 128 个线程在共享内存中归约订单，每块最多处理 8 行。主机复用原头文件的逐笔回放，按输出时点在内存中打包窗口，每 65,536 行为一批。同一进程中的批次复用显存。
+先前的逐文件实验使用 `qwen3.8-max` 分三次生成了 [主机程序](generated/host.cpp)、[GPU 接口](generated/gpu.hpp) 与 [CUDA 内核](generated/kernels.cu)。三个文件均可在计算节点的原始回复中按 SHA-256 核对。SIMT 每个线程计算一行，Tile 使用 128 个线程在共享内存中归约订单，每块最多处理 8 行。主机复用原头文件的逐笔回放，按输出时点在内存中打包窗口，每 65,536 行为一批。同一进程中的批次复用显存。
 
 ```sh
-cd "$(git rev-parse --show-toplevel)"
 bash workflow/cuda.sh --build-generated
 bash workflow/cuda.sh --generated simt example/order-fill-rate-spread/data/sample_ticks.csv runs/model-simt.csv
 bash workflow/cuda.sh --generated tile example/order-fill-rate-spread/data/sample_ticks.csv runs/model-tile.csv
@@ -49,10 +48,9 @@ cmp example/order-fill-rate-spread/data/factor_output.csv runs/model-tile.csv
 
 ## 优先使用流式回放
 
-在 计算节点 上使用下列入口，可直接从原始逐笔 CSV 写到最终因子 CSV。SIMT、CUDA C++ 分块 Tile 和提前编译的 Triton Tile 共用一个 C++ 前端，执行阶段使用同一套 CSV 解析、委托检查和输出格式化。
+在计算节点上使用下列入口，可直接从原始逐笔 CSV 写到最终因子 CSV。SIMT、CUDA C++ 分块 Tile 和提前编译的 Triton Tile 共用一个 C++ 前端，执行阶段使用同一套 CSV 解析、委托检查和输出格式化。
 
 ```sh
-cd "$(git rev-parse --show-toplevel)"
 bash workflow/cuda.sh --build-stream
 bash workflow/cuda.sh --stream simt example/order-fill-rate-spread/data/sample_ticks.csv runs/simt.csv
 bash workflow/cuda.sh --stream tile example/order-fill-rate-spread/data/sample_ticks.csv runs/tile.csv
@@ -69,7 +67,7 @@ printf '%s\t%s\n' example/order-fill-rate-spread/data/sample_ticks.csv runs/firs
 
 每个 GPU 批次最多 8,192 个时点，同一证券每段最多 128 行。段首以当前委托状态为基准，段内记录四个 int64 变化量，GPU 计算前缀和及成交率。只有分段索引按证券分组，因子按逐笔到达顺序输出。CPU 对照 `cpu` 直接增量维护四个统计量，`legacy` 保留原来的 100 笔窗口扫描。旧打包后端仍可用于逐阶段诊断。
 
-在 计算节点 上，主实验覆盖 13 至 1,530,669 行因子输出。约 8.3 万输出行时，新建 GPU 进程开始稳定超过原扫描 CPU。在测试上限，流式 GPU 与增量 CPU 的常驻端到端耗时接近。[规模、开销拆分、两组 CPU 基线和交叉点](validation/stream-results.md)
+主实验覆盖 13 至 1,530,669 行因子输出。约 8.3 万输出行时，新建 GPU 进程开始稳定超过原扫描 CPU。在测试上限，流式 GPU 与增量 CPU 的常驻端到端耗时接近。[规模、开销拆分、两组 CPU 基线和交叉点](validation/stream-results.md)
 
 ```sh
 bash workflow/cuda.sh --scale --core 6 --repeat 7
@@ -79,7 +77,7 @@ bash workflow/cuda.sh --scale --core 6 --repeat 7
 
 ## 验证示例的窗口打包实现
 
-把本仓库作为 agent 的工作目录，给它指令「按 AGENTS.md 在本机离线验证 OrderFillRateSpread 的 SIMT 与 Tile 实现」。阶段、排错分支和验收条件见 [AGENTS.md](../../AGENTS.md)。[离线资料目录](../../offline_docs/README.md) 包含 计算节点 上的 Toolkit 资料位置和共享数据格式。
+把本仓库作为 agent 的工作目录，给它指令「按 AGENTS.md 在本机离线验证 OrderFillRateSpread 的 SIMT 与 Tile 实现」。阶段、排错分支和验收条件见 [AGENTS.md](../../AGENTS.md)。[离线资料目录](../../offline_docs/README.md) 包含计算节点上的 Toolkit 资料位置和共享数据格式。
 
 ```sh
 python3 workflow/run.py --probe-only
@@ -88,12 +86,11 @@ python3 workflow/run.py --input example/order-fill-rate-spread/data/sample_ticks
 
 运行器需要 Python 3.8+ 和 C++17 主机编译器。两条原生后端通过本地 nvcc 编译，使用 CUDA C++14。每次运行打印独立的 `runs/run-*/report.json` 路径，并在该目录保留 CPU 和 GPU 结果。未连 GPU 的机器可完成 CPU 及打包验证。运行器不下载依赖。严格物理隔离时，可在断网计算节点或已预装工具链、禁用网络的本地容器内运行。
 
-### 在 计算节点 复现
+### 在计算节点复现
 
 从仓库根目录运行，按本地安装情况设置 `WORKFLOW_PYTHON`、`CUDA_HOME` 和 `NVCC_CCBIN`。`--device 0` 选择调度器分配的第一块可见设备。
 
 ```sh
-cd "$(git rev-parse --show-toplevel)"
 bash workflow/cuda.sh --device 0 --repeat 7
 ```
 
@@ -202,7 +199,7 @@ time_ms,symbol,trade_count,ask_fill_rate,bid_fill_rate,alpha
 
 ## 维护示例的既有实现
 
-使用 `bash workflow/cuda.sh --agent '维护任务'` 时，控制器先盘点 GPU 和 Toolkit，将任务、设备信息及项目规则传给所配置的模型。模型可以按需读取仓库源码和 `offline_docs/` 的文本材料、编辑候选副本中已有的 `cuda/` 或 `stream/` 源文件、读取编译错误并继续修复。编译、验证和基准运行在 计算节点 的独立 Linux 网络、挂载和 PID 命名空间内。候选源码对这些子进程只读，工作产物写入该次运行的 `runs/`。模型 API 调用由外层控制器发起，模型接口应支持文本生成。
+使用 `bash workflow/cuda.sh --agent '维护任务'` 时，控制器先盘点 GPU 和 Toolkit，将任务、设备信息及项目规则传给所配置的模型。模型可以按需读取仓库源码和 `offline_docs/` 的文本材料、编辑候选副本中已有的 `cuda/` 或 `stream/` 源文件、读取编译错误并继续修复。编译、验证和基准运行在计算节点的独立 Linux 网络、挂载和 PID 命名空间内。候选源码对这些子进程只读，工作产物写入该次运行的 `runs/`。模型 API 调用由外层控制器发起，模型接口应支持文本生成。
 
 当前候选版本通过 CPU 对照和基准回放后，控制器才将补丁应用到工作目录。若原文件在运行期间被其他任务修改，补丁保存在运行目录供核对。需要仅生成候选补丁时使用以下命令。
 

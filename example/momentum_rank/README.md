@@ -30,17 +30,16 @@ runs/momentum-rank example/momentum_rank/data/sessions.csv > runs/momentum-rank.
 diff -u example/momentum_rank/data/sessions.expected.csv runs/momentum-rank.csv
 ```
 
-在配好模型 API 的 计算节点 上，下面的入口让 Pi 根据 C++ 和本地头文件编写 CUDA，随后编译、验证并测速。任务清单只将输入 CSV 提供给 agent。控制器单独编译 C++ 参考程序生成期望输出。[任务清单](task.json)
+在配好模型 API 的计算节点上，下面的入口让 Pi 根据 C++ 和本地头文件编写 CUDA，随后编译、验证并测速。任务清单只将输入 CSV 提供给 agent。控制器单独编译 C++ 参考程序生成期望输出。[任务清单](task.json)
 
 ```sh
 bash workflow/cuda.sh --agent --backend pi --spec example/momentum_rank/task.json
 ```
 
-固定用例覆盖仅表头的输入、五个交易日的手算样例，以及日内证券数分别为 31、32、33、257 和 513 的五个截面。另附的独立验证脚本用有理数计算收益率和平均名次，可换种子生成新行情。将下面的 `run` 设为上一步打印的运行目录。命令从报告读取同一 GPU 的可见性设置，并复用控制器已编译的 CPU 和 GPU 程序。
+固定用例覆盖仅表头的输入、五个交易日的手算样例，以及日内证券数分别为 31、32、33、257 和 513 的五个截面。另附的独立验证脚本用有理数计算收益率和平均名次，可换种子生成新行情。将下面的 `run` 设为上一步打印的运行目录。在相同 GPU 分配下，复用控制器已编译的 CPU 和 GPU 程序。
 
 ```sh
 run=runs/cuda-agent-实际目录名
-export CUDA_VISIBLE_DEVICES=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["observations"]["toolchain"]["cuda_visible_devices"])' "$run/report.json")
 python3 example/momentum_rank/verify_holdout.py --cpu "$run/oracle/runs/cpu" \
   --gpu "$run/candidate/runs/replay" --seed 91028
 ```
@@ -49,7 +48,7 @@ python3 example/momentum_rank/verify_holdout.py --cpu "$run/oracle/runs/cpu" \
 
 Pi 生成的两个后端共用日期分组和整数收益率内核。SIMT 为每行分配一个线程，遍历当日可比证券并统计排名。Tile 为每个交易日分配一个 256 线程块，有效证券数至多 4096 时，在共享内存里用双调排序和二分查找求并列名次。超过这个容量时，线程块分片读取同一交易日的收益率并累计名次。[CUDA 源码](generated/replay.cu)
 
-在 计算节点 上也可以直接编译仓库里的 CUDA 源码，复用本机 Toolkit。先按前文设置可见 GPU，然后从仓库根目录执行。
+在计算节点上也可以直接编译仓库里的 CUDA 源码，复用本机 Toolkit。在已分配 GPU 的环境中，从仓库根目录执行。
 
 ```sh
 (cd example/momentum_rank && NVCC_CCBIN=/usr/bin/g++-7 bash ../../workflow/build_port.sh \
@@ -64,7 +63,7 @@ runs/momentum-rank-cuda/replay tile example/momentum_rank/data/sessions.csv
 | 项目 | 本次实测配置 |
 | --- | --- |
 | Agent 后端与模型 | Pi 1.6.0，通过配置的 API 调用 `qwen3.8-max`。首次会话从 C++ 生成 CUDA，第二次会话根据诊断修复候选。 |
-| 运行节点与 CPU 基线 | Intel Xeon Gold 6248R @ 3.00 GHz。纯计算基线使用单线程 C++，固定在逻辑核 6。 |
+| CPU 基线 | Intel Xeon Gold 6248R @ 3.00 GHz。纯计算基线使用单线程 C++，固定在逻辑核 6。 |
 | GPU | NVIDIA GeForce RTX 3090，计算能力 8.6（sm_86），82 个 SM。 |
 | 编译工具链 | CUDA Toolkit 11.3（nvcc 11.3.58），nvcc 主机编译器 G++ 7.5.0。CPU 参考实现使用 GCC 12.3.0，CPU 与 CUDA 均以 C++17 和 `-O3` 编译。 |
 | 计时工具 | CPU 使用 `std::chrono::steady_clock`，GPU 使用 Nsight Systems 2022.1.3.3 记录设备时间戳。 |
@@ -91,7 +90,7 @@ CPU 使用命令行程序共用的 `compute_ranks`，从内存里的行情开始
 
 GPU 直接调用已验证 CUDA 源码中的 `launch_all`。Nsight Systems 用设备时间戳逐次加总日期分组、CUB 前缀扫描、收益率和排名的全部内核。CSV 读写、数据打包、CUDA 初始化、显存分配、主机与设备传输、主机发射内核及内核间空隙均排除在 GPU 计时外。SIMT、Tile 各预热 5 次，交替执行，每轮均逐元素比对 CPU 的收益率和排名。加速比为 CPU 单次计算中位数除以 GPU 全部计算内核总耗时的中位数。
 
-在 计算节点 的仓库根目录执行下列命令复现。默认测试固定样例、留出集及不同交易日数和证券数的模拟行情。用 `--input /path/to/quotes.csv` 可测自己的非空输入。
+在计算节点的仓库根目录执行下列命令复现。默认测试固定样例、留出集及不同交易日数和证券数的模拟行情。用 `--input /path/to/quotes.csv` 可测自己的非空输入。
 
 ```sh
 # 使用当前环境分配的可见 GPU。

@@ -31,7 +31,7 @@
 | 目录 | 内容 |
 | --- | --- |
 | `example/order-fill-rate-spread/` | 订单因子的 C++ 参考程序和头文件。`data/` 存放模拟逐笔行情和预期输出，`cuda/`、`stream/` 和 `generated/` 存放不同 GPU 实现，`validation/` 保存该因子的测量记录。 |
-| `example/momentum_rank/` | 按交易日计算证券收益率的截面排名，包含 C++ 参考实现、模拟行情、Pi 生成的 CUDA 和 计算节点 验证记录。 |
+| `example/momentum_rank/` | 按交易日计算证券收益率的截面排名，包含 C++ 参考实现、模拟行情、Pi 生成的 CUDA 和 GPU 验证记录。 |
 | `example/window_energy/` | 五点窗口算子的 C++ 源码、任务清单、纠错用例、Pi 生成的 CUDA 代码和验证报告。 |
 | `workflow/` | Agent、构建和验证入口、离线工具及回归测试。 |
 | `offline_docs/` | 可供 agent 离线检索的 CUDA 手册和工作流说明。 |
@@ -62,7 +62,7 @@ flowchart TD
 
 ## 快速开始
 
-在 Linux CUDA 节点准备 Python 3.10+、C++17 编译器、兼容的 CUDA Toolkit、CUPTI 和 Compute Sanitizer。专项优化还使用 Nsight Systems 的 CUDA trace 和 SQLite 导出。工具隔离需要 Linux 用户、挂载、PID 和网络命名空间，以及 `unshare` 和 `ip`。仓库的 `workflow/cuda.sh` 已包含 计算节点 的解释器、Toolkit 和 GPU 配置。
+在 Linux CUDA 节点准备 Python 3.10+、C++17 编译器、兼容的 CUDA Toolkit、CUPTI 和 Compute Sanitizer。专项优化还使用 Nsight Systems 的 CUDA trace 和 SQLite 导出。工具隔离需要 Linux 用户、挂载、PID 和网络命名空间，以及 `unshare` 和 `ip`。通用入口为 `bash workflow/cuda.sh`。它默认使用当前环境的 `python3`，并尊重调度器设置的 `CUDA_VISIBLE_DEVICES`。
 
 ```sh
 git clone git@github.com:delta-1234/cpp2cuda.git
@@ -75,9 +75,11 @@ bash workflow/cuda.sh --agent --spec example/window_energy/task.json \
   --optimize --profile-case many
 ```
 
-在其他节点，可在配置好模型 API 和本地 CUDA 工具链后直接运行 Python 入口。`CUDA_VISIBLE_DEVICES` 指定获分配的 GPU，`CUDA_HOME` 和 `NVCC_CCBIN` 可指定 Toolkit 和兼容的主机编译器。
+配置好模型 API 和本地 CUDA 工具链后，也可直接运行 Python 入口。`CUDA_VISIBLE_DEVICES` 指定获分配的 GPU，`CUDA_HOME` 和 `NVCC_CCBIN` 可指定 Toolkit 和兼容的主机编译器。
 
-独立安装的 Nsight Systems 可通过 `NSYS` 指定可执行文件。计算节点 使用 CUDA 11.3 编译，使用本机的 Nsight Systems 2022.1.3 采样。如果一次导出没有 GPU 内核记录，控制器最多采集三次。报告记录每个有效样本的采集次数，连续三次空采样会使测量失败。
+在同一份检出中，可用 `git config --local factorport.python /path/to/python` 保存解释器，或用 `git config --local factorport.visibleDevices 0` 保存该机的默认 GPU 选择。启动脚本优先使用显式环境变量。
+
+独立安装的 Nsight Systems 可通过 `NSYS` 指定可执行文件。本项目的 RTX 3090 基准使用 CUDA 11.3 编译、Nsight Systems 2022.1.3 采样。如果一次导出没有 GPU 内核记录，控制器最多采集三次。报告记录每个有效样本的采集次数，连续三次空采样会使测量失败。
 
 ```sh
 python3 workflow/port_agent.py --spec example/window_energy/task.json --optimize --profile-case many
@@ -268,7 +270,7 @@ bash workflow/cuda.sh --agent --backend pi --spec example/window_energy/task.jso
 
 ## 验证安装
 
-在仓库根目录运行以下命令。通用测试使用本地夹具，Pi 协议测试使用回环模拟端点。对应后端已经安装时，测试会实际启动其运行时。GPU 纠错回归在 计算节点 编译候选、运行 CPU 对照并验证检查点回退。
+在仓库根目录运行以下命令。通用测试使用本地夹具，Pi 协议测试使用回环模拟端点。对应后端已经安装时，测试会实际启动其运行时。GPU 纠错回归在计算节点编译候选、运行 CPU 对照并验证检查点回退。
 
 ```sh
 # 本地回归
@@ -277,7 +279,7 @@ python3 -m unittest discover -s workflow -p 'test_*.py'
 # 已配置的模型端点连通性
 bash workflow/cuda.sh --check-api
 
-# 计算节点 的真实 GPU 纠错回归
+# 计算节点的真实 GPU 纠错回归
 bash workflow/cuda.sh --test-repair
 ```
 

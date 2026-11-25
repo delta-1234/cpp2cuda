@@ -6,7 +6,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import platform
 import random
 import shutil
 import sqlite3
@@ -165,7 +164,7 @@ def main():
               if args.input else suite(work, args.seed))
     sources = ["MomentumRank.cpp", "rank_cpu.hpp", "rank_io.hpp", "generated/replay.cu",
                "benchmark/cpu.cpp", "benchmark/compute.cu", "benchmark_compute.py", "verify_holdout.py"]
-    report = {"host": platform.node(), "device": device, "nsys": version(nsys, "--version"),
+    report = {"device": device, "nsys": version(nsys, "--version"),
               "nvcc": version(str(Path(toolkit) / "bin/nvcc"), "--version"),
               "host_cxx": version(os.getenv("CXX", "c++"), "--version").splitlines()[0],
               "nvcc_ccbin": os.getenv("NVCC_CCBIN"), "cpu": next(line.split(":", 1)[1].strip()

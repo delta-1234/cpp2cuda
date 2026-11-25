@@ -181,7 +181,7 @@ def main():
         p.error("repeat must be positive and device nonnegative")
     args.runs_dir.mkdir(parents=True, exist_ok=True)
     out = Path(tempfile.mkdtemp(prefix="run-", dir=str(args.runs_dir.resolve())))
-    report = {"host": platform.node(), "input": str(args.input.resolve()), "device_ordinal": args.device,
+    report = {"input": str(args.input.resolve()), "device_ordinal": args.device,
               "repeat": args.repeat, "require_cutile": args.require_cutile}
     os.environ.update(PIP_NO_INDEX="1", PIP_DISABLE_PIP_VERSION_CHECK="1")
     try:

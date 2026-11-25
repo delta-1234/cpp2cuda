@@ -2,7 +2,7 @@
 
 通用移植入口为 `bash workflow/cuda.sh --agent --source <程序.cpp>` 或 `--agent --spec <任务.json>`。原因子通过 `--generate-cuda example/order-fill-rate-spread/OrderFillRateSpread.cpp` 进入同一工具循环。`--agent --inspect --task '问题'` 支持无源码的节点分析。模型根据本地观测选择探测、查阅手册、实验、生成用例、写代码、编译和验证。控制器以独立 CPU 结果和真实 GPU 启动记录验收。
 
-在通用入口追加 `--backend pi` 可选择 Pi RPC 后端。Pi 用配置的模型 API 调用当前角色的 `fp_*` 工具。控制器执行工具并验收，运行中的 agent 不下载依赖。Pi 的离线准备和 计算节点 命令见 README。
+在通用入口追加 `--backend pi` 可选择 Pi RPC 后端。Pi 用配置的模型 API 调用当前角色的 `fp_*` 工具。控制器执行工具并验收，运行中的 agent 不下载依赖。Pi 的离线准备和计算节点命令见 README。
 
 编程手册位于 `offline_docs/nvidia/`，包含原版 PDF、可按页检索的文本和 SHA-256 清单。资料准备使用 `workflow/prepare_docs.py`，运行中的 agent 只查询本地副本，先核对资料版本与工具链。工具协议、通用输入输出约定和示例参见 README。收到错误时可通过 `diagnostics`、`log` 和 `test_case` 定位失败，修改后全量验证。检查点与回退语义详见 `offline_docs/agent-repair.md`。
 
@@ -26,7 +26,7 @@
 
 端到端任务优先使用 `example/order-fill-rate-spread/stream/replay.cpp`。每只证券维护 100 笔活动委托。CPU 对照 `cpu` 增量维护四个量并直接计算比率，`legacy` 按原算法逐窗口扫描。GPU 每段首行接收绝对值，其余行接收增减量。SIMT、共享内存 Tile 及预编译的 Triton Tile 在设备上分别作段内前缀和。每批最多 8,192 个待输出时点，结果按原始到达顺序写入最终 CSV。常驻 `--serve` 模式跨文件复用 CUDA 资源，各输入文件独立重建交易状态。
 
-在 计算节点 用 `bash workflow/cuda.sh --build-stream` 编译。用 `python workflow/check_stream.py --exe runs/stream/replay --with-triton` 验证空文件头、单侧委托、同一进程多次回放、多证券及批次边界。用 `bash workflow/cuda.sh --scale --core 6 --repeat 7` 在同一 CPU 亲和性、同一磁盘和同一原始输入下测试冷启动及常驻进程。报告两种 CPU 对照、输出行数、事件数和实测交叉区间。不要把内核加速比用作端到端加速比。
+在计算节点用 `bash workflow/cuda.sh --build-stream` 编译。用 `python workflow/check_stream.py --exe runs/stream/replay --with-triton` 验证空文件头、单侧委托、同一进程多次回放、多证券及批次边界。用 `bash workflow/cuda.sh --scale --core 6 --repeat 7` 在同一 CPU 亲和性、同一磁盘和同一原始输入下测试冷启动及常驻进程。报告两种 CPU 对照、输出行数、事件数和实测交叉区间。不要把内核加速比用作端到端加速比。
 
 以下为原始窗口路径，可用来诊断打包输入、拆分 I/O 开销和比对旧实现。
 
@@ -48,3 +48,5 @@
 从 `report.json` 提取硬件与工具版本、样本量、各实现状态、首个失败原因和重复次数。分别报告 GPU event 内核中位数、相同已打包数据的单线程 C++ 计算中位数，以及从原始 CSV 到结果 CSV 的端到端中位数。端到端包括进程启动、窗口打包、文件读写、主机设备传输和结果格式化。报告实际的加速或减速。设备不可用时将该项保留为未测。
 
 退出码 0 表示本次要求的路径通过（`--probe-only` 仅完成盘点）。1 表示某个实现或校验失败。2 表示缺少必需运行条件。SIMT 与 CUDA C++ 分块 Tile 是默认必验路径。即使其中一条失败，也要执行其余能测试的路径。
+
+公开文档、文件名和验证报告以硬件型号及工具版本描述环境。发布前移除主机名、SSH 别名、GPU UUID 和用户目录。原始节点日志保存在 Git 忽略的 `runs/` 中。

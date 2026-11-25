@@ -104,7 +104,7 @@ def main():
     exe = args.exe.resolve()
     modes = (*MODES,"triton") if args.with_triton else MODES
     cases = prepare(folder,sizes,args.seed)
-    report = dict(host=platform.node(), platform=platform.platform(), seed=args.seed, repeat=args.repeat,
+    report = dict(platform=platform.platform(), seed=args.seed, repeat=args.repeat,
                   affinity=sorted(os.sched_getaffinity(0)), cuda_visible_devices=os.getenv("CUDA_VISIBLE_DEVICES"),
                   clock="parent perf_counter_ns; fresh process through exit or warm request through reply",
                   directory=str(folder), cases=cases, samples=[])

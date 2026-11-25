@@ -8,7 +8,7 @@
 | [CUDA C++ Programming Guide](nvidia/cuda-guide-11.3.pdf) | 11.3 | 399 |
 | [CUDA C++ Best Practices Guide](nvidia/best-practices-11.3.pdf) | 11.3 | 93 |
 
-每份手册同时保存原 PDF 和按物理页分隔的压缩文本。模型通过 `catalog` 列出版本，使用 `search(query="shared memory", doc="cuda-guide-11.3")` 搜索，再用 `page(doc="cuda-guide-11.3", page=51)` 读取完整页或其后续片段。公式、图表和排版可在相应 PDF 页核对。计算节点 使用 Toolkit 11.3，可用归档手册判断适用接口，新版功能另用本机编译探针验证。
+每份手册同时保存原 PDF 和按物理页分隔的压缩文本。模型通过 `catalog` 列出版本，使用 `search(query="shared memory", doc="cuda-guide-11.3")` 搜索，再用 `page(doc="cuda-guide-11.3", page=51)` 读取完整页或其后续片段。公式、图表和排版可在相应 PDF 页核对。计算节点使用 Toolkit 11.3，可用归档手册判断适用接口，新版功能另用本机编译探针验证。
 
 **资料准备**　[来源清单](sources.json) 记录手册 ID、标题和官方 PDF 地址。[快照清单](nvidia/manifest.json) 记录封面版本、页数、时间、来源、PDF 和解压文本的 SHA-256。仓库自带的索引可直接使用。运行 `python3 workflow/prepare_docs.py verify` 可离线核对全部 PDF、文本哈希与页数。在准备机上执行以下命令可刷新。
 
@@ -20,7 +20,7 @@ python3 workflow/prepare_docs.py sync
 
 ## 本地工具链参考
 
-本次计算使用 Toolkit 11.3。下列资料随服务器上的 Toolkit 安装，可通过文件系统直接查看。
+本次计算使用 Toolkit 11.3。下列资料随相应工具安装，可通过文件系统直接查看。
 
 | 内容 | 查询方式或示例路径 |
 | --- | --- |

@@ -10,4 +10,4 @@ Aider 会把编辑、lint 或测试错误作为下一轮模型输入，并对连
 
 运行目录的 `report.json` 保存失败记录、候选哈希、检查点和计时；`tools.jsonl` 保存工具观测。数据依赖特定任务、编译器和服务器，重用另一次运行的源码时可从 `--candidate` 开始重新验证。
 
-在 计算节点 上可用 `bash workflow/cuda.sh --test-repair` 重跑确定性的控制器回归。它用预设动作复现同一错误两次，修好后再引入回归并耗尽轮数，真实执行 CUDA 构建、定向重测、完整验证和回退。另一次真实模型自主修复的操作序列及一行改动见[实测报告](../example/window_energy/validation/agent-repair-rtx3090.json)。
+在计算节点上可用 `bash workflow/cuda.sh --test-repair` 重跑确定性的控制器回归。它用预设动作复现同一错误两次，修好后再引入回归并耗尽轮数，真实执行 CUDA 构建、定向重测、完整验证和回退。另一次真实模型自主修复的操作序列及一行改动见[实测报告](../example/window_energy/validation/agent-repair-rtx3090.json)。
